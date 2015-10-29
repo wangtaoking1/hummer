@@ -46,7 +46,12 @@ apt-get install -y lxc-docker
 
 docker -v
 
+# Set Docker private registry address
+read -p "Input private registry address(Default: 127.0.0.1:5000): " registry_address
+if [[ -z $registry_address ]]; then
+    registry_address="127.0.0.1:5000"
+fi
 # Add Docker registry mirror to speed up image download
-sed -i 's|#DOCKER_OPTS=.*|DOCKER_OPTS="--registry-mirror=http://aad0405c.m.daocloud.io"|g' /etc/default/docker
+sed -i "s|.*DOCKER_OPTS=.*|DOCKER_OPTS=\"--registry-mirror=http://aad0405c.m.daocloud.io --insecure-registry=${registry_address}\"|g" /etc/default/docker
 
 service docker restart
