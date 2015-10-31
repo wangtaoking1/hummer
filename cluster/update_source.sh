@@ -7,7 +7,7 @@
 
 set -o xtrace
 
-cat > /etc/apt/source.list <<EOF
+cat > /etc/apt/sources.list <<EOF
 deb http://mirrors.aliyun.com/ubuntu/ trusty main restricted universe multiverse
 deb http://mirrors.aliyun.com/ubuntu/ trusty-security main restricted universe multiverse
 deb http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted universe multiverse
