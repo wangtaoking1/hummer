@@ -12,6 +12,8 @@ if [[ $UID -ne 0 ]]; then
     exit 0
 fi
 
+bash ./update_source.sh
+
 # Install Docker if not
 docker -v
 if [[ $? -ne 0 ]]; then
