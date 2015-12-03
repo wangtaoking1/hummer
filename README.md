@@ -11,4 +11,5 @@ Kubernetes 1.0.6+
 ### Server
 Python 3
 Django
+Django REST Framework
 
