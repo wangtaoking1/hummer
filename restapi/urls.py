@@ -1,8 +1,9 @@
 from django.conf.urls import include, url
 from rest_framework import routers
-from restapi import views
+from restapi.views import UserViewSet
 
 router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
 
 urlpatterns = [
     # Examples:
@@ -10,8 +11,6 @@ urlpatterns = [
     # url(r'^blog/', include('blog.urls')),
 
     url(r'', include(router.urls)),
-    url(r'users/$', views.UserList.as_view()),
-    url(r'^users/(?P<pk>[a-z]+)/$', views.UserDetail.as_view()),
 
     url(r'auth/', include('rest_framework.urls',
                                namespace='rest_framework')),

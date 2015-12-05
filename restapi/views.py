@@ -1,14 +1,11 @@
 from restapi.serializers import UserSerializer
 from django.contrib.auth.models import User
-from rest_framework import generics
+from rest_framework import viewsets
+from rest_framework.permissions import IsAdminUser
 
 
-class UserList(generics.ListCreateAPIView):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-
-class UserDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
+    permission_classes = (IsAdminUser,)
