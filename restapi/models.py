@@ -51,3 +51,38 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
+class App(models.Model):
+    """
+    Each User has many projects called app, each app also contains one or more
+    images.
+
+    source represents the app which is　the current app cloned from, default null
+     represents the app is a raw app.
+    """
+    source = models.ForeignKey('self', models.SET_NULL, null=True)
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=128)
+    desc = models.TextField(max_length=254, null=True)
+    create_time = models.DateTimeField(auto_now=True)
+
+
+class Image(models.Model):
+    """
+    Image represents the model of every service, and there are many different
+    version images in every app.
+    """
+    STATUS_CHOICES = (
+        ('deleted': 'deleted'),
+        ('deleting': 'deleting'),
+        ('active': 'active'),
+        ('creating': 'creating'),
+    )
+
+    name = models.CharField(max_length=128)
+    app = models.ForeignKey(App, on_delete=models.CASCADE)
+    desc = models.TextField(max_length=254, null=True)
+    version = models.CharField(max_length=32)
+    is_public = models.BooleanField('public', default=False)
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES,
+        default='creating')
+    create_time = models.DateTimeField(auto_now=True)
