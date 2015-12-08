@@ -39,10 +39,12 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'backend',
     'restapi',
+    'website',
 )
 
-AUTH_USER_MODEL = 'restapi.MyUser'
+AUTH_USER_MODEL = 'backend.MyUser'
 
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [

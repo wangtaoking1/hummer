@@ -4,8 +4,8 @@ from restapi.views import UserViewSet, AppViewSet, ImageViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
-router.register(r'apps', AppViewSet)
-router.register(r'images', ImageViewSet)
+router.register(r'apps', AppViewSet, base_name="app")
+router.register(r'images', ImageViewSet, base_name='image')
 
 urlpatterns = [
     # Examples:

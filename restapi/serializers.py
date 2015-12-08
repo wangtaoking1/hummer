@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from restapi.models import MyUser, App, Image
+from backend.models import MyUser, App, Image
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,7 +17,12 @@ class AppSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = ('url', 'id', 'app', 'name', 'desc', 'version',
+        fields = ('url', 'id', 'app', 'name', 'desc', 'version', 'token',
             'is_public', 'create_time', 'status')
 
 
+# class ControllerSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Controller
+#         fields = ('url', 'id', 'name', 'user', 'image', 'status', 'replicas',
+#             'create_time')
