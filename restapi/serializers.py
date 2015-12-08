@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from restapi.models import MyUser
+from restapi.models import MyUser, App, Image
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,7 +17,7 @@ class AppSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = ('url', 'id', 'app', 'nick_name', 'desc', 'version',
+        fields = ('url', 'id', 'app', 'name', 'desc', 'version',
             'is_public', 'create_time', 'status')
 
 

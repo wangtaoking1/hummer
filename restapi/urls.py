@@ -1,9 +1,11 @@
 from django.conf.urls import include, url
 from rest_framework import routers
-from restapi.views import UserViewSet
+from restapi.views import UserViewSet, AppViewSet, ImageViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
+router.register(r'apps', AppViewSet)
+router.register(r'images', ImageViewSet)
 
 urlpatterns = [
     # Examples:

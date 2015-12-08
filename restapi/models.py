@@ -59,7 +59,7 @@ class App(models.Model):
     source represents the app which is　the current app cloned from, default null
      represents the app is a raw app.
     """
-    source = models.ForeignKey('self', models.SET_NULL, null=True)
+    source = models.ForeignKey('self', blank=True, null=True)
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     desc = models.TextField(max_length=254, null=True)
@@ -72,10 +72,10 @@ class Image(models.Model):
     version images in every app.
     """
     STATUS_CHOICES = (
-        ('deleted': 'deleted'),
-        ('deleting': 'deleting'),
-        ('active': 'active'),
-        ('creating': 'creating'),
+        ('deleted', 'deleted'),
+        ('deleting', 'deleting'),
+        ('active', 'active'),
+        ('creating', 'creating'),
     )
 
     name = models.CharField(max_length=128)

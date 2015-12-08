@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser
 
-from restapi.serializers import UserSerializer
-from restapi.models import MyUser
+from restapi.serializers import UserSerializer, AppSerializer, ImageSerializer
+from restapi.models import MyUser, App, Image
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -11,4 +11,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
     permission_classes = (IsAdminUser,)
 
+
+class AppViewSet(viewsets.ModelViewSet):
+    queryset = App.objects.all()
+    serializer_class = AppSerializer
+
+
+class ImageViewSet(viewsets.ModelViewSet):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer
 
