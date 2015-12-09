@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: create a private registry
 # Version: 0.1
-# 
+#
 # Author: wangtao 479021795@qq.com
 # Date: 2015/10/29
 
@@ -30,8 +30,6 @@ docker pull registry
 
 # Start registry container
 mkdir /opt/registry
-docker run -d -p 5000:5000 -v /opt/registry:/tmp/registry --name hummer_registry registry
+docker run -d -p 5000:5000 --restart=always -v /opt/registry:/tmp/registry --name hummer_registry registry
 
-# Restart registry container when reboot
-sed -i 's|.*exit 0.*|docker start hummer_registry\n\nexit 0|' /etc/rc.local
 
