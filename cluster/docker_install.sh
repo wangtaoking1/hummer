@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: install docker daemon and client
 # Version: 0.1
-# 
+#
 # Author: wangtao 479021795@qq.com
 # Date: 2015/10/28
 
@@ -22,6 +22,7 @@ function add_docker_source() {
 function install_key() {
     apt-get install apt-transport-https -y
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D8576A8BA88D21E9
 
     return 0
 }
@@ -47,7 +48,7 @@ apt-get install -y lxc-docker
 docker -v
 
 # Set Docker private registry address
-read -p "Input private registry address(Default: 127.0.0.1:5000): " registry_address
+read -p "Input private registry address(192.168.0.1:5000): " registry_address
 if [[ -z $registry_address ]]; then
     registry_address="127.0.0.1:5000"
 fi

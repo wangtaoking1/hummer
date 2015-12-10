@@ -25,11 +25,12 @@ if [[ $? -ne 0 ]]; then
         exit 0
 fi
 
-# Download registry image
-docker pull registry
+REGISTRY_VERSION=2.2
+
+# Download registry image v2.2
+docker pull registry:${REGISTRY_VERSION}
 
 # Start registry container
 mkdir /opt/registry
-docker run -d -p 5000:5000 --restart=always -v /opt/registry:/tmp/registry --name hummer_registry registry
-
+docker run -d -p 5000:5000 --restart=always -v /opt/registry:/tmp/registry-dev --name hummer_registry registry:${REGISTRY_VERSION}
 
