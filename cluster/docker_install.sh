@@ -60,7 +60,7 @@ if [[ -z $registry_address ]]; then
     registry_address="127.0.0.1:5000"
 fi
 # Add Docker registry mirror to speed up image download
-sed -i "s|.*DOCKER_OPTS=.*|DOCKER_OPTS=\"-H 0.0.0.0:4243 -H unix:///var/run/docker.sock --registry-mirror=http://aad0405c.m.daocloud.io --insecure-registry=${registry_address}\"|g" /etc/default/docker
+sed -i "s|.*DOCKER_OPTS=.*|DOCKER_OPTS=\"-H 0.0.0.0:2357 -H unix:///var/run/docker.sock --registry-mirror=http://aad0405c.m.daocloud.io --insecure-registry=${registry_address}\"|g" /etc/default/docker
 
 service docker restart
 

@@ -21,4 +21,4 @@ Python k8s client: https://github.com/wangtaoking1/python-k8sclient
 API文档：http://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/
 Python client library: http://docker-py.readthedocs.org/en/latest/
 
-调用地址端口: tcp://192.168.0.10:4243
+调用地址端口: tcp://192.168.0.10:2357

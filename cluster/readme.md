@@ -68,7 +68,7 @@ K8S是基于Docker的开源平台，所以我们首先需要在集群的每一�
 
 	export FLANNEL_NET=${FLANNEL_NET:-172.16.0.0/16}
 
-	DOCKER_OPTS=${DOCKER_OPTS:-"-H 0.0.0.0:4243 --registry-mirror=http://aad0405c.m.daocloud.io --insecure-registry=192.168.0.10:5000"}
+	DOCKER_OPTS=${DOCKER_OPTS:-"-H 0.0.0.0:2357 --registry-mirror=http://aad0405c.m.daocloud.io --insecure-registry=192.168.0.10:5000"}
 
 ###**部署**
 直接在Master节点上运行脚本进行安装，在安装的过程中需要输入密码。
