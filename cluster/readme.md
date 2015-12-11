@@ -21,7 +21,7 @@
 ###**准备工作**
 设计好集群结构，为每一台机器安装好操作系统，需要Ubuntu 14.04 64bit，配置好IP地址及主机名等，安装git，用于下载安装脚本，开启SSH服务，用于支持远程登录安装K8S。
 在Master节点上运行如下命令配置好能够从Master节点免密钥登录到其他节点上。
-	
+
 	$ ssh-keygen
 	$ ssh-copy-id user@node1_ip
 	$ ssh-copy-id user@node2_ip
@@ -37,7 +37,7 @@ K8S是基于Docker的开源平台，所以我们首先需要在集群的每一�
 在安装的过程中需要输入私有仓库的地址，用于快速下载镜像。
 
 由于GFW，为了能够成功安装，须先下载安装过程中会用到的pause镜像。
-	
+
 	# docker pull docker.io/kubernetes/pause
 	# docker tag kubernetes/pause gcr.io/google_containers/pause:0.8.0
 	# docker tag gcr.io/google_containers/pause:0.8.0 gcr.io/google_containers/pause
@@ -67,6 +67,8 @@ K8S是基于Docker的开源平台，所以我们首先需要在集群的每一�
 	export SERVICE_CLUSTER_IP_RANGE=${SERVICE_CLUSTER_IP_RANGE:-10.0.1.0/24}
 
 	export FLANNEL_NET=${FLANNEL_NET:-172.16.0.0/16}
+
+	DOCKER_OPTS=${DOCKER_OPTS:-"-H 0.0.0.0:4243 --registry-mirror=http://aad0405c.m.daocloud.io --insecure-registry=192.168.0.10:5000"}
 
 ###**部署**
 直接在Master节点上运行脚本进行安装，在安装的过程中需要输入密码。
