@@ -49,8 +49,10 @@ K8S是基于Docker的开源平台，所以我们首先需要在集群的每一�
 	$ cd kubernetes/cluster/ubuntu
 	$ export FLANNEL_VERSION="0.5.0"
 	$ export ETCD_VERSION="2.2.0"
-    $ export KUBE_VERSION="1.0.6"
-    $ ./build.sh
+	$ export KUBE_VERSION="1.0.6"
+	$ ./build.sh
+	# 新版的k8s这里运行的是download-release.sh
+
 如果下载不成功，那么就用root下载，完成之后将文件所有者设置为原来的账户。
 
 ###**修改配置**
