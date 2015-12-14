@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser
@@ -5,6 +7,8 @@ from rest_framework.exceptions import PermissionDenied
 
 from restapi.serializers import UserSerializer, AppSerializer, ImageSerializer
 from backend.models import MyUser, App, Image
+
+logger = logging.getLogger("hummer")
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -60,7 +64,6 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         return Image.objects.filter(app__user=user)
 
-
     def get_object(self):
         """
         Returns the object the view is displaying.
@@ -89,6 +92,32 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         return obj
 
+    """
+    Create an image instance.
+    """
+    def create(self, request, *args, **kwargs):
+        logger.info("user %s will create a new image" % request.user.username)
+
+        # TODO: create an image instance
+
+        return super(ImageViewSet, self).create(request, *args, **kwargs)
+
+    """
+    Destroy an image instance.
+    """
+    def destroy(self, request, *args, **kwargs):
+        image = self.get_object()
+
+        logger.info("user %s deletes image: %s/%s:%s, token: %s" % (
+            request.user.username,
+            image.app.user.username,
+            image.name,
+            image.version,
+            image.token))
+
+        # TODO: delete an image instance
+
+        return super(ImageViewSet, self).destroy(request, *args, **kwargs)
 
 def check_Anonymous(user):
     """

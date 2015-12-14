@@ -81,7 +81,6 @@ class Image(models.Model):
     )
 
     app = models.ForeignKey(App, on_delete=models.CASCADE)
-
     name = models.CharField(max_length=128)
     desc = models.TextField(max_length=254, null=True)
     version = models.CharField(max_length=32)
