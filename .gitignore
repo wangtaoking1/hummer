@@ -2,6 +2,7 @@
 *.db
 *~
 .*
+abc.html
 
 env/
 __pycache__/

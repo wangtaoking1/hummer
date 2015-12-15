@@ -78,6 +78,7 @@ class Image(models.Model):
         ('deleting', 'deleting'),
         ('active', 'active'),
         ('creating', 'creating'),
+        ('failed', 'failed')
     )
 
     app = models.ForeignKey(App, on_delete=models.CASCADE)

@@ -2,14 +2,16 @@ import logging
 import os
 
 from django.contrib.auth.models import AnonymousUser
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
-from django.conf import settings
 
 from restapi.serializers import UserSerializer, AppSerializer, ImageSerializer
 from backend.models import MyUser, App, Image
-from restapi.utils import save_image_file_to_disk
+from restapi.utils import (save_image_file_to_disk, is_image_or_dockerfile,
+    get_upload_image_filename)
+from backend.image import ImageBuilder
 
 logger = logging.getLogger("hummer")
 
@@ -105,16 +107,27 @@ class ImageViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         logger.info("user %s will create a new image" % request.user.username)
 
-        image = request.data
+        # create image metadata
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        response = Response(serializer.data, status=status.HTTP_201_CREATED,
+            headers=headers)
+
+        image = serializer.data
         logger.debug(image)
 
-        filename = image['name'] + '_' + image['version'] + '.tar'
-        logger.debug(filename)
+        is_image = is_image_or_dockerfile(request.data['is_image'])
+        filename = get_upload_image_filename(image, request.user)
 
-        save_image_file_to_disk(request.FILES['file'], request.user.username,
-            filename)
+        save_image_file_to_disk(request.FILES['file'], filename)
 
-        return super(ImageViewSet, self).create(request, *args, **kwargs)
+        # create a true image instance, and upload into private registry
+        builder = ImageBuilder(filename, is_image, image['id'], request.user)
+        builder.create_image()
+
+        return response
 
     """
     Destroy an image instance.
