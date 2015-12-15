@@ -151,3 +151,5 @@ LOGGING = {
 
 # Privete Image registry address:port
 IMAGE_REGISTRY = '192.168.0.10:5000'
+
+UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads/images')

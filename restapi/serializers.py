@@ -18,7 +18,7 @@ class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = ('url', 'id', 'app', 'name', 'desc', 'version', 'token',
-            'is_public', 'create_time', 'status')
+            'build_file', 'is_public', 'create_time', 'status')
 
 
 # class ControllerSerializer(serializers.ModelSerializer):

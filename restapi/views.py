@@ -1,12 +1,15 @@
 import logging
+import os
 
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import viewsets
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
+from django.conf import settings
 
 from restapi.serializers import UserSerializer, AppSerializer, ImageSerializer
 from backend.models import MyUser, App, Image
+from restapi.utils import save_image_file_to_disk
 
 logger = logging.getLogger("hummer")
 
@@ -20,6 +23,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class AppViewSet(viewsets.ModelViewSet):
     serializer_class = AppSerializer
+
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         """
@@ -40,6 +45,8 @@ class AppViewSet(viewsets.ModelViewSet):
 
 class ImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
+
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         """
@@ -98,7 +105,14 @@ class ImageViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         logger.info("user %s will create a new image" % request.user.username)
 
-        # TODO: create an image instance
+        image = request.data
+        logger.debug(image)
+
+        filename = image['name'] + '_' + image['version'] + '.tar'
+        logger.debug(filename)
+
+        save_image_file_to_disk(request.FILES['file'], request.user.username,
+            filename)
 
         return super(ImageViewSet, self).create(request, *args, **kwargs)
 
