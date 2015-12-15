@@ -1,6 +1,9 @@
 import logging
 from threading import Thread
 
+from backend.models import Image
+from backend.schedule import DockerSchedulerFactory
+
 logger = logging.getLogger('hummer')
 
 
@@ -11,13 +14,13 @@ class ImageBuilder(object):
     """
     build_file = None
     is_image = False
-    image_id = None
+    image = None
     user = None
 
     def __init__(self, build_file, is_image, image_id, user):
         self.build_file = build_file
         self.is_image = is_image
-        self.image_id = image_id
+        self.image = Image.objects.get(id=image_id)
         self.user = user
 
     def create_image(self):
@@ -39,8 +42,31 @@ class ImageBuilder(object):
         """
         logger.debug("creating an image by imagefile.")
 
+        scheduler = DockerSchedulerFactory.get_scheduler()
+        docker_host = scheduler.get_optimal_docker_host()
+
+        logger.debug("image is building on docher host %s" % docker_host)
+
+        if not docker_host:
+            self._update_image_status("failed")
+            return
+
+        # TODO: create image on docker host
+        #
+        self._update_image_status("active", "99998888")
+
+
     def _create_image_by_dockerfile(self):
         """
         Create image by dockerfile, this maybe take a long time.
         """
         logger.debug("creating an image by dockerfile.")
+        pass
+
+    def _update_image_status(self, status, token=None):
+        """
+        Update image metadata after building the image.
+        """
+        self.image.status = status
+        self.image.token = token
+        self.image.save()

@@ -9,8 +9,7 @@ from rest_framework.exceptions import PermissionDenied
 
 from restapi.serializers import UserSerializer, AppSerializer, ImageSerializer
 from backend.models import MyUser, App, Image
-from restapi.utils import (save_image_file_to_disk, is_image_or_dockerfile,
-    get_upload_image_filename)
+from restapi.utils import (save_image_file_to_disk, is_image_or_dockerfile, get_upload_image_filename)
 from backend.image import ImageBuilder
 
 logger = logging.getLogger("hummer")

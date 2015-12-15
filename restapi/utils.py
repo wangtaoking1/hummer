@@ -18,7 +18,6 @@ def save_image_file_to_disk(file_obj, filename):
         for chunk in file_obj.chunks():
             destination.write(chunk)
 
-
 def is_image_or_dockerfile(is_image=None):
     """
     Parse the is_image option of the http data.
