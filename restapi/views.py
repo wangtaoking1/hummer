@@ -106,6 +106,9 @@ class ImageViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         logger.info("user %s will create a new image" % request.user.username)
 
+        if not request.FILES.get('file'):
+            raise Exception("There is no image build file.")
+
         # create image metadata
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -134,12 +137,11 @@ class ImageViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         image = self.get_object()
 
-        logger.info("user %s deletes image: %s/%s:%s, token: %s" % (
+        logger.info("user %s deletes image: %s/%s:%s" % (
             request.user.username,
             image.app.user.username,
             image.name,
-            image.version,
-            image.token))
+            image.version))
 
         # TODO: delete an image instance
 
