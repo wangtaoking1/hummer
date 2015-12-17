@@ -120,7 +120,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         image = serializer.data
         logger.debug(image)
 
-        is_image = is_image_or_dockerfile(request.data['is_image'])
+        is_image = is_image_or_dockerfile(request.data.get('is_image'), 'true')
         dockerfile = None
         if not is_image:
             dockerfile = request.data.get('dockerfile', 'Dockerfile')

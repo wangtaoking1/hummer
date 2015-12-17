@@ -3,6 +3,7 @@ from threading import Thread
 
 from django.conf import settings
 from docker import Client
+from docker.errors import APIError
 
 from backend.models import Image
 from backend.schedule import DockerSchedulerFactory
@@ -268,9 +269,14 @@ class ImageBuilder(object):
                 dockerfile=dockerfile,
                 rm=True,
                 tag=image_complete_name)]
+        except APIError as error:
+            logger.debug(error)
+            logger.error('Cannot locate specified Dockerfile: %s.' % self.dockerfile)
+            fileobj.close()
+            return None
         except Exception as error:
-            logger.error(error)
-            logger.error('build image on docker host %s failed.' % base_url)
+            logger.debug(error)
+            logger.error('Build image %s failed.' % image_complete_name)
             fileobj.close()
             return None
         fileobj.close()
