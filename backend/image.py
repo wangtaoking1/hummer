@@ -83,7 +83,42 @@ class ImageBuilder(object):
         Create image by dockerfile, this maybe take a long time.
         """
         logger.debug("creating an image by dockerfile.")
-        pass
+
+        docker_host = self._get_build_docker_host()
+        if not docker_host:
+            logger.error("there is no available active docker host.")
+            self._update_image_status(status="failed")
+            return None
+
+        base_url = self._get_docker_host_base_url(docker_host)
+        image_name = self._get_image_name()
+
+        logger.debug('%s %s' % (base_url, image_name))
+
+        token = self._build_image_on_docker_host(
+            base_url=base_url,
+            build_file=self.build_file,
+            dockerfile=self.dockerfile,
+            image_name=image_name,
+            image_version=self.image.version)
+        if not token:
+            logger.error("Build image on docker host failed")
+            self._update_image_status(status="failed")
+            return None
+        logger.info('Image %s:%s has been builded, with token %s', image_name,
+            self.image.version, token)
+
+        digest = self._push_image_to_registry(base_url, image_name,
+            self.image.version, token)
+        if not digest:
+            logger.error("Push image from docker host to registry failed")
+            self._update_image_status(status="failed")
+            return None
+        logger.info('Image %s:%s has been pushed to registry, with digest %s', image_name,
+            self.image.version, digest)
+
+        self._update_image_status(status="active", digest=digest, token=token)
+
 
     def _update_image_status(self, status, digest=None, token=None):
         """
@@ -192,7 +227,6 @@ class ImageBuilder(object):
 
         return digest
 
-
     def _is_image_on_docker_host(self, base_url, image_token):
         """
         Check the image whether or not on docker host.
@@ -207,3 +241,50 @@ class ImageBuilder(object):
             return False
         return True
 
+    def _build_image_on_docker_host(self, base_url, build_file, dockerfile,
+            image_name, image_version):
+        """
+        Build image on the selected docker host by Dockerfile.
+
+        'base_url': the url of docker host.
+        'build_file': the name of the build file in absolute path.
+        'dockerfile': Dockerfile path in build_file.
+        'image_name': the name of the image, containing registry address, user
+        name and image name.
+        'image_version': the version of the image.
+
+        Returns:
+        'token': the image token
+        """
+        self._delete_image_on_docker_host(base_url, image_name, image_version)
+
+        client = Client(base_url=base_url)
+        fileobj = open(build_file, 'rb')
+        image_complete_name = '%s:%s' % (image_name, image_version)
+        try:
+            response = [line for line in client.build(
+                fileobj=fileobj,
+                custom_context=True,
+                dockerfile=dockerfile,
+                rm=True,
+                tag=image_complete_name)]
+        except Exception as error:
+            logger.error(error)
+            logger.error('build image on docker host %s failed.' % base_url)
+            fileobj.close()
+            return None
+        fileobj.close()
+
+        return self._get_image_token(base_url, image_complete_name)
+
+    def _get_image_token(self, base_url, image_complete_name):
+        """
+        """
+        client = Client(base_url=base_url)
+        try:
+            token = client.inspect_image(image_complete_name).get('Id', None)
+        except Exception:
+            logger.error('Can\'t get the token of image %s on docker host %s' %
+                (image_complete_name, base_url))
+            return None
+        return token
