@@ -86,6 +86,7 @@ class Image(models.Model):
     desc = models.TextField(max_length=254, null=True)
     version = models.CharField(max_length=32)
     digest = models.CharField(max_length=64, blank=True, null=True, default='')
+    token = models.CharField(max_length=64, blank=True, null=True, default='')
     is_public = models.BooleanField('public', default=False)
     status = models.CharField(max_length=16, choices=STATUS_CHOICES,
         default='creating')

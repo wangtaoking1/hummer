@@ -121,12 +121,21 @@ class ImageViewSet(viewsets.ModelViewSet):
         logger.debug(image)
 
         is_image = is_image_or_dockerfile(request.data['is_image'])
+        dockerfile = None
+        if not is_image:
+            dockerfile = request.data.get('dockerfile', 'Dockerfile')
         filename = get_upload_image_filename(image, request.user)
 
         save_image_file_to_disk(request.FILES['file'], filename)
 
         # create a true image instance, and upload into private registry
-        builder = ImageBuilder(filename, is_image, image['id'], request.user)
+        builder = ImageBuilder(
+            build_file=filename,
+            is_image=is_image,
+            dockerfile=dockerfile,
+            image_id=image['id'],
+            user=request.user
+            )
         builder.create_image()
 
         return response

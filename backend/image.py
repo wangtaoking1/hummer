@@ -18,12 +18,14 @@ class ImageBuilder(object):
     """
     build_file = None
     is_image = False
+    dockerfile = None
     image = None
     user = None
 
-    def __init__(self, build_file, is_image, image_id, user):
+    def __init__(self, build_file, is_image, dockerfile, image_id, user):
         self.build_file = build_file
         self.is_image = is_image
+        self.dockerfile = dockerfile
         self.image = Image.objects.get(id=image_id)
         self.user = user
 
@@ -33,9 +35,9 @@ class ImageBuilder(object):
         """
         target = None
         if self.is_image:
-            target = self._create_image_by_imagefile()
+            target = self._create_image_by_imagefile
         else:
-            target = self._create_image_by_dockerfile()
+            target = self._create_image_by_dockerfile
 
         creating_thread = Thread(target=target)
         creating_thread.start()
@@ -49,7 +51,7 @@ class ImageBuilder(object):
         docker_host = self._get_build_docker_host()
         if not docker_host:
             logger.error("there is no available active docker host.")
-            self._update_image_status("failed")
+            self._update_image_status(status="failed")
             return None
 
         # TODO: create image on docker host
@@ -60,17 +62,21 @@ class ImageBuilder(object):
             image_name, self.image.version)
         if not token:
             logger.error("Import image on docker host failed")
-            self._update_image_status("failed")
+            self._update_image_status(status="failed")
             return None
+        logger.info('Image %s:%s has been imported, with token %s', image_name,
+            self.image.version, token)
 
         digest = self._push_image_to_registry(base_url, image_name,
             self.image.version, token)
         if not digest:
             logger.error("Push image from docker host to registry failed")
-            self._update_image_status("failed")
+            self._update_image_status(status="failed")
             return None
+        logger.info('Image %s:%s has been pushed to registry, with digest %s', image_name,
+            self.image.version, digest)
 
-        self._update_image_status("active", digest)
+        self._update_image_status(status="active", digest=digest, token=token)
 
     def _create_image_by_dockerfile(self):
         """
@@ -79,12 +85,15 @@ class ImageBuilder(object):
         logger.debug("creating an image by dockerfile.")
         pass
 
-    def _update_image_status(self, status, digest=None):
+    def _update_image_status(self, status, digest=None, token=None):
         """
         Update image metadata after building the image.
         """
         self.image.status = status
-        self.image.digest = digest
+        if digest:
+            self.image.digest = digest
+        if token:
+            self.image.token = token
         self.image.save()
 
     def _get_build_docker_host(self):
@@ -133,6 +142,7 @@ class ImageBuilder(object):
         except Exception:
             logger.error('import image on docker host %s failed.' % base_url)
             return None
+
         return res.get('status', None)
 
     def _delete_image_on_docker_host(self, base_url, image_name, image_version):
@@ -160,7 +170,6 @@ class ImageBuilder(object):
         Returns the sha256 digest of the image.
         """
         image_complete_name = '%s:%s' %(image_name, image_version)
-        logger.debug('%s   %s' % (image_complete_name, image_token))
 
         if not self._is_image_on_docker_host(base_url, image_token):
             logger.error('There is no image called %s on docker host %s' %
