@@ -2,7 +2,6 @@ import unittest
 import os
 
 from backend.schedule import DockerScheduler, DockerSchedulerFactory
-from hummer.settings import *
 
 class DockerSchedulerTestCase(unittest.TestCase):
 
@@ -25,7 +24,5 @@ class DockerSchedulerFactoryTestCase(unittest.TestCase):
         self.assertEqual(scheduler1, scheduler2)
 
 
-if __name__ == '__main__':
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'hummer.settings'
-    django.setup()
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()

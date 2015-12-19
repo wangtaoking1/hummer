@@ -9,7 +9,7 @@ Python etcd client doc: https://python-etcd.readthedocs.org/en/latest/#
 
 #**K8S**
 ---
-API文档：http://kubernetes.io/third_party/swagger-ui/#/
+API文档：http://kubernetes.io/third_party/swagger-ui/
 Python k8s client: https://github.com/wangtaoking1/python-k8sclient
 
 
