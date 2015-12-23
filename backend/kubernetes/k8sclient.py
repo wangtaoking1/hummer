@@ -27,7 +27,7 @@ class KubeClient(object):
     def base_url(self):
         return self._base_url
 
-    def send_request(self, method, path, body=None):
+    def _send_request(self, method, path, query=None, body=None):
         """
         Send requests to k8s server and get the response.
         Returns a response dict.
@@ -48,9 +48,9 @@ class KubeClient(object):
 
     def list_nodes(self):
         """
-        List all namespaces.
+        List all nodes.
         """
-        res = self.send_request('GET', 'nodes')
+        res = self._send_request('GET', 'nodes')
         print(res)
         nodes = []
         for item in res.get('items'):
@@ -61,7 +61,7 @@ class KubeClient(object):
         """
         List all namespaces.
         """
-        res = self.send_request('GET', 'namespaces')
+        res = self._send_request('GET', 'namespaces')
         namespaces = []
         for item in res.get('items'):
             namespaces.append(item['metadata']['name'])
@@ -77,13 +77,13 @@ class KubeClient(object):
                 }
         body['metadata']['name'] = name
 
-        self.send_request('POST', 'namespaces', body=body)
+        self._send_request('POST', 'namespaces', body=body)
 
     def delete_namespace(self, name):
         """
         Delete namespace called name.
         """
-        res = self.send_request('DELETE', 'namespaces/{}'.format(name))
+        res = self._send_request('DELETE', 'namespaces/{}'.format(name))
         print(res)
 
 

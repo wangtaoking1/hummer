@@ -23,6 +23,3 @@ class DockerSchedulerFactoryTestCase(unittest.TestCase):
         scheduler2 = DockerSchedulerFactory.get_scheduler()
         self.assertEqual(scheduler1, scheduler2)
 
-
-# if __name__ == '__main__':
-#     unittest.main()

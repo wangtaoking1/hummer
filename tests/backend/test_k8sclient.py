@@ -20,7 +20,8 @@ class KubeClientTestCase(unittest.TestCase):
         self.assertEqual(client.base_url, "http://192.168.0.10:8080/")
 
     def test_send_request(self):
-        res = self.client.send_request("get", "namespaces", labels={'a': 1, 'name': 'wangtao'})
+        res = self.client.send_request("get", "namespaces",
+            labels={'a': 1, 'name': 'wangtao'})
         self.assertEqual(isinstance(res, dict), True)
 
     def test_list_namespaces(self):
