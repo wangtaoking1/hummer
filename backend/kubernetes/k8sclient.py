@@ -2,6 +2,9 @@ import json
 import requests
 import logging
 
+from backend.kubernetes.namespace import Namespace
+from backend.kubernetes.replicationcontroller import Controller
+
 logger = logging.getLogger('hummer')
 
 
@@ -51,7 +54,6 @@ class KubeClient(object):
         List all nodes.
         """
         res = self._send_request('GET', 'nodes')
-        print(res)
         nodes = []
         for item in res.get('items'):
             nodes.append(item['metadata']['name'])
@@ -71,20 +73,44 @@ class KubeClient(object):
         """
         Create namespace called name.
         """
-        body = {'apiVersion': 'v1',
-                'kind': 'Namespace',
-                'metadata': {}
-                }
-        body['metadata']['name'] = name
+        namespace = Namespace(name)
 
-        self._send_request('POST', 'namespaces', body=body)
+        self._send_request('POST', 'namespaces', body=namespace.body)
 
     def delete_namespace(self, name):
         """
         Delete namespace called name.
         """
         res = self._send_request('DELETE', 'namespaces/{}'.format(name))
-        print(res)
+        # print(res)
 
+    def list_controllers(self, namespace):
+        """
+        List all replicationcontroller in the namespace.
+        """
+        path = 'namespaces/{}/replicationcontrollers'.format(namespace)
+        res = self._send_request('GET', path)
+        controllers = []
+        for item in res.get('items'):
+            controllers.append(item['metadata']['name'])
+        return controllers
+
+    def create_controller(self, namespace, name, image_name, replicas=1,
+        ports=None, commands=None, args=None, envs=None):
+        """
+        Create a replicationcontroller.
+        """
+        controller = Controller(name, image_name, replicas, ports,
+            commands, args, envs)
+        path='namespaces/{}/replicationcontrollers'.format(namespace)
+
+        self._send_request('POST', path, body=controller.body)
+
+    def delete_controller(self, namespace, name):
+        """
+        Delete a replicationcontroller.
+        """
+        path='namespaces/{}/replicationcontrollers/{}'.format(namespace, name)
+        self._send_request('DELETE', path)
 
 
