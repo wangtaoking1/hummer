@@ -4,6 +4,7 @@ import logging
 
 from backend.kubernetes.namespace import Namespace
 from backend.kubernetes.replicationcontroller import Controller
+from backend.kubernetes.service import Service
 
 logger = logging.getLogger('hummer')
 
@@ -113,4 +114,33 @@ class KubeClient(object):
         path='namespaces/{}/replicationcontrollers/{}'.format(namespace, name)
         self._send_request('DELETE', path)
 
+    def list_services(self, namespace):
+        """
+        List all services in the namespace.
+        """
+        path = 'namespaces/{}/services'.format(namespace)
+        res = self._send_request('GET', path)
+        services = []
+        for item in res.get('items'):
+            services.append(item['metadata']['name'])
+        return services
+
+    def create_service(self, namespace, name, tcp_ports=None, udp_ports=None,
+        is_public=False, session_affinity=False):
+        """
+        Create a service in namespace.
+        """
+        service = Service(name, tcp_ports, udp_ports, is_public,
+            session_affinity)
+        path='namespaces/{}/services'.format(namespace)
+
+        res = self._send_request('POST', path, body=service.body)
+        print(res)
+
+    def delete_service(self, namespace, name):
+        """
+        Delete a service.
+        """
+        path='namespaces/{}/services/{}'.format(namespace, name)
+        self._send_request('DELETE', path)
 
