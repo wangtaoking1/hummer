@@ -52,26 +52,22 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-class App(models.Model):
+class Project(models.Model):
     """
-    Each User has many projects called app, each app also contains one or more
+    Each User has many projects called project, each project also contains one or more
     images.
-
-    source represents the app which is　the current app cloned from, default null
-     represents the app is a raw app.
     """
-    source = models.ForeignKey('self', blank=True, null=True)
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, default='')
     desc = models.TextField(max_length=254, null=True)
     create_time = models.DateTimeField(auto_now=True)
 
 
 class Image(models.Model):
     """
-    Image represents the model of every Controller, and there are many different
-    version images in every app.
+    Image represents the model of every application, and there are many different
+    version images in every application.
     """
     STATUS_CHOICES = (
         ('deleted', 'deleted'),
@@ -81,35 +77,53 @@ class Image(models.Model):
         ('failed', 'failed')
     )
 
-    app = models.ForeignKey(App, on_delete=models.CASCADE)
-    name = models.CharField(max_length=128)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
+    name = models.CharField(max_length=128, default='')
     desc = models.TextField(max_length=254, null=True)
     version = models.CharField(max_length=32)
     digest = models.CharField(max_length=64, blank=True, null=True, default='')
     token = models.CharField(max_length=64, blank=True, null=True, default='')
-    is_public = models.BooleanField('public', default=False)
+    is_public = models.BooleanField(default=False)
     status = models.CharField(max_length=16, choices=STATUS_CHOICES,
         default='creating')
     create_time = models.DateTimeField(auto_now=True)
 
 
-# class Controller(models.Model):
-#     """
-#     Controller represents the running app, which maybe contains a few
-#     containers, we can also open a service for controller.
-#     """
-#     STATUS_CHOICES = (
-#         ('down', 'down'),
-#         ('up', 'up'),
-#         ('error', 'error'),
-#     )
+class Application(models.Model):
+    """
+    Application represents the running image, which maybe an internal service or
+    an external application.
+    """
+    STATUS_CHOICES = (
+        ('creating', 'creating'),
+        ('active', 'active'),
+        ('down', 'down'),
+        ('deleting', 'deleting'),
+        ('deleted', 'deleted'),
+        ('error', 'error'),
+    )
 
-#     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-#     image = models.ForeignKey(Image, on_delete=models.SET_NULL, blank=True,
-#         null=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
+    name = models.CharField(max_length=128, default='')
+    replicas = models.IntegerField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='creating')
+    internal_ip = models.CharField(max_length=16, blank=True, null=True)
+    external_ip = models.CharField(max_length=16, blank=True, null=True)
+    create_time = models.DateTimeField(auto_now=True)
 
-#     name = models.CharField(max_length=128)
-#     replicas = models.IntegerField()
-#     status = models.CharField(max_length=10, choices=STATUS_CHOICES)
-#     create_time = models.DateTimeField(auto_now=True)
 
+class Port(models.Model):
+    """
+    Ports for the application. The external_port represents the port of external
+     service. The internal_port represents the port of internal service.
+    """
+    PROTOCOL_CHOICES = (
+        ('TCP', 'TCP'),
+        ('UDP', 'UDP'),
+    )
+
+    app = models.ForeignKey(Application, on_delete=models.CASCADE)
+    name = models.CharField(max_length=64, default='')
+    protocol = models.CharField(max_length=3, choices=PROTOCOL_CHOICES, default='TCP')
+    external_port = models.IntegerField(blank=True, null=True)
+    internal_port = models.IntegerField()

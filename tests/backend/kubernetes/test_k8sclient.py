@@ -49,7 +49,7 @@ class KubeClientTestCase(unittest.TestCase):
     def test_create_controller_1(self):
         image_name = '192.168.0.10:5000/admin/nginx:1.9.9'
         self.client.create_controller('test-space', 'test-nginx', image_name,
-            replicas=1, ports=[80])
+            replicas=1, tcp_ports={"http": 80, "https": 443})
 
     def test_create_controller_2(self):
         image_name = '192.168.0.10:5000/admin/ubuntu:14.04'
@@ -67,15 +67,15 @@ class KubeClientTestCase(unittest.TestCase):
         print(services)
 
     def test_create_service_internal(self):
-        self.client.create_service('test-space', 'nginx', tcp_ports=[80],
+        self.client.create_service('test-space', 'nginx', tcp_ports={"http": 80},
             is_public=False)
 
     def test_create_service_external(self):
-        self.client.create_service('test-space', 'nginx', tcp_ports=[80],
-            is_public=True)
+        self.client.create_service('test-space', 'test-nginx',
+            tcp_ports={"http": 80, "https": 443}, is_public=True)
 
     def test_create_service_session(self):
-        self.client.create_service('test-space', 'nginx', tcp_ports=[80],
+        self.client.create_service('test-space', 'nginx', tcp_ports={"http": 80},
             is_public=True, session_affinity=True)
 
     def test_delete_service(self):

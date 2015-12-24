@@ -8,7 +8,9 @@ class Controller(object):
     name: application name.
     replicas: the number of pods.
     image_name: the image name for the container.
-    ports: the ports of the container.
+    tcp_ports: a dict, the tcp ports of the containers. For example: {
+        "http": 80, "https": 443}
+    udp_ports: a dict, the udp ports of the containers.
     commands: the commands which the container runs when start.
     envs: a dict for example: {"MYSQL_HOST": "localhost", "PORT": "3306"}
     """
@@ -42,8 +44,8 @@ class Controller(object):
         }
     }
 
-    def __init__(self, name, image_name, replicas=1, ports=None, commands=None,
-        args=None, envs=None):
+    def __init__(self, name, image_name, replicas=1, tcp_ports=None,
+        udp_ports=None, commands=None, args=None, envs=None):
         self._body['metadata']['name'] = name
         self._body['spec']['template']['metadata']['labels']['app'] = name
         self._body['spec']['replicas'] = replicas
@@ -51,20 +53,26 @@ class Controller(object):
         self._container['image'] = image_name
         self._container['command'] = commands
         self._container['args'] = args
-        if ports:
-            self.set_ports(ports)
+        if tcp_ports:
+            self.set_ports("TCP", tcp_ports)
+        if udp_ports:
+            self.set_ports("UDP", udp_ports)
         if envs:
             self.set_envs(envs)
 
-    def set_ports(self, ports):
+    def set_ports(self, protocol, ports):
         """
         Open ports for the containers.
 
         Parameters:
-        ports: the list of open ports.
+        ports: the dict of open ports.
         """
-        for port in ports:
-            self._container['ports'].append({'containerPort': port})
+        assert(protocol in ['TCP', 'UDP'])
+        for name, port in ports.items():
+            self._container['ports'].append({
+                'name': name,
+                'protocol': protocol,
+                'containerPort': port})
 
     def set_envs(self, envs):
         """

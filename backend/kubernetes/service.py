@@ -6,8 +6,9 @@ class Service(object):
 
     Parameters:
     name: application name.
-    tcp_ports: the TCP ports of the service.
-    udp_ports: the UDP ports of the service.
+    tcp_ports: a dict, the tcp ports of the service. For example: {
+        "http": 80, "https": 443}.
+    udp_ports: a dict, the udp ports of the service.
     is_public: boolean.
     """
     _body = {
@@ -45,13 +46,15 @@ class Service(object):
         if session_affinity:
             self._body['spec']['sessionAffinity'] = "ClientIP"
 
-    def set_ports(self, type, ports):
+    def set_ports(self, protocol, ports):
         """
         Open port for the service.
         """
-        for port in ports:
+        assert(protocol in ['TCP', 'UDP'])
+        for name, port in ports.items():
             self._body['spec']['ports'].append({
-                'protocol': type,
+                'name': name,
+                'protocol': protocol,
                 'port': port})
 
     @property
