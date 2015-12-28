@@ -67,16 +67,21 @@ class KubeClientTestCase(unittest.TestCase):
         print(services)
 
     def test_create_service_internal(self):
-        self.client.create_service('test-space', 'nginx', tcp_ports={"http": 80},
-            is_public=False)
+        self.client.create_service('test-space', 'nginx',
+            tcp_ports={"http": 80},
+            is_public=False
+        )
 
     def test_create_service_external(self):
         self.client.create_service('test-space', 'test-nginx',
             tcp_ports={"http": 80, "https": 443}, is_public=True)
 
     def test_create_service_session(self):
-        self.client.create_service('test-space', 'nginx', tcp_ports={"http": 80},
-            is_public=True, session_affinity=True)
+        self.client.create_service('test-space', 'nginx',
+            tcp_ports={"http": 80},
+            is_public=True,
+            session_affinity=True
+        )
 
     def test_delete_service(self):
         self.client.delete_service('test-space', 'nginx')

@@ -103,7 +103,7 @@ class Application(models.Model):
         ('error', 'error'),
     )
 
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
+    image = models.ForeignKey(Image, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=128, default='')
     replicas = models.IntegerField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='creating')

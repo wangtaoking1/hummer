@@ -105,7 +105,10 @@ class KubeClient(object):
             udp_ports, commands, args, envs)
         path='namespaces/{}/replicationcontrollers'.format(namespace)
 
-        self._send_request('POST', path, body=controller.body)
+        response = self._send_request('POST', path, body=controller.body)
+        if not self._is_resource_creating_successful(response):
+            raise Exception('create controller failed')
+        return True
 
     def delete_controller(self, namespace, name):
         """
@@ -144,3 +147,10 @@ class KubeClient(object):
         path='namespaces/{}/services/{}'.format(namespace, name)
         self._send_request('DELETE', path)
 
+    def _is_resource_creating_successful(self, response):
+        """
+        Check the response to determinate whether creating resource
+        successfully.
+        """
+        # TODO
+        return True
