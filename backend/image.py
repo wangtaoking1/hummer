@@ -6,8 +6,7 @@ from docker import Client
 from docker.errors import APIError
 
 from backend.models import Image
-from backend.schedule import DockerSchedulerFactory
-from backend.utils import (fetch_digest_from_response)
+from backend.utils import (fetch_digest_from_response, get_optimal_docker_host)
 
 logger = logging.getLogger('hummer')
 
@@ -49,7 +48,7 @@ class ImageBuilder(object):
         """
         logger.debug("creating an image by imagefile.")
 
-        docker_host = self._get_build_docker_host()
+        docker_host = get_optimal_docker_host()
         if not docker_host:
             logger.error("there is no available active docker host.")
             self._update_image_status(status="failed")
@@ -85,7 +84,7 @@ class ImageBuilder(object):
         """
         logger.debug("creating an image by dockerfile.")
 
-        docker_host = self._get_build_docker_host()
+        docker_host = self.get_optimal_docker_host()
         if not docker_host:
             logger.error("there is no available active docker host.")
             self._update_image_status(status="failed")

@@ -36,11 +36,9 @@ class KubeClientTestCase(unittest.TestCase):
 
     def test_create_namespace(self):
         self.client.create_namespace('abcd')
-        self.assertEqual(len(res), len(res))
 
     def test_delete_namespace(self):
         self.client.delete_namespace('abcd')
-        self.assertEqual(True, True)
 
     def test_list_controllers(self):
         controllers = self.client.list_controllers('test-space')
@@ -48,16 +46,22 @@ class KubeClientTestCase(unittest.TestCase):
 
     def test_create_controller_1(self):
         image_name = '192.168.0.10:5000/admin/nginx:1.9.9'
-        self.client.create_controller('test-space', 'test-nginx', image_name,
-            replicas=1, tcp_ports={"http": 80, "https": 443})
+        res = self.client.create_controller('test-space', 'test-nginx', image_name,
+            replicas=1, tcp_ports={"http": 80})
+        print(res)
 
     def test_create_controller_2(self):
         image_name = '192.168.0.10:5000/admin/ubuntu:14.04'
-        self.client.create_controller('test-space', 'test-env', image_name,
+        self.client.create_controller('test-space', 'test-nginx', image_name,
             replicas=1,
             commands=['sleep', '3600'],
             envs={"MYSQL": "192.168.0.100"}
         )
+
+    def test_create_controller_3(self):
+        image_name = '192.168.0.10:5000/admin/nginx:1.9.9'
+        self.client.create_controller('test-space', 'test-nginx', image_name,
+            replicas=1, tcp_ports={"http": 80, "https": 443})
 
     def test_delete_controller(self):
         self.client.delete_controller('test-space', 'test-nginx')
@@ -67,14 +71,18 @@ class KubeClientTestCase(unittest.TestCase):
         print(services)
 
     def test_create_service_internal(self):
-        self.client.create_service('test-space', 'nginx',
+        res = self.client.create_service('test-space', 'test-nginx',
             tcp_ports={"http": 80},
             is_public=False
         )
+        print(res)
 
     def test_create_service_external(self):
-        self.client.create_service('test-space', 'test-nginx',
-            tcp_ports={"http": 80, "https": 443}, is_public=True)
+        res = self.client.create_service('test-space', 'test-nginx',
+            tcp_ports={"http": 80},
+            is_public=True
+        )
+        print(res)
 
     def test_create_service_session(self):
         self.client.create_service('test-space', 'nginx',
@@ -85,3 +93,7 @@ class KubeClientTestCase(unittest.TestCase):
 
     def test_delete_service(self):
         self.client.delete_service('test-space', 'nginx')
+
+    def test_get_service_details(self):
+        res = self.client.get_service_details('test-space', 'test-nginx')
+        print(res)

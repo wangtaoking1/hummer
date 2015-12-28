@@ -1,6 +1,8 @@
 import os, json
 import logging
 
+from backend.schedule import DockerSchedulerFactory
+
 logger = logging.getLogger('hummer')
 
 
@@ -16,3 +18,11 @@ def fetch_digest_from_response(response):
 
     return digest
 
+def get_optimal_docker_host():
+    """
+    Returns the optimal docker host to build image.
+    """
+    scheduler = DockerSchedulerFactory.get_scheduler()
+    docker_host = scheduler.get_optimal_docker_host()
+    logger.debug("select the optimal docher host %s" % docker_host)
+    return docker_host

@@ -76,14 +76,15 @@ class KubeClient(object):
         """
         namespace = Namespace(name)
 
-        self._send_request('POST', 'namespaces', body=namespace.body)
+        response = self._send_request('POST', 'namespaces', body=namespace.body)
+        return self._is_creating_deleting_successful(response)
 
     def delete_namespace(self, name):
         """
         Delete namespace called name.
         """
-        res = self._send_request('DELETE', 'namespaces/{}'.format(name))
-        # print(res)
+        response = self._send_request('DELETE', 'namespaces/{}'.format(name))
+        return self._is_creating_deleting_successful(response)
 
     def list_controllers(self, namespace):
         """
@@ -106,16 +107,15 @@ class KubeClient(object):
         path='namespaces/{}/replicationcontrollers'.format(namespace)
 
         response = self._send_request('POST', path, body=controller.body)
-        if not self._is_resource_creating_successful(response):
-            raise Exception('create controller failed')
-        return True
+        return self._is_creating_deleting_successful(response)
 
     def delete_controller(self, namespace, name):
         """
         Delete a replicationcontroller.
         """
         path='namespaces/{}/replicationcontrollers/{}'.format(namespace, name)
-        self._send_request('DELETE', path)
+        response = self._send_request('DELETE', path)
+        return self._is_creating_deleting_successful(response)
 
     def list_services(self, namespace):
         """
@@ -137,20 +137,32 @@ class KubeClient(object):
             session_affinity)
         path='namespaces/{}/services'.format(namespace)
 
-        res = self._send_request('POST', path, body=service.body)
-        print(res)
+        response = self._send_request('POST', path, body=service.body)
+        return self._is_creating_deleting_successful(response)
 
     def delete_service(self, namespace, name):
         """
         Delete a service.
         """
         path='namespaces/{}/services/{}'.format(namespace, name)
-        self._send_request('DELETE', path)
+        response = self._send_request('DELETE', path)
+        return self._is_resource_creating_successful(response)
 
-    def _is_resource_creating_successful(self, response):
+    def get_service_details(self, namespace, name):
         """
-        Check the response to determinate whether creating resource
+        Get the details of a service.
+        """
+        path='namespaces/{}/services/{}'.format(namespace, name)
+        response = self._send_request('GET', path)
+        return response
+
+    def _is_creating_deleting_successful(self, response):
+        """
+        Check the response to determinate whether creating and resource
         successfully.
         """
-        # TODO
+        status = response['status']
+        if isinstance(status, str) and status == 'Failure':
+            logger.debug(response['message'])
+            return False
         return True
