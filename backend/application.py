@@ -17,7 +17,6 @@ class ApplicationBuilder(object):
     should offer many necessary arguments.
 
     Parameters:
-    replicas: the number of pods.
     image_name: the image name for the container.
     tcp_ports: a dict, the tcp ports of the containers. For example: {
         "http": 80, "https": 443}
@@ -29,32 +28,27 @@ class ApplicationBuilder(object):
     namespace = None
     application = None
     image_name = None
-    replicas = 1
     tcp_ports = None
     udp_ports = None
     commands = None
     args = None
     envs = None
     is_public = False
-    session_affinity = False
 
-    def __init__(self, namespace, application, image_name, replicas=1,
-        tcp_ports=None, udp_ports=None, commands=None, args=None, envs=None,
-        is_public=False, session_affinity=False):
+    def __init__(self, namespace, application, image_name, tcp_ports=None,
+        udp_ports=None, commands=None, args=None, envs=None, is_public=False):
         self.kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
             settings.K8S_PORT, settings.K8S_API_PATH))
 
         self.namespace = namespace
         self.application = application
         self.image_name = image_name
-        self.replicas = replicas
         self.tcp_ports = tcp_ports
         self.udp_ports = udp_ports
         self.commands = commands
         self.args = args
         self.envs = envs
         self.is_public = is_public
-        self.session_affinity = session_affinity
 
     def create_application(self):
         """
@@ -105,8 +99,6 @@ class ApplicationBuilder(object):
         # create port metadata
         self._create_ports_metadata(ports)
 
-
-
     def _create_controller(self):
         """
         Create a replicationcontroller by provided image.
@@ -114,7 +106,7 @@ class ApplicationBuilder(object):
         return self.kubeclient.create_controller(namespace=self.namespace,
             name=self.application.name,
             image_name=self.image_name,
-            replicas=self.replicas,
+            replicas=self.application.replicas,
             tcp_ports=self.tcp_ports,
             udp_ports=self.udp_ports,
             commands=self.commands,
@@ -131,7 +123,7 @@ class ApplicationBuilder(object):
             tcp_ports=self.tcp_ports,
             udp_ports=self.udp_ports,
             is_public=self.is_public,
-            session_affinity=self.session_affinity
+            session_affinity=self.application.session_affinity
         )
 
     def _get_service_ip_and_ports(self):
@@ -157,4 +149,17 @@ class ApplicationBuilder(object):
 
         self.application.save()
 
-    def
+    def _create_ports_metadata(self, ports):
+        """
+        Create ports metadata for application.
+        """
+        for port_dict in ports:
+            port = Port(app=self.application,
+                name=port_dict['name'],
+                protocol=port_dict['protocol'],
+                external_port=port_dict.get('nodePort', None),
+                internal_port=port_dict['port']
+            )
+            port.save()
+
+

@@ -106,6 +106,7 @@ class Application(models.Model):
     image = models.ForeignKey(Image, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=128, default='')
     replicas = models.IntegerField()
+    session_affinity = models.BooleanField(default=False)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='creating')
     internal_ip = models.CharField(max_length=16, blank=True, null=True)
     external_ip = models.CharField(max_length=16, blank=True, null=True)

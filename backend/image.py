@@ -293,3 +293,32 @@ class ImageBuilder(object):
                 (image_complete_name, base_url))
             return None
         return token
+
+
+class ImageDestroyer(object):
+    """
+    ImageDestroyer is to destroy image instance by multiple threading.
+    """
+    image = None
+
+    def __init__(self, image):
+        self.image = image
+
+    def destroy_image_instance(self):
+        deleting_thread = Thread(target=self._destroy_image_instance)
+        deleting_thread.start()
+
+    def _destroy_image_instance(self):
+        self._update_image_status(status='deleting')
+
+        # TODO: delete the image instance
+
+        self._update_image_status(status='deleted')
+        self._delete_image_metadata()
+
+    def _update_image_status(self, status):
+        self.image.status = status
+        self.image.save()
+
+    def _delete_image_metadata(self):
+        self.image.delete()
