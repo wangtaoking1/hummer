@@ -1,6 +1,9 @@
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser, PermissionsMixin)
+
+from backend.kubernetes.k8sclient import KubeClient
 
 
 class MyUserManager(BaseUserManager):
@@ -14,6 +17,8 @@ class MyUserManager(BaseUserManager):
         user = self.model(username=username, email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+
+        self._create_namespace(username)
         return user
 
     def create_user(self, username, email, password, **extra_fields):
@@ -27,6 +32,15 @@ class MyUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_staff=True')
 
         return self._create_user(username, email, password, **extra_fields)
+
+    def _create_namespace(self, namesapce):
+        """
+        Create namespace for each user.
+        """
+        kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+            settings.K8S_PORT, settings.K8S_API_PATH))
+
+        kubeclient.create_namespace(namespace)
 
 
 class MyUser(AbstractBaseUser, PermissionsMixin):

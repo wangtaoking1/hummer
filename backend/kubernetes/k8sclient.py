@@ -106,6 +106,7 @@ class KubeClient(object):
             udp_ports, commands, args, envs)
         path='namespaces/{}/replicationcontrollers'.format(namespace)
 
+        logger.debug(controller.body)
         response = self._send_request('POST', path, body=controller.body)
         return self._is_creating_deleting_successful(response)
 
@@ -137,6 +138,7 @@ class KubeClient(object):
             session_affinity)
         path='namespaces/{}/services'.format(namespace)
 
+        logger.debug(service.body)
         response = self._send_request('POST', path, body=service.body)
         return self._is_creating_deleting_successful(response)
 
@@ -146,7 +148,7 @@ class KubeClient(object):
         """
         path='namespaces/{}/services/{}'.format(namespace, name)
         response = self._send_request('DELETE', path)
-        return self._is_resource_creating_successful(response)
+        return self._is_creating_deleting_successful(response)
 
     def get_service_details(self, namespace, name):
         """

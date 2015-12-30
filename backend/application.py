@@ -24,7 +24,6 @@ class ApplicationBuilder(object):
     commands: the commands which the container runs when start.
     envs: a dict for example: {"MYSQL_HOST": "localhost", "PORT": "3306"}
     """
-    kubeclient = None
     namespace = None
     application = None
     image_name = None
@@ -66,19 +65,19 @@ class ApplicationBuilder(object):
             .format(self.application.name, self.namespace, self.image_name))
 
         if not self._create_controller():
-            logger.info('Create an application {} in namespace {} failed.'
-            .format(self.application.name, self.namespace, self.image_name))
             logger.debug('Create controller {} failed.'.format(
                 self.application.name))
+            logger.info('Create an application {} in namespace {} failed.'
+            .format(self.application.name, self.namespace, self.image_name))
 
             self._update_application_metadata(status='error')
             return None
 
         if not self._create_service():
-            logger.info('Create an application {} in namespace {} failed.'
-            .format(self.application.name, self.namespace, self.image_name))
             logger.debug('Create service {} failed.'.format(
                 self.application.name))
+            logger.info('Create an application {} in namespace {} failed.'
+            .format(self.application.name, self.namespace, self.image_name))
 
             self._update_application_metadata(status='error')
             return None
@@ -97,7 +96,7 @@ class ApplicationBuilder(object):
             )
 
         # create port metadata
-        self._create_ports_metadata(ports)
+        # self._create_ports_metadata(ports)
 
     def _create_controller(self):
         """
@@ -161,5 +160,57 @@ class ApplicationBuilder(object):
                 internal_port=port_dict['port']
             )
             port.save()
+
+
+class ApplicationDestroy(object):
+    """
+    ApplicationDestroy is to destroy application instance, including controller
+    and service.
+    """
+    application = None
+
+    def __init__(self, application):
+        self.application = application
+        self.namespace = self.application.image.project.user.username
+        self.service_name = self.application.name
+        self.controller_name = self.application.name
+
+        self.kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+            settings.K8S_PORT, settings.K8S_API_PATH))
+
+    def destroy_application_instance(self):
+        """
+        Destroy application instance by multiple threading.
+        """
+        deleting_thread = Thread(target=self._destroy_application_instance)
+        deleting_thread.start()
+
+    def _destroy_application_instance(self):
+        self._update_application_status(status='deleting')
+
+        if not self._destroy_service_instance():
+            logger.debug("Delete service {} failed.".format(self.service_name))
+
+        if not self._destroy_controller_instance():
+            logger.debug("Delete controller {} failed.".format(
+                self.controller_name))
+
+        self._update_application_status(status='deleted')
+        self._delete_application_metadata()
+
+    def _destroy_service_instance(self):
+        return self.kubeclient.delete_service(namespace=self.namespace,
+                name=self.service_name)
+
+    def _destroy_controller_instance(self):
+        return self.kubeclient.delete_controller(namespace=self.namespace,
+                name=self.controller_name)
+
+    def _update_application_status(self, status):
+        self.application.status = status
+        self.application.save()
+
+    def _delete_application_metadata(self):
+        self.application.delete()
 
 

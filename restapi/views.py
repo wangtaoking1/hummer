@@ -11,9 +11,9 @@ from rest_framework.exceptions import PermissionDenied
 from restapi.serializers import (UserSerializer, ProjectSerializer,
     ImageSerializer, ApplicationSerializer, PortSerializer)
 from backend.models import MyUser, Project, Image, Application, Port
-from restapi.utils import (save_image_file_to_disk, is_image_or_dockerfile, get_upload_image_filename)
+from restapi.utils import (save_image_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol)
 from backend.image import ImageBuilder, ImageDestroyer
-from backend.application import ApplicationBuilder
+from backend.application import ApplicationBuilder, ApplicationDestroy
 
 logger = logging.getLogger("hummer")
 
@@ -213,6 +213,12 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             raise Exception("User {} doesn't have project {}".format(
                 user.username, pid))
 
+        applications = Application.objects.filter(image__project__user=user,
+            name=request.data.get('name'))
+        if applications:
+            raise Exception("User {} already has an application called {}."
+                .format(user.username, request.data.get('name')))
+
         # create application metadata
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -221,25 +227,40 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         response = Response(serializer.data, status=status.HTTP_201_CREATED,
             headers=headers)
 
-        application = serializer.data
+        application = Application.objects.get(id=serializer.data['id'])
         logger.debug(application)
 
         image_name = "{}/{}/{}:{}".format(settings.IMAGE_REGISTRY,
             request.user.username, image.name, image.version)
         logger.debug(image_name)
+        ports = request.data.get('ports', None)
+
         # create a true application instance
-        # build = ApplicationBuilder(
-        #     namespace=request.user.username,
-        #     application=application,
-        #     image_name=image_name,
-        #     tcp_ports, udp_ports, commands, args, envs, is_public)
-        # builder = ImageBuilder(
-        #     build_file=filename,
-        #     is_image=is_image,
-        #     dockerfile=dockerfile,
-        #     image_id=image['id'],
-        #     user=request.user
-        #     )
-        # builder.create_image()
+        builder = ApplicationBuilder(
+            namespace=request.user.username,
+            application=application,
+            image_name=image_name,
+            tcp_ports=get_ports_by_protocol('TCP', ports),
+            udp_ports=get_ports_by_protocol('UDP', ports),
+            commands=request.data.get('commands', None),
+            args=request.data.get('args', None),
+            envs=request.data.get('envs', None),
+            is_public=request.data.get('is_public', False)
+        )
+        builder.create_application()
 
         return response
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Destroy an application instance.
+        """
+        application = self.get_object()
+
+        logger.info("user {} deletes application: {}.".format(
+            request.user.username, application.name))
+
+        destroyer = ApplicationDestroy(application=application)
+        destroyer.destroy_application_instance()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

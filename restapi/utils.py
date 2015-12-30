@@ -37,3 +37,14 @@ def get_upload_image_filename(image, user):
     filename = image['name'] + '_' + image['version'] + '.tar'
     return os.path.join(settings.UPLOAD_DIR, user.username, filename)
 
+
+def get_ports_by_protocol(protocol, ports):
+    """
+    Get tcp or udp ports from the list of POST data.
+    """
+    result_ports = {}
+    for port in ports:
+        if port['protocol'] == protocol:
+            result_ports[port['name']] = port['port']
+    return result_ports
+

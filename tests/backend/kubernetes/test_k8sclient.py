@@ -35,7 +35,7 @@ class KubeClientTestCase(unittest.TestCase):
         self.assertEqual(True, True)
 
     def test_create_namespace(self):
-        self.client.create_namespace('abcd')
+        self.client.create_namespace('user')
 
     def test_delete_namespace(self):
         self.client.delete_namespace('abcd')
@@ -45,9 +45,9 @@ class KubeClientTestCase(unittest.TestCase):
         print(controllers)
 
     def test_create_controller_1(self):
-        image_name = '192.168.0.10:5000/admin/nginx:1.9.9'
-        res = self.client.create_controller('test-space', 'test-nginx', image_name,
-            replicas=1, tcp_ports={"http": 80})
+        image_name = '192.168.0.10:5000/user/nginx:1.9.9'
+        res = self.client.create_controller('user', 'test-nginx', image_name,
+            replicas=2, tcp_ports={"http": 80})
         print(res)
 
     def test_create_controller_2(self):
@@ -71,7 +71,7 @@ class KubeClientTestCase(unittest.TestCase):
         print(services)
 
     def test_create_service_internal(self):
-        res = self.client.create_service('test-space', 'test-nginx',
+        res = self.client.create_service('user', 'test-nginx',
             tcp_ports={"http": 80},
             is_public=False
         )
