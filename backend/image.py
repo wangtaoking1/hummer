@@ -15,9 +15,12 @@ class ImageBuilder(object):
     """
     ImageBuilder is to build image. One way is to use image file directly, the
     other way is to use Dockerfile to build image.
+
+    is_image: 0|1|2, 0 represents build file, 1 represents image file,
+        2 represents container snapshot.
     """
     build_file = None
-    is_image = False
+    is_image = 0
     dockerfile = None
     image = None
     user = None
@@ -34,7 +37,7 @@ class ImageBuilder(object):
         Create image by two ways.
         """
         target = None
-        if self.is_image:
+        if self.is_image != 0:
             target = self._create_image_by_imagefile
         else:
             target = self._create_image_by_dockerfile
@@ -58,8 +61,13 @@ class ImageBuilder(object):
         base_url = self._get_docker_host_base_url(docker_host)
         image_name = self._get_image_name()
 
-        token = self._import_image_on_docker_host(base_url, self.build_file,
-            image_name, self.image.version)
+        if self.is_image == 1:
+            token = self._load_image_on_docker_host(base_url, self.build_file,
+                image_name, self.image.version)
+        elif self.is_image == 2:
+            token = self._import_snapshot_on_docker_host(base_url,
+                self.build_file, image_name, self.image.version)
+
         if not token:
             logger.error("Import image on docker host failed")
             self._update_image_status(status="failed")
@@ -153,10 +161,37 @@ class ImageBuilder(object):
         return '%s/%s/%s' % (settings.IMAGE_REGISTRY, self.user.username,
             self.image.name)
 
-    def _import_image_on_docker_host(self, base_url, build_file, image_name,
+    def _load_image_on_docker_host(self, base_url, build_file, image_name,
                 image_version='latest'):
         """
-        Import image on the selected docker host.
+        Import container snapshot on the selected docker host.
+
+        'base_url': the url of docker host.
+        'build_file': the name of the build file in absolute path.
+        'image_name': the name of the image, containing registry address, user
+        name and image name.
+        'image_version': the version of the image.
+
+        Returns:
+        'token': the image token
+        """
+        self._delete_image_on_docker_host(base_url, image_name, image_version)
+
+        client = Client(base_url=base_url)
+        try:
+            with open(build_file, 'rb') as fileobj:
+                client.load_image(fileobj)
+        except Exception:
+            logger.error('load image file on docker host %s failed.' % base_url)
+            return None
+
+        return self._get_image_token_on_docker_host(base_url, image_name,
+            image_version)
+
+    def _import_snapshot_on_docker_host(self, base_url, build_file, image_name,
+                image_version='latest'):
+        """
+        Import container snapshot on the selected docker host.
 
         'base_url': the url of docker host.
         'build_file': the name of the build file in absolute path.
@@ -175,7 +210,7 @@ class ImageBuilder(object):
                 image_version)
             res = json.loads(res_json)
         except Exception:
-            logger.error('import image on docker host %s failed.' % base_url)
+            logger.error('import snapshot on docker host %s failed.' % base_url)
             return None
 
         return res.get('status', None)
@@ -240,6 +275,28 @@ class ImageBuilder(object):
         if image_token not in response:
             return False
         return True
+
+    def _get_image_token_on_docker_host(self, base_url, image_name,
+        image_version):
+        """
+        Given the image name and version, return the token of the image on the
+        docker host.
+        """
+        image_complete_name = '%s:%s' %(image_name, image_version)
+
+        client = Client(base_url=base_url)
+        try:
+            images = client.images(name=image_complete_name)
+        except Exception as e:
+            logger.debug(e)
+            logger.debug("Communicate with docker host {} failed.".format(
+                base_url))
+            return None
+        if not images:
+            logger.info("The name of the image imported from image file is \
+                wrong.")
+            return None
+        return images[0].get('Id', None)
 
     def _build_image_on_docker_host(self, base_url, build_file, dockerfile,
             image_name, image_version):

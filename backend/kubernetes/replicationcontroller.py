@@ -45,7 +45,7 @@ class Controller(object):
     }
 
     def __init__(self, name, image_name, replicas=1, tcp_ports=None,
-        udp_ports=None, commands=None, args=None, envs=None):
+        udp_ports=None, commands=[], args=[], envs=[]):
         self._body['metadata']['name'] = name
         self._body['spec']['template']['metadata']['labels']['app'] = name
         self._body['spec']['replicas'] = replicas

@@ -21,13 +21,17 @@ def save_image_file_to_disk(file_obj, filename):
 def is_image_or_dockerfile(is_image=None):
     """
     Parse the is_image option of the http data.
-    'true' represents the image file is an image, 'false' represents the image
-    file is a dockerfile used to build the image.
+    1 represents the image file is an image, 0 represents the image
+    file is a dockerfile used to build the image, 2 represents the container
+    snapshot.
     """
-    is_image = is_image.lower()
-    if 'true' == is_image or '1' == is_image:
-        return True
-    return False
+    if not is_image:
+        return 0
+    if is_image == '1':
+        return 1
+    elif is_image == '2':
+        return 2
+    return 0
 
 
 def get_upload_image_filename(image, user):

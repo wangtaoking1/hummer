@@ -6,7 +6,7 @@ POST: user, name, desc
 /api/projects/{project_id}
 
 /api/projects/{project_id}/images
-POST: project(path), name, desc, version, is_public, is_image, file
+POST: project(path), name, desc, version, is_public, is_image(0/1/2), file
 /api/projects/{project_id}/images/{image_id}
 
 /api/projects/{project_id}/applications
