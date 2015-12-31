@@ -195,6 +195,10 @@ class ApplicationDestroy(object):
             logger.debug("Delete controller {} failed.".format(
                 self.controller_name))
 
+        if not self._destroy_pods_instance():
+            logger.debug("Delete pods with label 'app={}' failed.".format(
+                self.controller_name))
+
         self._update_application_status(status='deleted')
         self._delete_application_metadata()
 
@@ -205,6 +209,19 @@ class ApplicationDestroy(object):
     def _destroy_controller_instance(self):
         return self.kubeclient.delete_controller(namespace=self.namespace,
                 name=self.controller_name)
+
+    def _destroy_pods_instance(self):
+        pods = self.kubeclient.list_pods(namespace=self.namespace,
+            label="app={}".format(self.controller_name))
+        logger.debug(pods)
+
+        res = True
+        for pod in pods:
+            flag = self.kubeclient.delete_pod(namespace=self.namespace,
+                name=pod)
+            if not flag:
+                res = False
+        return res
 
     def _update_application_status(self, status):
         self.application.status = status

@@ -36,6 +36,7 @@ class Service(object):
         self._body['metadata']['labels']['app'] = name
         self._body['spec']['selector']['app'] = name
 
+        self._body['spec']['ports'] = []
         if tcp_ports:
             self.set_ports("TCP", tcp_ports)
         if udp_ports:
@@ -43,8 +44,12 @@ class Service(object):
 
         if is_public:
             self._body['spec']['type'] = "NodePort"
+        else:
+            self._body['spec']['type'] = "ClusterIP"
         if session_affinity:
             self._body['spec']['sessionAffinity'] = "ClientIP"
+        else:
+            self._body['spec']['sessionAffinity'] = "None"
 
     def set_ports(self, protocol, ports):
         """

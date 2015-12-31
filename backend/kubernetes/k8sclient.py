@@ -35,8 +35,13 @@ class KubeClient(object):
         """
         Send requests to k8s server and get the response.
         Returns a response dict.
+
+        Parameters:
+        query: str, "app=name"
         """
         url = self._base_url + path
+        if query:
+            url = '{}?labelSelector={}'.format(url, query)
         kwargs = {}
         if body:
             kwargs['data'] = json.dumps(body)
@@ -104,7 +109,7 @@ class KubeClient(object):
         """
         controller = Controller(name, image_name, replicas, tcp_ports,
             udp_ports, commands, args, envs)
-        path='namespaces/{}/replicationcontrollers'.format(namespace)
+        path = 'namespaces/{}/replicationcontrollers'.format(namespace)
 
         logger.debug(controller.body)
         response = self._send_request('POST', path, body=controller.body)
@@ -114,7 +119,30 @@ class KubeClient(object):
         """
         Delete a replicationcontroller.
         """
-        path='namespaces/{}/replicationcontrollers/{}'.format(namespace, name)
+        path = 'namespaces/{}/replicationcontrollers/{}'.format(namespace, name)
+        response = self._send_request('DELETE', path)
+        return self._is_creating_deleting_successful(response)
+
+    def list_pods(self, namespace, label=None):
+        """
+        List pods by label.
+
+        Parameters:
+        label: str, "app=name"
+        """
+        path = 'namespaces/{}/pods/'.format(namespace)
+        response = self._send_request('GET', path, query=label)
+        # logger.debug(response)
+        pods = []
+        for item in response.get('items'):
+            pods.append(item['metadata']['name'])
+        return pods
+
+    def delete_pod(self, namespace, name):
+        """
+        Delete a pod.
+        """
+        path = 'namespaces/{}/pods/{}'.format(namespace, name)
         response = self._send_request('DELETE', path)
         return self._is_creating_deleting_successful(response)
 
@@ -136,7 +164,7 @@ class KubeClient(object):
         """
         service = Service(name, tcp_ports, udp_ports, is_public,
             session_affinity)
-        path='namespaces/{}/services'.format(namespace)
+        path = 'namespaces/{}/services'.format(namespace)
 
         logger.debug(service.body)
         response = self._send_request('POST', path, body=service.body)
@@ -146,7 +174,7 @@ class KubeClient(object):
         """
         Delete a service.
         """
-        path='namespaces/{}/services/{}'.format(namespace, name)
+        path = 'namespaces/{}/services/{}'.format(namespace, name)
         response = self._send_request('DELETE', path)
         return self._is_creating_deleting_successful(response)
 
@@ -154,7 +182,7 @@ class KubeClient(object):
         """
         Get the details of a service.
         """
-        path='namespaces/{}/services/{}'.format(namespace, name)
+        path = 'namespaces/{}/services/{}'.format(namespace, name)
         response = self._send_request('GET', path)
         return response
 
