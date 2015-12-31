@@ -114,8 +114,16 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         is_image = is_image_or_dockerfile(request.data.get('is_image', None))
         dockerfile = None
+        old_image_name = None
+        old_image_version = None
         if is_image == 0:
             dockerfile = request.data.get('dockerfile', 'Dockerfile')
+        if is_image == 1:
+            old_image_name = request.data.get('old_image_name',
+                image['name'])
+            old_image_version = request.data.get('old_image_version',
+                image['version'])
+
         filename = get_upload_image_filename(image, request.user)
 
         save_image_file_to_disk(request.FILES['file'], filename)
@@ -126,7 +134,9 @@ class ImageViewSet(viewsets.ModelViewSet):
             is_image=is_image,
             dockerfile=dockerfile,
             image_id=image['id'],
-            user=request.user
+            user=request.user,
+            old_image_name=old_image_name,
+            old_image_version=old_image_version
             )
         builder.create_image()
 

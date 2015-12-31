@@ -6,7 +6,7 @@ POST: user, name, desc
 /api/projects/{project_id}
 
 /api/projects/{project_id}/images
-POST: project(path), name, desc, version, is_public, is_image(0/1/2), file
+POST: project(path), name, desc, version, is_public, is_image(0/1/2, if 1, attach old_image_name and old_image_version), file
 /api/projects/{project_id}/images/{image_id}
 
 /api/projects/{project_id}/applications

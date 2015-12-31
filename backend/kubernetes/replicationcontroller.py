@@ -53,10 +53,12 @@ class Controller(object):
         self._container['image'] = image_name
         self._container['command'] = commands
         self._container['args'] = args
+        self._container['ports'] = []
         if tcp_ports:
             self.set_ports("TCP", tcp_ports)
         if udp_ports:
             self.set_ports("UDP", udp_ports)
+        self._container['env'] = []
         if envs:
             self.set_envs(envs)
 

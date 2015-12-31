@@ -25,12 +25,15 @@ class ImageBuilder(object):
     image = None
     user = None
 
-    def __init__(self, build_file, is_image, dockerfile, image_id, user):
+    def __init__(self, build_file, is_image, dockerfile, image_id, user,
+        old_image_name, old_image_version):
         self.build_file = build_file
         self.is_image = is_image
         self.dockerfile = dockerfile
         self.image = Image.objects.get(id=image_id)
         self.user = user
+        self.old_image_name = old_image_name
+        self.old_image_version = old_image_version
 
     def create_image(self):
         """
@@ -185,8 +188,8 @@ class ImageBuilder(object):
             logger.error('load image file on docker host %s failed.' % base_url)
             return None
 
-        return self._get_image_token_on_docker_host(base_url, image_name,
-            image_version)
+        return self._tag_image_with_new_name(base_url, self.old_image_name,
+            self.old_image_version, image_name, image_version)
 
     def _import_snapshot_on_docker_host(self, base_url, build_file, image_name,
                 image_version='latest'):
@@ -223,7 +226,7 @@ class ImageBuilder(object):
         image_complete_name = '%s:%s' %(image_name, image_version)
         client = Client(base_url=base_url)
         try:
-            client.remove_image(image=image_complete_name)
+            client.remove_image(image=image_complete_name, force=True)
         except Exception:
             logger.info('There is no image called %s on docker host %s' %
                 (image_complete_name, base_url))
@@ -276,6 +279,31 @@ class ImageBuilder(object):
             return False
         return True
 
+    def _tag_image_with_new_name(self, base_url, old_image_name,
+            old_image_version, image_name, image_version):
+        """
+        Docker tag old_image_name:old_image_version image_name:image_version.
+        """
+        old_image_token = self._get_image_token_on_docker_host(base_url,
+            old_image_name, old_image_version)
+
+        if not old_image_token:
+            return None
+
+        client = Client(base_url=base_url)
+        old_image = "{}:{}".format(old_image_name, old_image_version)
+        try:
+            response = client.tag(image=old_image, repository=image_name,
+                tag=image_version)
+        except Exception as e:
+            logger.debug(e)
+            response = False
+        if not response:
+            logger.info("Tag image {} to {}:{} failed.".format(old_image,
+                image_name, image_version))
+            return None
+        return old_image_token
+
     def _get_image_token_on_docker_host(self, base_url, image_name,
         image_version):
         """
@@ -293,8 +321,8 @@ class ImageBuilder(object):
                 base_url))
             return None
         if not images:
-            logger.info("The name of the image imported from image file is \
-                wrong.")
+            logger.info("The docker host {} has no image {}:{}".format(base_url,
+                image_name, image_version))
             return None
         return images[0].get('Id', None)
 
