@@ -17,10 +17,12 @@ POST(json): image, name, replicas, is_public, session_affinity, ports, commands,
 /api/projects/{project_id}/applications/{app_id}/ports/{port_id}
 
 
-
 For example:
-1. create image by image file
+1. create image
+image file:
 http -a user:user123 -f POST http://127.0.0.1:8000/api/projects/1/images/ name="nginx" desc="nginx" version="1.9.9" is_public=false is_image=1 old_image_name="nginx" old_image_version="1.9.9" file@/home/wangtao/images/nginx.tar >abc.html
+snapshot:
+http -a user:user123 -f POST http://127.0.0.1:8000/api/projects/1/images/ name="my-nginx" desc="my-nginx" version="1.9.9" is_public=false is_image=2 file@/home/wangtao/images/nginxn.tar >abc.html
 
 2. delete image
 http -a user:user123 DELETE http://127.0.0.1:8000/api/projects/1/images/3/
@@ -40,7 +42,5 @@ data.json:
     ]
 }
 
-
 4. delete application
 http -a user:user123 DELETE http://127.0.0.1:8000/api/projects/1/applications/11/ >abc.html
-

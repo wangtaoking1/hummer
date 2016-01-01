@@ -14,6 +14,7 @@ from backend.models import MyUser, Project, Image, Application, Port
 from restapi.utils import (save_image_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol)
 from backend.image import ImageBuilder, ImageDestroyer
 from backend.application import ApplicationBuilder, ApplicationDestroy
+from backend.kubernetes.k8sclient import KubeClient
 
 logger = logging.getLogger("hummer")
 
@@ -23,6 +24,20 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     permission_classes = (IsAdminUser,)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Destroy an user instance.
+        """
+        user = self.get_object()
+
+        # Delete the namespace
+        kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+            settings.K8S_PORT, settings.K8S_API_PATH))
+
+        kubeclient.delete_namespace(user.username)
+
+        return super(UserViewSet, self).destroy(request, *args, **kwargs)
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
