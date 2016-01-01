@@ -274,3 +274,48 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         destroyer.destroy_application_instance()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class PortViewSet(viewsets.ModelViewSet):
+    serializer_class = PortSerializer
+
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+
+        assert 'pid' in self.kwargs
+        assert 'aid' in self.kwargs
+        pid = self.kwargs['pid']
+        aid = self.kwargs['aid']
+
+        if user.is_staff:
+            return Port.objects.filter(app__image__project__id=pid,
+                app__id=aid)
+        else:
+            return Port.objects.filter(app__image__project__id=pid,
+                app__id=aid, app__image__project__user=user)
+
+    def get_object(self):
+        """
+        Returns the object the view is displaying.
+        """
+        user = self.request.user
+
+        assert 'pid' in self.kwargs
+        assert 'aid' in self.kwargs
+        pid = self.kwargs['pid']
+        aid = self.kwargs['aid']
+
+        assert 'pk' in self.kwargs
+        id = self.kwargs['pk']
+        obj = Port.objects.get(app__image__project__id=pid, app__id=aid,
+            id=id)
+
+        # Check user permission
+        if not user.is_staff and user != obj.app.image.project.user:
+            raise PermissionDenied()
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+
+        return obj

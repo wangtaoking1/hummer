@@ -96,7 +96,7 @@ class ApplicationBuilder(object):
             )
 
         # create port metadata
-        # self._create_ports_metadata(ports)
+        self._create_ports_metadata(ports)
 
     def _create_controller(self):
         """
@@ -201,6 +201,7 @@ class ApplicationDestroy(object):
 
         self._update_application_status(status='deleted')
         self._delete_application_metadata()
+        self._delete_port_metadata()
 
     def _destroy_service_instance(self):
         return self.kubeclient.delete_service(namespace=self.namespace,
@@ -228,6 +229,13 @@ class ApplicationDestroy(object):
         self.application.save()
 
     def _delete_application_metadata(self):
+        logger.debug("delete application medatade.")
         self.application.delete()
 
+    def _delete_port_metadata(self):
+        logger.debug("delete port metadata.")
+        ports = Port.objects.filter(app=self.application)
+        for port in ports:
+            logger.debug("delete port {} metadata.".format(port.name))
+            port.delete()
 
