@@ -33,7 +33,7 @@ class MyUserManager(BaseUserManager):
 
         return self._create_user(username, email, password, **extra_fields)
 
-    def _create_namespace(self, namesapce):
+    def _create_namespace(self, namespace):
         """
         Create namespace for each user.
         """

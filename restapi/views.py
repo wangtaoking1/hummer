@@ -46,6 +46,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         return Project.objects.filter(user=user)
 
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+
+        project = Project.objects.filter(user=user,
+            name=request.data.get('name', None))
+        if project:
+            raise Exception("Already has an project called {}."
+                .format(request.data['name']))
+
+        return super(ProjectViewSet, self).create(request, *args, **kwargs)
 
 class ImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
@@ -98,12 +108,20 @@ class ImageViewSet(viewsets.ModelViewSet):
             raise Exception("There is no image build file.")
 
         assert 'pid' in self.kwargs
+        pid = self.kwargs['pid']
 
         data = request.data
-        data['project'] = self.kwargs['pid']
+        data['project'] = pid
         # create image metadata
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
+
+        images = Image.objects.filter(project__id=pid, name=data['name'],
+            version=data['version'])
+        if images:
+            raise Exception("Already has an image called {}."
+                .format(data['name']))
+
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         response = Response(serializer.data, status=status.HTTP_201_CREATED,
@@ -223,11 +241,11 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             raise Exception("User {} doesn't have project {}".format(
                 user.username, pid))
 
-        applications = Application.objects.filter(image__project__user=user,
+        applications = Application.objects.filter(image__project=project,
             name=request.data.get('name'))
         if applications:
-            raise Exception("User {} already has an application called {}."
-                .format(user.username, request.data.get('name')))
+            raise Exception("Already has an application called {}."
+                .format(request.data.get('name')))
 
         # create application metadata
         serializer = self.get_serializer(data=request.data)
