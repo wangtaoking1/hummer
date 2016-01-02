@@ -6,7 +6,8 @@ from django.conf import settings
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import (PermissionDenied, ValidationError,
+    ParseError, NotFound)
 
 from restapi.serializers import (UserSerializer, ProjectSerializer,
     ImageSerializer, ApplicationSerializer, PortSerializer)
@@ -51,9 +52,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         authenticated user.
         """
         user = self.request.user
-        # AnonymousUser
-        if not user.is_authenticated():
-            raise PermissionDenied()
 
         # AdminUser
         if user.is_staff:
@@ -67,7 +65,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = Project.objects.filter(user=user,
             name=request.data.get('name', None))
         if project:
-            raise Exception("Already has an project called {}."
+            raise ValidationError(detail="Already has an project called {}."
                 .format(request.data['name']))
 
         return super(ProjectViewSet, self).create(request, *args, **kwargs)
@@ -120,7 +118,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         logger.info("user %s will create a new image" % request.user.username)
 
         if not request.FILES.get('file'):
-            raise Exception("There is no image build file.")
+            raise ParseError(detail="There is no image build file.")
 
         assert 'pid' in self.kwargs
         pid = self.kwargs['pid']
@@ -134,7 +132,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         images = Image.objects.filter(project__id=pid, name=data['name'],
             version=data['version'])
         if images:
-            raise Exception("Already has an image called {}."
+            raise ValidationError(detail="Already has an image called {}."
                 .format(data['name']))
 
         self.perform_create(serializer)
@@ -247,19 +245,18 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         pid = int(self.kwargs['pid'])
         image = Image.objects.get(id=image_id)
         if not image or image.project.id != pid:
-            raise Exception("Image {} isn't in project {}.".format(
+            raise NotFound(detail="Image {} isn't in project {}.".format(
                 image_id, pid))
 
         # Check whether project is corresponding to the user
         project = Project.objects.get(id=pid)
         if not project or project.user != user:
-            raise Exception("User {} doesn't have project {}".format(
-                user.username, pid))
+            raise PermissionDenied()
 
         applications = Application.objects.filter(image__project=project,
             name=request.data.get('name'))
         if applications:
-            raise Exception("Already has an application called {}."
+            raise ValidationError(detail="Already has an application called {}."
                 .format(request.data.get('name')))
 
         # create application metadata
