@@ -10,8 +10,10 @@ from rest_framework.exceptions import (PermissionDenied, ValidationError,
     ParseError, NotFound)
 
 from restapi.serializers import (UserSerializer, ProjectSerializer,
-    ImageSerializer, ApplicationSerializer, PortSerializer)
-from backend.models import MyUser, Project, Image, Application, Port
+    ImageSerializer, ApplicationSerializer, PortSerializer,
+    ResourceLimitSerializer)
+from backend.models import (MyUser, Project, Image, Application, Port,
+    ResourceLimit)
 from restapi.utils import (save_image_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol)
 from backend.image import ImageBuilder, ImageDestroyer
 from backend.application import ApplicationBuilder, ApplicationDestroy
@@ -349,3 +351,11 @@ class PortViewSet(viewsets.ModelViewSet):
         self.check_object_permissions(self.request, obj)
 
         return obj
+
+
+class ResourceLimitViewSet(viewsets.ModelViewSet):
+    serializer_class = ResourceLimitSerializer
+    queryset = ResourceLimit.objects.all()
+
+    permission_classes = (IsAdminUser,)
+

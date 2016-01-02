@@ -49,6 +49,13 @@ class ApplicationBuilder(object):
         self.envs = envs
         self.is_public = is_public
 
+        # Compute the resource limit of the application
+        resource_limit = self.application.resource_limit
+        self.cpu = str(resource_limit.cpu) + resource_limit.cpu_unit
+        self.memory = str(resource_limit.memory) + resource_limit.memory_unit
+        logger.debug(self.cpu)
+        logger.debug(self.memory)
+
     def create_application(self):
         """
         Create application by multiple threading.
@@ -105,6 +112,8 @@ class ApplicationBuilder(object):
         return self.kubeclient.create_controller(namespace=self.namespace,
             name=self.application.name,
             image_name=self.image_name,
+            cpu=self.cpu,
+            memory=self.memory,
             replicas=self.application.replicas,
             tcp_ports=self.tcp_ports,
             udp_ports=self.udp_ports,

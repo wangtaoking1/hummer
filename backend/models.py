@@ -68,8 +68,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 class Project(models.Model):
     """
-    Each User has many projects called project, each project also contains one or more
-    images.
+    Each User has many projects called project, each project also contains one
+    or more images.
     """
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 
@@ -80,8 +80,8 @@ class Project(models.Model):
 
 class Image(models.Model):
     """
-    Image represents the model of every application, and there are many different
-    version images in every application.
+    Image represents the model of every application, and there are many
+    different version images in every application.
     """
     STATUS_CHOICES = (
         ('deleted', 'deleted'),
@@ -91,7 +91,7 @@ class Image(models.Model):
         ('failed', 'failed')
     )
 
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     name = models.CharField(max_length=128, default='')
     desc = models.TextField(max_length=254, null=True)
     version = models.CharField(max_length=32)
@@ -101,6 +101,25 @@ class Image(models.Model):
     status = models.CharField(max_length=16, choices=STATUS_CHOICES,
         default='creating')
     create_time = models.DateTimeField(auto_now=True)
+
+
+class ResourceLimit(models.Model):
+    """
+    Resource Limit for every pods/containers. Every application should have a
+    resource limit. Default: cpu: m, memory: Mi
+    """
+    MEMORY_SIZE = (
+        ('Ki', 'Ki'),
+        ('Mi', 'Mi'),
+        ('Gi', 'Gi')
+    )
+
+    name = models.CharField(max_length=32, default='')
+    cpu = models.IntegerField()
+    cpu_unit = models.CharField(max_length=4, default='m')
+    memory = models.IntegerField()
+    memory_unit = models.CharField(max_length=4, choices=MEMORY_SIZE,
+        default='Mi')
 
 
 class Application(models.Model):
@@ -117,11 +136,13 @@ class Application(models.Model):
         ('error', 'error'),
     )
 
-    image = models.ForeignKey(Image, on_delete=models.CASCADE, blank=True, null=True)
+    image = models.ForeignKey(Image, on_delete=models.CASCADE)
     name = models.CharField(max_length=128, default='')
     replicas = models.IntegerField()
+    resource_limit = models.ForeignKey(ResourceLimit, on_delete=models.CASCADE)
     session_affinity = models.BooleanField(default=False)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='creating')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES,
+        default='creating')
     internal_ip = models.CharField(max_length=16, blank=True, null=True)
     external_ip = models.CharField(max_length=16, blank=True, null=True)
     create_time = models.DateTimeField(auto_now=True)
@@ -139,6 +160,8 @@ class Port(models.Model):
 
     app = models.ForeignKey(Application, on_delete=models.CASCADE)
     name = models.CharField(max_length=64, default='')
-    protocol = models.CharField(max_length=3, choices=PROTOCOL_CHOICES, default='TCP')
+    protocol = models.CharField(max_length=3, choices=PROTOCOL_CHOICES,
+        default='TCP')
     external_port = models.IntegerField(blank=True, null=True)
     internal_port = models.IntegerField()
+

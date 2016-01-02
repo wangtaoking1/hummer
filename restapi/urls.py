@@ -1,7 +1,7 @@
 from django.conf.urls import include, url
 from rest_framework import routers
 from restapi.views import (UserViewSet, ProjectViewSet, ImageViewSet,
-    ApplicationViewSet, PortViewSet)
+    ApplicationViewSet, PortViewSet, ResourceLimitViewSet)
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -10,6 +10,8 @@ router.register(r'projects/(?P<pid>[0-9]+)/images', ImageViewSet,
     base_name='image')
 router.register(r'projects/(?P<pid>[0-9]+)/applications', ApplicationViewSet,
     base_name='application')
+router.register(r'resourcelimits', ResourceLimitViewSet,
+    base_name='resourcelimit')
 
 port_list = PortViewSet.as_view({
     'get': 'list'

@@ -102,13 +102,14 @@ class KubeClient(object):
             controllers.append(item['metadata']['name'])
         return controllers
 
-    def create_controller(self, namespace, name, image_name, replicas=1,
-        tcp_ports=None, udp_ports=None, commands=None, args=None, envs=None):
+    def create_controller(self, namespace, name, image_name, cpu, memory,
+        replicas=1, tcp_ports=None, udp_ports=None, commands=None, args=None,
+        envs=None):
         """
         Create a replicationcontroller.
         """
-        controller = Controller(name, image_name, replicas, tcp_ports,
-            udp_ports, commands, args, envs)
+        controller = Controller(name, image_name, cpu, memory, replicas,
+            tcp_ports, udp_ports, commands, args, envs)
         path = 'namespaces/{}/replicationcontrollers'.format(namespace)
 
         logger.debug(controller.body)

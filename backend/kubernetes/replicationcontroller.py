@@ -14,9 +14,21 @@ class Controller(object):
     commands: the commands which the container runs when start.
     envs: a dict for example: {"MYSQL_HOST": "localhost", "PORT": "3306"}
     """
+    _resource_limit = {
+        "requests": {
+            "memory": None,
+            "cpu": None
+        },
+        "limits": {
+            "memory": None,
+            "cpu": None
+        }
+    }
+
     _container = {
         "name": None,
         "image": None,
+        "resources": _resource_limit,
         "ports": [],
         "command": [],
         "args": [],
@@ -44,8 +56,12 @@ class Controller(object):
         }
     }
 
-    def __init__(self, name, image_name, replicas=1, tcp_ports=None,
+    def __init__(self, name, image_name, cpu, memory, replicas=1, tcp_ports=None,
         udp_ports=None, commands=[], args=[], envs=[]):
+        self._resource_limit['requests']['memory'] = memory
+        self._resource_limit['requests']['cpu'] = cpu
+        self._resource_limit['limits']['memory'] = memory
+        self._resource_limit['limits']['cpu'] = cpu
         self._body['metadata']['name'] = name
         self._body['spec']['template']['metadata']['labels']['app'] = name
         self._body['spec']['replicas'] = replicas

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from backend.models import MyUser, Project, Image, Application, Port
+from backend.models import (MyUser, Project, Image, Application, Port,
+    ResourceLimit)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,8 +26,9 @@ class ImageSerializer(serializers.ModelSerializer):
 class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
-        fields = ('id', 'image', 'name', 'replicas', 'session_affinity', 'internal_ip',
-            'external_ip', 'create_time', 'status')
+        fields = ('id', 'image', 'name', 'replicas', 'resource_limit',
+            'session_affinity', 'internal_ip', 'external_ip', 'create_time',
+            'status')
 
 
 class PortSerializer(serializers.ModelSerializer):
@@ -35,3 +37,8 @@ class PortSerializer(serializers.ModelSerializer):
         fields = ('id', 'app', 'name', 'protocol', 'internal_port',
             'external_port')
 
+
+class ResourceLimitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResourceLimit
+        fields = ('id', 'name', 'cpu', 'cpu_unit', 'memory', 'memory_unit')
