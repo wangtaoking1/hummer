@@ -17,7 +17,7 @@ bash ./update_source.sh
 apt-get install -y nfs-kernel-server nfs-common
 
 mkdir /hummer
-chown -R wangtao:wangtao /hummer
+chmod -R 777 /hummer
 cat >>/etc/exports <<EOF
 /hummer *(rw,sync,no_root_squash,no_subtree_check)
 EOF
