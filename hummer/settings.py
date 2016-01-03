@@ -152,9 +152,10 @@ LOGGING = {
 UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads/images')
 
 # Privete Image registry address:port
-IMAGE_REGISTRY = '192.168.0.10:5000'
+IMAGE_REGISTRY = '192.168.0.15:5000'
 
 MASTER_IP = '192.168.0.10'
+NFS_IP = '192.168.0.15'
 ETCD_PORT = 4001
 K8S_PORT = 8080
 DOCKER_PORT = 2357

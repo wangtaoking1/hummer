@@ -42,6 +42,11 @@ K8S是基于Docker的开源平台，所以我们首先需要在集群的每一�
 	# docker tag kubernetes/pause gcr.io/google_containers/pause:0.8.0
 	# docker tag gcr.io/google_containers/pause:0.8.0 gcr.io/google_containers/pause
 
+需要使用NFS做持久化volume后端，因此需要在每一个集群节点上安装nfs-common，这样才能成功访问nfs server。
+
+	# apt-get install nfs-common
+
+
 ###**下载脚本**
 首先从kubernetes官方仓库中下载安装脚本，然后下载二进制可执行文件。
 

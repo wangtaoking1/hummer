@@ -302,6 +302,10 @@ class ImageBuilder(object):
             logger.info("Tag image {} to {}:{} failed.".format(old_image,
                 image_name, image_version))
             return None
+
+        self._delete_image_on_docker_host(base_url, old_image_name,
+            old_image_version)
+
         return old_image_token
 
     def _get_image_token_on_docker_host(self, base_url, image_name,
