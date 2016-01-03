@@ -14,7 +14,7 @@ fi
 
 bash ./update_source.sh
 
-apt-get install -y nfs-kernel-server nfs-common
+apt-get install -y nfs-kernel-server nfs-common openssh-server
 
 mkdir /hummer
 chmod -R 777 /hummer
