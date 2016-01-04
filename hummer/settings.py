@@ -154,10 +154,15 @@ UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads/images')
 # Privete Image registry address:port
 IMAGE_REGISTRY = '192.168.0.15:5000'
 
+# K8S cluster information
 MASTER_IP = '192.168.0.10'
-NFS_IP = '192.168.0.15'
 ETCD_PORT = 4001
 K8S_PORT = 8080
 DOCKER_PORT = 2357
 K8S_API_PATH = '/api/v1/'
 
+# NFS server information
+NFS_IP = '192.168.0.15'
+NFS_DIR = '/hummer'
+NFS_USER = 'wangtao'
+NFS_PWD = 'admin123'

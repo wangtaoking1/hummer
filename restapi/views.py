@@ -11,9 +11,9 @@ from rest_framework.exceptions import (PermissionDenied, ValidationError,
 
 from restapi.serializers import (UserSerializer, ProjectSerializer,
     ImageSerializer, ApplicationSerializer, PortSerializer,
-    ResourceLimitSerializer)
+    ResourceLimitSerializer, VolumeSerializer)
 from backend.models import (MyUser, Project, Image, Application, Port,
-    ResourceLimit)
+    ResourceLimit, Volume)
 from restapi.utils import (save_image_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol)
 from backend.image import ImageBuilder, ImageDestroyer
 from backend.application import ApplicationBuilder, ApplicationDestroy
@@ -359,3 +359,79 @@ class ResourceLimitViewSet(viewsets.ModelViewSet):
 
     permission_classes = (IsAdminUser,)
 
+
+class VolumeViewSet(viewsets.ModelViewSet):
+    serializer_class = VolumeSerializer
+
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+
+        assert 'pid' in self.kwargs
+        pid = self.kwargs['pid']
+
+        if user.is_staff:
+            return Volume.objects.filter(project__id=pid)
+        else:
+            return Volume.objects.filter(project__id=pid, project__user=user)
+
+    def get_object(self):
+        """
+        Returns the object the view is displaying.
+        """
+        user = self.request.user
+
+        assert 'pid' in self.kwargs
+        pid = self.kwargs['pid']
+
+        assert 'pk' in self.kwargs
+        id = self.kwargs['pk']
+        obj =Volume.objects.get(project__id=pid, id=id)
+
+        # Check user permission
+        if not user.is_staff and user != obj.project.user:
+            raise PermissionDenied()
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+
+        return obj
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create an application instance.
+        """
+        user = request.user
+
+        logger.info("user {} will create an volume.".format(
+            user.username))
+
+        assert 'pid' in self.kwargs
+
+        # Check whether image is corresponding to the project
+        image_id = request.data.get('image', None)
+        pid = int(self.kwargs['pid'])
+        image = Image.objects.get(id=image_id)
+        if not image or image.project.id != pid:
+            raise NotFound(detail="Image {} isn't in project {}.".format(
+                image_id, pid))
+
+        # Check whether project is corresponding to the user
+        project = Project.objects.get(id=pid)
+        if not project or project.user != user:
+            raise PermissionDenied()
+
+        applications = Application.objects.filter(image__project=project,
+            name=request.data.get('name'))
+        if applications:
+            raise ValidationError(detail="Already has an application called {}."
+                .format(request.data.get('name')))
+
+        return response
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Destroy an application instance.
+        """
+        pass

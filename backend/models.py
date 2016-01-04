@@ -165,3 +165,22 @@ class Port(models.Model):
     external_port = models.IntegerField(blank=True, null=True)
     internal_port = models.IntegerField()
 
+
+class Volume(models.Model):
+    """
+    Volume is for persistent storage. It can be mounted on to application and
+    umounted.
+    """
+    CAPACITY_UNIT =(
+        ('Ki', 'Ki'),
+        ('Mi', 'Mi'),
+        ('Gi', 'Gi')
+    )
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    app = models.ForeignKey(Application, blank=True, null=True)
+    name = models.CharField(max_length=64)
+    desc = models.TextField(max_length=254, null=True)
+    capacity = models.IntegerField()
+    capacity_unit = model.CharField(max_length=4, choices=CAPACITY_UNIT,
+        default='Mi')

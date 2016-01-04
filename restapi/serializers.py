@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from backend.models import (MyUser, Project, Image, Application, Port,
-    ResourceLimit)
+    ResourceLimit, Volume)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -42,3 +42,10 @@ class ResourceLimitSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResourceLimit
         fields = ('id', 'name', 'cpu', 'cpu_unit', 'memory', 'memory_unit')
+
+
+class VolumeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Volume
+        fields = ('id', 'project', 'app', 'name', 'desc', 'capacity',
+            'capacity_unit')
