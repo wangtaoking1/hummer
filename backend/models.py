@@ -177,6 +177,14 @@ class Volume(models.Model):
         ('Gi', 'Gi')
     )
 
+    STATUS_CHOICES = (
+        ('creating', 'creating'),
+        ('active', 'active'),
+        ('deleting', 'deleting'),
+        ('deleted', 'deleted'),
+        ('error', 'error'),
+    )
+
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     app = models.ForeignKey(Application, blank=True, null=True)
     mount_path = models.CharField(max_length=256, null=True, blank=True)
@@ -185,3 +193,6 @@ class Volume(models.Model):
     capacity = models.IntegerField()
     capacity_unit = models.CharField(max_length=4, choices=CAPACITY_UNIT,
         default='Mi')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES,
+        default='creating')
+    create_time = models.DateTimeField(auto_now=True)

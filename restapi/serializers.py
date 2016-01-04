@@ -48,4 +48,4 @@ class VolumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Volume
         fields = ('id', 'project', 'app', 'mount_path', 'name', 'desc',
-            'capacity', 'capacity_unit')
+            'capacity', 'capacity_unit', 'status', 'create_time')

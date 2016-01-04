@@ -45,13 +45,13 @@ class KubeClientTestCase(unittest.TestCase):
         print(controllers)
 
     def test_create_controller_1(self):
-        image_name = '192.168.0.10:5000/user/nginx:1.9.9'
+        image_name = '192.168.0.15:5000/user/nginx:1.9.9'
         res = self.client.create_controller('user', 'test-nginx', image_name,
             replicas=2, tcp_ports={"http": 80})
         print(res)
 
     def test_create_controller_2(self):
-        image_name = '192.168.0.10:5000/admin/ubuntu:14.04'
+        image_name = '192.168.0.15:5000/admin/ubuntu:14.04'
         self.client.create_controller('test-space', 'test-nginx', image_name,
             replicas=1,
             commands=['sleep', '3600'],
@@ -59,9 +59,15 @@ class KubeClientTestCase(unittest.TestCase):
         )
 
     def test_create_controller_3(self):
-        image_name = '192.168.0.10:5000/admin/nginx:1.9.9'
+        image_name = '192.168.0.15:5000/admin/nginx:1.9.9'
         self.client.create_controller('test-space', 'test-nginx', image_name,
             replicas=1, tcp_ports={"http": 80, "https": 443})
+
+    def test_create_controller_volume(self):
+        image_name = '192.168.0.15:5000/user/nginx:1.9.9'
+        self.client.create_controller('user', 'test-nginx', image_name,
+            cpu="100m", memory="64Mi", replicas=1, tcp_ports={"http": 80},
+            volumes={"project0-volume0": "/var/www/html"})
 
     def test_delete_controller(self):
         self.client.delete_controller('test-space', 'test-nginx')
@@ -96,4 +102,22 @@ class KubeClientTestCase(unittest.TestCase):
 
     def test_get_service_details(self):
         res = self.client.get_service_details('test-space', 'test-nginx')
+        print(res)
+
+    def test_create_persistentvolume(self):
+        res = self.client.create_persistentvolume('user', 'volume0', '10Mi',
+            '/hummer/test', '192.168.0.15')
+        print(res)
+
+    def test_delete_persistentvolume(self):
+        res = self.client.delete_persistentvolume('user', 'volume0')
+        print(res)
+
+    def test_create_persistentvolumeclaim(self):
+        res = self.client.create_persistentvolumeclaim('user', 'volume0',
+            '10Mi')
+        print(res)
+
+    def test_delete_persistentvolumeclaim(self):
+        res = self.client.delete_persistentvolumeclaim('user', 'volume0')
         print(res)

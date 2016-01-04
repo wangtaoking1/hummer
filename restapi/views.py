@@ -17,6 +17,7 @@ from backend.models import (MyUser, Project, Image, Application, Port,
 from restapi.utils import (save_image_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol)
 from backend.image import (ImageBuilder, ImageDestroyer)
 from backend.application import (ApplicationBuilder, ApplicationDestroyer)
+from backend.volume import (VolumeBuilder, VolumeDestroyer)
 from backend.kubernetes.k8sclient import KubeClient
 
 logger = logging.getLogger("hummer")
@@ -261,6 +262,13 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             raise ValidationError(detail="Already has an application called {}."
                 .format(request.data.get('name')))
 
+        volumes = request.data.get('volumes', [])
+        for volume in volumes:
+            volume = Volume.objects.get(id=volume['volume'])
+            if volume.app or volume.mount_path:
+                raise ValidationError(detail="Volume {} is being used by \
+application {}.".format(volume.name, volume.app.name))
+
         # create application metadata
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -416,6 +424,14 @@ class VolumeViewSet(viewsets.ModelViewSet):
         if not project or project.user != user:
             raise PermissionDenied()
 
+        # Check whether or not exists the same name volume in the project
+        volumes = Volume.objects.filter(project__id=pid,
+            name=request.data.get('name', ''))
+        if volumes:
+            raise ValidationError(
+                detail="Already has an volume called {} in this project."
+                .format(request.data.get('name', '')))
+
         app = request.data.get('app', None)
         if app:
             raise ValidationError(detail="Shouldn't contain app attribute.")
@@ -432,6 +448,8 @@ class VolumeViewSet(viewsets.ModelViewSet):
         logger.debug(volume)
 
         # TODO: create volume instance
+        builder = VolumeBuilder(volume)
+        builder.create_volume()
 
         return response
 

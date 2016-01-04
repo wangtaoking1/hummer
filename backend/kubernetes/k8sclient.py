@@ -5,6 +5,7 @@ import logging
 from backend.kubernetes.namespace import Namespace
 from backend.kubernetes.replicationcontroller import Controller
 from backend.kubernetes.service import Service
+from backend.kubernetes.volume import PersistentVolume, PersistentVolumeClaim
 
 logger = logging.getLogger('hummer')
 
@@ -89,6 +90,44 @@ class KubeClient(object):
         Delete namespace called name.
         """
         response = self._send_request('DELETE', 'namespaces/{}'.format(name))
+        return self._is_creating_deleting_successful(response)
+
+    def create_persistentvolume(self, namespace, name, capacity, nfs_path,
+        nfs_server):
+        """
+        Create persistentvolume called namespace-name.
+        """
+        volume_name = namespace + '-' + name
+        volume = PersistentVolume(volume_name, capacity, nfs_path, nfs_server)
+        response = self._send_request('POST', 'persistentvolumes',
+            body=volume.body)
+        return self._is_creating_deleting_successful(response)
+
+    def delete_persistentvolume(self, namespace, name):
+        """
+        Delete persistentvolume called namespace-name.
+        """
+        volume_name = namespace + '-' + name
+        response = self._send_request('DELETE', 'persistentvolumes/{}'.format(
+            volume_name))
+        return self._is_creating_deleting_successful(response)
+
+    def create_persistentvolumeclaim(self, namespace, name, capacity):
+        """
+        Create persistentvolumeclaim called name.
+        """
+        volumeclaim = PersistentVolumeClaim(name, capacity)
+        response = self._send_request('POST',
+            'namespaces/{}/persistentvolumeclaims'.format(namespace),
+            body=volumeclaim.body)
+        return self._is_creating_deleting_successful(response)
+
+    def delete_persistentvolumeclaim(self, namespace, name):
+        """
+        Delete persistentvolumeclaim called name.
+        """
+        response = self._send_request('DELETE',
+            'namespaces/{}/persistentvolumeclaims/{}'.format(namespace, name))
         return self._is_creating_deleting_successful(response)
 
     def list_controllers(self, namespace):

@@ -124,7 +124,7 @@ class ApplicationBuilder(object):
             commands=self.commands,
             args=self.args,
             envs=self.envs,
-            volumes=None # volumes=self._get_volume_names_and_path()
+            volumes=self._get_volume_names_and_path()
         )
 
     def _create_service(self):
@@ -181,8 +181,8 @@ class ApplicationBuilder(object):
         """
         if not self.volumes:
             return None
-        for volume_item in volumes:
-            volume = Volume.objects.get(id=int(volume_item['volume']))
+        for volume_item in self.volumes:
+            volume = Volume.objects.get(id=volume_item['volume'])
             logger.debug("mount volume {} onto application {}.".format(
                 volume.name, self.application.name))
             volume.app = self.application
