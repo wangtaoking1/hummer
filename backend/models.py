@@ -182,5 +182,5 @@ class Volume(models.Model):
     name = models.CharField(max_length=64)
     desc = models.TextField(max_length=254, null=True)
     capacity = models.IntegerField()
-    capacity_unit = model.CharField(max_length=4, choices=CAPACITY_UNIT,
+    capacity_unit = models.CharField(max_length=4, choices=CAPACITY_UNIT,
         default='Mi')

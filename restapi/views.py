@@ -408,30 +408,43 @@ class VolumeViewSet(viewsets.ModelViewSet):
             user.username))
 
         assert 'pid' in self.kwargs
-
-        # Check whether image is corresponding to the project
-        image_id = request.data.get('image', None)
         pid = int(self.kwargs['pid'])
-        image = Image.objects.get(id=image_id)
-        if not image or image.project.id != pid:
-            raise NotFound(detail="Image {} isn't in project {}.".format(
-                image_id, pid))
 
         # Check whether project is corresponding to the user
         project = Project.objects.get(id=pid)
         if not project or project.user != user:
             raise PermissionDenied()
 
-        applications = Application.objects.filter(image__project=project,
-            name=request.data.get('name'))
-        if applications:
-            raise ValidationError(detail="Already has an application called {}."
-                .format(request.data.get('name')))
+        app = request.data.get('app', None)
+        if app:
+            raise ValidationError(detail="Shouldn't contain app attribute.")
+
+        # create volume metadata
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        response = Response(serializer.data, status=status.HTTP_201_CREATED,
+            headers=headers)
+
+        volume = Volume.objects.get(id=serializer.data['id'])
+        logger.debug(volume)
+
+        # TODO: create volume instance
 
         return response
 
     def destroy(self, request, *args, **kwargs):
         """
-        Destroy an application instance.
+        Destroy volume metadata and instance.
         """
-        pass
+        volume = self.get_object()
+
+        if volume.app:
+            raise ValidationError(detail="The volume is being used by \
+                application {}, delete the application first.".format(
+                    volume.app.name))
+
+        # Delete the volume instance
+
+        return super(VolumeViewSet, self).destroy(request, *args, **kwargs)
