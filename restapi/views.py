@@ -15,8 +15,8 @@ from restapi.serializers import (UserSerializer, ProjectSerializer,
 from backend.models import (MyUser, Project, Image, Application, Port,
     ResourceLimit, Volume)
 from restapi.utils import (save_image_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol)
-from backend.image import ImageBuilder, ImageDestroyer
-from backend.application import ApplicationBuilder, ApplicationDestroy
+from backend.image import (ImageBuilder, ImageDestroyer)
+from backend.application import (ApplicationBuilder, ApplicationDestroyer)
 from backend.kubernetes.k8sclient import KubeClient
 
 logger = logging.getLogger("hummer")
@@ -287,7 +287,8 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             commands=request.data.get('commands', None),
             args=request.data.get('args', None),
             envs=request.data.get('envs', None),
-            is_public=request.data.get('is_public', False)
+            is_public=request.data.get('is_public', False),
+            volumes=request.data.get('volumes', None)
         )
         builder.create_application()
 
@@ -302,7 +303,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         logger.info("user {} deletes application: {}.".format(
             request.user.username, application.name))
 
-        destroyer = ApplicationDestroy(application=application)
+        destroyer = ApplicationDestroyer(application=application)
         destroyer.destroy_application_instance()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -442,8 +443,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
         if volume.app:
             raise ValidationError(detail="The volume is being used by \
-                application {}, delete the application first.".format(
-                    volume.app.name))
+application {}, delete the application first.".format(volume.app.name))
 
         # Delete the volume instance
 

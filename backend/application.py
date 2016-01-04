@@ -3,7 +3,7 @@ from threading import Thread
 
 from django.conf import settings
 
-from backend.models import Application, Port
+from backend.models import Application, Port, Volume
 from backend.kubernetes.k8sclient import KubeClient
 from backend.schedule import DockerSchedulerFactory
 from backend.utils import get_optimal_docker_host
@@ -23,6 +23,7 @@ class ApplicationBuilder(object):
     udp_ports: a dict, the udp ports of the containers.
     commands: the commands which the container runs when start.
     envs: a dict for example: {"MYSQL_HOST": "localhost", "PORT": "3306"}
+    volumes: a dict, for example: [{"volume": id, "mount_path": path}]
     """
     namespace = None
     application = None
@@ -33,9 +34,11 @@ class ApplicationBuilder(object):
     args = None
     envs = None
     is_public = False
+    volumes = None
 
     def __init__(self, namespace, application, image_name, tcp_ports=None,
-        udp_ports=None, commands=None, args=None, envs=None, is_public=False):
+        udp_ports=None, commands=None, args=None, envs=None, is_public=False,
+        volumes=None):
         self.kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
             settings.K8S_PORT, settings.K8S_API_PATH))
 
@@ -48,13 +51,12 @@ class ApplicationBuilder(object):
         self.args = args
         self.envs = envs
         self.is_public = is_public
+        self.volumes = volumes
 
         # Compute the resource limit of the application
         resource_limit = self.application.resource_limit
         self.cpu = str(resource_limit.cpu) + resource_limit.cpu_unit
         self.memory = str(resource_limit.memory) + resource_limit.memory_unit
-        logger.debug(self.cpu)
-        logger.debug(self.memory)
 
     def create_application(self):
         """
@@ -70,6 +72,8 @@ class ApplicationBuilder(object):
         """
         logger.info('Create an application {} in namespace {} by image {}.'
             .format(self.application.name, self.namespace, self.image_name))
+
+        self._mount_volume_onto_application()
 
         if not self._create_controller():
             logger.debug('Create controller {} failed.'.format(
@@ -119,7 +123,8 @@ class ApplicationBuilder(object):
             udp_ports=self.udp_ports,
             commands=self.commands,
             args=self.args,
-            envs=self.envs
+            envs=self.envs,
+            volumes=None # volumes=self._get_volume_names_and_path()
         )
 
     def _create_service(self):
@@ -170,10 +175,39 @@ class ApplicationBuilder(object):
             )
             port.save()
 
+    def _mount_volume_onto_application(self):
+        """
+        Edit the metadata, Mount volumes onto this application.
+        """
+        if not self.volumes:
+            return None
+        for volume_item in volumes:
+            volume = Volume.objects.get(id=int(volume_item['volume']))
+            logger.debug("mount volume {} onto application {}.".format(
+                volume.name, self.application.name))
+            volume.app = self.application
+            volume.mount_path = volume_item['mount_path']
+            volume.save()
 
-class ApplicationDestroy(object):
+    def _get_volume_names_and_path(self):
+        """
+        Return the volume names from volume ids. The true volume instance name
+        is "project_name-volume_name".
+        """
+        if not self.volumes:
+            return None
+        volume_name_path = {}
+        for volume_item in self.volumes:
+            volume = Volume.objects.get(id=int(volume_item['volume']))
+            volume_name_path[volume.project.name + '-' + volume.name] = \
+                volume_item['mount_path']
+        logger.debug(volume_name_path)
+        return volume_name_path
+
+
+class ApplicationDestroyer(object):
     """
-    ApplicationDestroy is to destroy application instance, including controller
+    ApplicationDestroyer is to destroy application instance, including controller
     and service.
     """
     application = None
@@ -209,6 +243,7 @@ class ApplicationDestroy(object):
                 self.controller_name))
 
         self._update_application_status(status='deleted')
+        self._umount_volume()
         self._delete_application_metadata()
         self._delete_port_metadata()
 
@@ -248,3 +283,14 @@ class ApplicationDestroy(object):
             logger.debug("delete port {} metadata.".format(port.name))
             port.delete()
 
+    def _umount_volume(self):
+        """
+        Umount volumes which mounted on application.
+        """
+        volumes = Volume.objects.filter(app=self.application)
+        for volume in volumes:
+            logger.debug("umount volume {}-{} from application {}.".format(
+                volume.project.name, volume.name, self.application.name))
+            volume.app = None
+            volume.mount_path = None
+            volume.save()

@@ -84,8 +84,8 @@ class ImageBuilder(object):
             logger.error("Push image from docker host to registry failed")
             self._update_image_status(status="failed")
             return None
-        logger.info('Image %s:%s has been pushed to registry, with digest %s', image_name,
-            self.image.version, digest)
+        logger.info('Image %s:%s has been pushed to registry, with digest %s',
+            image_name, self.image.version, digest)
 
         self._update_image_status(status="active", digest=digest, token=token)
 
@@ -125,8 +125,8 @@ class ImageBuilder(object):
             logger.error("Push image from docker host to registry failed")
             self._update_image_status(status="failed")
             return None
-        logger.info('Image %s:%s has been pushed to registry, with digest %s', image_name,
-            self.image.version, digest)
+        logger.info('Image %s:%s has been pushed to registry, with digest %s',
+            image_name, self.image.version, digest)
 
         self._update_image_status(status="active", digest=digest, token=token)
 
@@ -359,7 +359,8 @@ class ImageBuilder(object):
                 tag=image_complete_name)]
         except APIError as error:
             logger.debug(error)
-            logger.error('Cannot locate specified Dockerfile: %s.' % self.dockerfile)
+            logger.error('Cannot locate specified Dockerfile: %s.' %
+                (self.dockerfile))
             fileobj.close()
             return None
         except Exception as error:

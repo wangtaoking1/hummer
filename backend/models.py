@@ -179,6 +179,7 @@ class Volume(models.Model):
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     app = models.ForeignKey(Application, blank=True, null=True)
+    mount_path = models.CharField(max_length=256, null=True, blank=True)
     name = models.CharField(max_length=64)
     desc = models.TextField(max_length=254, null=True)
     capacity = models.IntegerField()

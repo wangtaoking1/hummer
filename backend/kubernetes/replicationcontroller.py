@@ -13,6 +13,7 @@ class Controller(object):
     udp_ports: a dict, the udp ports of the containers.
     commands: the commands which the container runs when start.
     envs: a dict for example: {"MYSQL_HOST": "localhost", "PORT": "3306"}
+    volumes: a dict, for example: {"volume_name": "mount_path"}
     """
     _resource_limit = {
         "requests": {
@@ -32,7 +33,8 @@ class Controller(object):
         "ports": [],
         "command": [],
         "args": [],
-        "env": []
+        "env": [],
+        "volumeMounts": []
     }
 
     _body = {
@@ -50,14 +52,16 @@ class Controller(object):
                     }
                 },
                 "spec": {
-                    "containers": [_container]
+                    "containers": [_container],
+                    "volumes": []
                 }
             }
         }
     }
 
-    def __init__(self, name, image_name, cpu, memory, replicas=1, tcp_ports=None,
-        udp_ports=None, commands=[], args=[], envs=[]):
+    def __init__(self, name, image_name, cpu, memory, replicas=1,
+        tcp_ports=None, udp_ports=None, commands=[], args=[], envs={},
+        volumes={}):
         self._resource_limit['requests']['memory'] = memory
         self._resource_limit['requests']['cpu'] = cpu
         self._resource_limit['limits']['memory'] = memory
@@ -74,9 +78,15 @@ class Controller(object):
             self.set_ports("TCP", tcp_ports)
         if udp_ports:
             self.set_ports("UDP", udp_ports)
+
         self._container['env'] = []
         if envs:
             self.set_envs(envs)
+
+        self._container['volumeMounts'] = []
+        self._body['spec']['template']['spec']['volumes'] = []
+        if volumes:
+            self.set_volumes(volumes)
 
     def set_ports(self, protocol, ports):
         """
@@ -102,6 +112,27 @@ class Controller(object):
         for key, value in envs.items():
             env = {'name': key, 'value': value}
             self._container['env'].append(env)
+
+    def set_volumes(self, volumes):
+        """
+        Set the volumes.
+
+        Parameters:
+        volumes: a dict, for example: {"volume_name": "mount_path"}
+        """
+        assert(isinstance(volumes, dict))
+        for name, path in volumes.items():
+            self._container['volumeMounts'].append({
+                "mountPath": path,
+                "name": name
+            })
+
+            self._body['spec']['template']['spec']['volumes'].append({
+                "name": name,
+                "persistentVolumeClaim": {
+                    "claimName": name
+                }
+            })
 
     @property
     def body(self):

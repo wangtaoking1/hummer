@@ -47,5 +47,5 @@ class ResourceLimitSerializer(serializers.ModelSerializer):
 class VolumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Volume
-        fields = ('id', 'project', 'app', 'name', 'desc', 'capacity',
-            'capacity_unit')
+        fields = ('id', 'project', 'app', 'mount_path', 'name', 'desc',
+            'capacity', 'capacity_unit')
