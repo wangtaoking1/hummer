@@ -8,4 +8,4 @@ env/
 __pycache__/
 migrations/
 logs/
-uploads/
+files/

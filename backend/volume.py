@@ -1,12 +1,12 @@
 import logging, json
 from threading import Thread
 
-import paramiko
 from django.conf import settings
 
 from backend.models import Volume
 from backend.kubernetes.k8sclient import KubeClient
 from backend.utils import get_volume_nfs_dir
+from backend.nfs import NFSClient
 
 logger = logging.getLogger('hummer')
 
@@ -81,17 +81,9 @@ class VolumeBuilder(object):
         """
         Create direction on nfs server to store volume data.
         """
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        try:
-            client.connect(self.nfs_server, 22, settings.NFS_USER,
+        client = NFSClient(self.nfs_server, 22, settings.NFS_USER,
                 settings.NFS_PWD)
-        except Exception as e:
-            logger.debug(e)
-            return False
-        stdin, stdout, stderr = client.exec_command("mkdir -p " + self.nfs_path)
-        for line in stderr:
-            logger.debug(line)
+        client.makedir(self.nfs_path)
         client.close()
         return True
 
@@ -177,17 +169,9 @@ class VolumeDestroyer(object):
         """
         Remove direction on nfs server.
         """
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        try:
-            client.connect(self.nfs_server, 22, settings.NFS_USER,
+        client = NFSClient(self.nfs_server, 22, settings.NFS_USER,
                 settings.NFS_PWD)
-        except Exception as e:
-            logger.debug(e)
-            return False
-        stdin, stdout, stderr = client.exec_command("rm -r " + self.nfs_path)
-        for line in stderr:
-            logger.debug(line)
+        client.removedir(self.nfs_path)
         client.close()
         return True
 

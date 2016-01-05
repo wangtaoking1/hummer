@@ -6,7 +6,8 @@ from docker import Client
 from docker.errors import APIError
 
 from backend.models import Image
-from backend.utils import (fetch_digest_from_response, get_optimal_docker_host)
+from backend.utils import (fetch_digest_from_response, get_optimal_docker_host,
+    remove_file_from_disk)
 
 logger = logging.getLogger('hummer')
 
@@ -89,6 +90,8 @@ class ImageBuilder(object):
 
         self._update_image_status(status="active", digest=digest, token=token)
 
+        remove_file_from_disk(self.build_file)
+
     def _create_image_by_dockerfile(self):
         """
         Create image by dockerfile, this maybe take a long time.
@@ -129,6 +132,8 @@ class ImageBuilder(object):
             image_name, self.image.version, digest)
 
         self._update_image_status(status="active", digest=digest, token=token)
+
+        remove_file_from_disk(self.build_file)
 
 
     def _update_image_status(self, status, digest=None, token=None):

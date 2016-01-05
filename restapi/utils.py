@@ -18,6 +18,7 @@ def save_image_file_to_disk(file_obj, filename):
         for chunk in file_obj.chunks():
             destination.write(chunk)
 
+
 def is_image_or_dockerfile(is_image=None):
     """
     Parse the is_image option of the http data.
@@ -39,7 +40,7 @@ def get_upload_image_filename(image, user):
     Return the filename of the uploaded image file in disk
     """
     filename = image['name'] + '_' + image['version'] + '.tar'
-    return os.path.join(settings.UPLOAD_DIR, user.username, filename)
+    return os.path.join(settings.FILE_DIR, user.username, 'images', filename)
 
 
 def get_ports_by_protocol(protocol, ports):
