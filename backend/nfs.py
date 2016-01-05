@@ -67,13 +67,23 @@ class NFSClient(object):
         """
         Tar remotedir as a package, and copy to local.
         """
-        pass
+        tar_name = os.path.basename(localfile)
+        command = "cd {} && tar -cf {} *".format(remotedir, tar_name)
+        stdin, stdout, stderr = self.client.exec_command(command)
+        remotefile = os.path.join(remotedir, tar_name)
+        self.copy_file_to_local(remotefile, localfile)
+        stdin, stdout, stderr = self.client.exec_command("rm " + remotefile)
 
     def copy_file_to_remote_and_untar(self, localfile, remotedir):
         """
         Copy local tar file to remote, and untar into the remote dir.
         """
-        pass
+        tar_name = os.path.basename(localfile)
+        remotefile = os.path.join(remotedir, tar_name)
+        self.copy_file_to_remote(localfile, remotefile)
+        command = "cd {} && tar -xf {} && rm {}".format(remotedir, tar_name,
+            remotefile)
+        stdin, stdout, stderr = self.client.exec_command(command)
 
     def close(self):
         self.client.close()
