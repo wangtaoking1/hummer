@@ -396,7 +396,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
         assert 'pk' in self.kwargs
         id = self.kwargs['pk']
-        obj =Volume.objects.get(project__id=pid, id=id)
+        obj = Volume.objects.get(project__id=pid, id=id)
 
         # Check user permission
         if not user.is_staff and user != obj.project.user:
@@ -445,9 +445,9 @@ class VolumeViewSet(viewsets.ModelViewSet):
             headers=headers)
 
         volume = Volume.objects.get(id=serializer.data['id'])
-        logger.debug(volume)
+        # logger.debug(volume)
 
-        # TODO: create volume instance
+        # create volume instance
         builder = VolumeBuilder(volume)
         builder.create_volume()
 
@@ -464,5 +464,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
 application {}, delete the application first.".format(volume.app.name))
 
         # Delete the volume instance
+        destroyer = VolumeDestroyer(volume=volume)
+        destroyer.destroy_volume()
 
-        return super(VolumeViewSet, self).destroy(request, *args, **kwargs)
+        return Response(status=status.HTTP_204_NO_CONTENT)

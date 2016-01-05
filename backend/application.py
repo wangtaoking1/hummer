@@ -273,7 +273,7 @@ class ApplicationDestroyer(object):
         self.application.save()
 
     def _delete_application_metadata(self):
-        logger.debug("delete application medatade.")
+        logger.debug("delete application medatada.")
         self.application.delete()
 
     def _delete_port_metadata(self):
