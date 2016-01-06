@@ -6,7 +6,7 @@ from django.conf import settings
 from backend.models import Volume
 from backend.kubernetes.k8sclient import KubeClient
 from backend.utils import get_volume_nfs_dir
-from backend.nfs import NFSClient
+from backend.nfs import NFSClient, NFSLocalClient
 
 logger = logging.getLogger('hummer')
 
@@ -81,10 +81,8 @@ class VolumeBuilder(object):
         """
         Create direction on nfs server to store volume data.
         """
-        client = NFSClient(self.nfs_server, 22, settings.NFS_USER,
-                settings.NFS_PWD)
+        client = NFSLocalClient()
         client.makedir(self.nfs_path)
-        client.close()
         return True
 
     def _create_persistentvolume(self):
@@ -169,10 +167,8 @@ class VolumeDestroyer(object):
         """
         Remove direction on nfs server.
         """
-        client = NFSClient(self.nfs_server, 22, settings.NFS_USER,
-                settings.NFS_PWD)
+        client = NFSLocalClient()
         client.removedir(self.nfs_path)
-        client.close()
         return True
 
     def _delete_persistentvolumeclaim(self):
