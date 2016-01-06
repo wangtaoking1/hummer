@@ -3,6 +3,7 @@ import os
 
 from django.contrib.auth.models import AnonymousUser
 from django.conf import settings
+from django.http import StreamingHttpResponse
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -15,7 +16,8 @@ from restapi.serializers import (UserSerializer, ProjectSerializer,
 from backend.models import (MyUser, Project, Image, Application, Port,
     ResourceLimit, Volume)
 from restapi.utils import (save_upload_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol,
-    get_upload_volume_filename, get_volume_direction_on_nfs)
+    get_upload_volume_filename, get_volume_direction_on_nfs,
+    big_file_iterator)
 from backend.image import (ImageBuilder, ImageDestroyer)
 from backend.application import (ApplicationBuilder, ApplicationDestroyer)
 from backend.volume import (VolumeBuilder, VolumeDestroyer)
@@ -474,12 +476,29 @@ application {}, delete the application first.".format(volume.app.name))
 
     def download(self, request, *args, **kwargs):
         """
+        Download the volume data.
         """
-        return Response()
+        volume = self.get_object()
+
+        logger.info("User {} download the data of volume {}-{}.".format(
+            request.user.username, volume.project.name, volume.name))
+
+        # Copy file to local first
+        volume_dir = get_volume_direction_on_nfs(volume, request.user)
+        filename = get_upload_volume_filename(volume, request.user)
+        client = NFSLocalClient()
+        client.tar_and_copy_to_local(volume_dir, filename)
+
+        response = StreamingHttpResponse(big_file_iterator(filename))
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="{}"'.format(
+            os.path.basename(filename))
+
+        return response
 
     def upload(self, request, *args, **kwargs):
         """
-        User upload volume data.
+        User upload volume data, delete the original data first.
         """
         volume = self.get_object()
         if not request.FILES.get('file'):
@@ -493,6 +512,10 @@ application {}, delete the application first.".format(volume.app.name))
 
         client = NFSLocalClient()
         volume_dir = get_volume_direction_on_nfs(volume, request.user)
+        # Clear the dir first
+        client.removedir(volume_dir)
+        client.makedir(volume_dir)
+
         client.copy_file_to_remote_and_untar(filename, volume_dir)
         remove_file_from_disk(filename)
 

@@ -70,3 +70,16 @@ def get_ports_by_protocol(protocol, ports):
             result_ports[port['name']] = port['port']
     return result_ports
 
+
+def big_file_iterator(filename, chunk_size=512):
+    """
+    Used to download big file.
+    """
+    with open(filename, 'rb') as f:
+        while True:
+            content = f.read(chunk_size)
+            if content:
+                yield content
+            else:
+                break
+
