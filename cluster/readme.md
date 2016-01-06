@@ -14,6 +14,22 @@
 
 在安装Docker的过程中需要输入私有仓库的地址，直接按回车即可，默认为本机。
 
+#**NFS Server**
+---
+NFS Server用来做数据持久化的，可以作为镜像存储后端以及存储
+需要持久化的应用数据（日志，数据库数据等）。
+在NFS　Server上运行如下命令安装NFS服务:
+
+	$ git clone http://github.com/wangtaoking1/hummer.git
+	$ cd hummer/cluster
+	$ sudo bash nfs_install.sh
+
+部署好NFS Server后，我们还需将该目录挂载到平台API Server上，在API Server上运行如下命令设置开机挂载：
+
+	# apt-get install nfs-common
+	# mkdir /hummer
+	# echo "nfs_server_ip:/hummer /hummer nfs 0 0" >>/etc/fstab
+
 #**K8S集群**
 ---
 由于该部分部署工作比较复杂，所以没有花大量时间去写自动化部署脚本了，只要按着如下步骤操作即可部署好K8S集群。

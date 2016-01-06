@@ -28,7 +28,8 @@ class NFSClientTestCase(unittest.TestCase):
         print(res)
 
     def test_tar_and_copy_to_local(self):
-        self.client.tar_and_copy_to_local("/hummer/test", "/home/wangtao/test/test.tar")
+        self.client.tar_and_copy_to_local("/hummer/test",
+            "/home/wangtao/test/test.tar")
 
     def test_copy_file_to_remote_and_untar(self):
         self.client.copy_file_to_remote_and_untar("/home/wangtao/test/test.tar",
