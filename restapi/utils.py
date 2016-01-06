@@ -6,13 +6,13 @@ from django.conf import settings
 logger = logging.getLogger('hummer')
 
 
-def save_image_file_to_disk(file_obj, filename):
+def save_upload_file_to_disk(file_obj, filename):
     """
-    Save the image file into disk, then use it to build image.
+    Save the upload file into disk.
     """
-    image_dir = os.path.dirname(filename)
-    if not os.path.exists(image_dir):
-        os.makedirs(image_dir)
+    file_dir = os.path.dirname(filename)
+    if not os.path.exists(file_dir):
+        os.makedirs(file_dir)
 
     with open(filename, 'wb+') as destination:
         for chunk in file_obj.chunks():
@@ -41,6 +41,23 @@ def get_upload_image_filename(image, user):
     """
     filename = image['name'] + '_' + image['version'] + '.tar'
     return os.path.join(settings.FILE_DIR, user.username, 'images', filename)
+
+
+def get_upload_volume_filename(volume, user):
+    """
+    Return the filename of the uploaded volume file in disk.
+    """
+    filename = volume.name + '.tar'
+    return os.path.join(settings.FILE_DIR, user.username, 'volumes',
+        volume.project.name, filename)
+
+
+def get_volume_direction_on_nfs(volume, user):
+    """
+    Return the direction of the uploaded volume file on nfs.
+    """
+    return os.path.join(settings.NFS_BASE_DIR, user.username,
+        volume.project.name, volume.name)
 
 
 def get_ports_by_protocol(protocol, ports):

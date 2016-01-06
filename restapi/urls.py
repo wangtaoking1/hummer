@@ -23,6 +23,13 @@ port_detail = PortViewSet.as_view({
     'get': 'retrieve'
 })
 
+volume_download = VolumeViewSet.as_view({
+    'get': 'download'
+})
+volume_upload = VolumeViewSet.as_view({
+    'post': 'upload'
+})
+
 urlpatterns = [
     # Examples:
     # url(r'^$', 'hummer.views.home', name='home'),
@@ -33,6 +40,11 @@ urlpatterns = [
         port_list, name='port-list'),
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/ports/(?P<pk>[0-9]+)/$',
         port_detail, name='port-detail'),
+
+    url(r'projects/(?P<pid>[0-9]+)/volumes/(?P<pk>[0-9]+)/download/$',
+        volume_download, name='volume-download'),
+    url(r'projects/(?P<pid>[0-9]+)/volumes/(?P<pk>[0-9]+)/upload/$',
+        volume_upload, name='volume-upload'),
 
     url(r'auth/', include('rest_framework.urls',
                                namespace='rest_framework')),

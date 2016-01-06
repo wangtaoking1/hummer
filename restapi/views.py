@@ -14,11 +14,14 @@ from restapi.serializers import (UserSerializer, ProjectSerializer,
     ResourceLimitSerializer, VolumeSerializer)
 from backend.models import (MyUser, Project, Image, Application, Port,
     ResourceLimit, Volume)
-from restapi.utils import (save_image_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol)
+from restapi.utils import (save_upload_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol,
+    get_upload_volume_filename, get_volume_direction_on_nfs)
 from backend.image import (ImageBuilder, ImageDestroyer)
 from backend.application import (ApplicationBuilder, ApplicationDestroyer)
 from backend.volume import (VolumeBuilder, VolumeDestroyer)
 from backend.kubernetes.k8sclient import KubeClient
+from backend.nfs import NFSLocalClient
+from backend.utils import (remove_file_from_disk)
 
 logger = logging.getLogger("hummer")
 
@@ -160,7 +163,7 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         filename = get_upload_image_filename(image, request.user)
 
-        save_image_file_to_disk(request.FILES['file'], filename)
+        save_upload_file_to_disk(request.FILES['file'], filename)
 
         # create a true image instance, and upload into private registry
         builder = ImageBuilder(
@@ -468,3 +471,29 @@ application {}, delete the application first.".format(volume.app.name))
         destroyer.destroy_volume()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def download(self, request, *args, **kwargs):
+        """
+        """
+        return Response()
+
+    def upload(self, request, *args, **kwargs):
+        """
+        User upload volume data.
+        """
+        volume = self.get_object()
+        if not request.FILES.get('file'):
+            raise ParseError(detail="There is no upload file.")
+
+        logger.info("User {} upload files to volume {}-{}.".format(
+            request.user.username, volume.project.name, volume.name))
+
+        filename = get_upload_volume_filename(volume, request.user)
+        save_upload_file_to_disk(request.FILES['file'], filename)
+
+        client = NFSLocalClient()
+        volume_dir = get_volume_direction_on_nfs(volume, request.user)
+        client.copy_file_to_remote_and_untar(filename, volume_dir)
+        remove_file_from_disk(filename)
+
+        return Response(status=status.HTTP_202_ACCEPTED)
