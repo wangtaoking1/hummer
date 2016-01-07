@@ -105,19 +105,19 @@ class KubeClientTestCase(unittest.TestCase):
         print(res)
 
     def test_create_persistentvolume(self):
-        res = self.client.create_persistentvolume('user', 'volume0', '10Mi',
-            '/hummer/test', '192.168.0.15')
+        res = self.client.create_persistentvolume('default', 'project0-volume0', '10Mi',
+            '/hummer/user/project0/volume0', '192.168.0.15')
         print(res)
 
     def test_delete_persistentvolume(self):
-        res = self.client.delete_persistentvolume('user', 'volume0')
+        res = self.client.delete_persistentvolume('default', 'project0-volume0')
         print(res)
 
     def test_create_persistentvolumeclaim(self):
-        res = self.client.create_persistentvolumeclaim('user', 'volume0',
+        res = self.client.create_persistentvolumeclaim('default', 'project0-volume0',
             '10Mi')
         print(res)
 
     def test_delete_persistentvolumeclaim(self):
-        res = self.client.delete_persistentvolumeclaim('user', 'volume0')
+        res = self.client.delete_persistentvolumeclaim('default', 'project0-volume0')
         print(res)

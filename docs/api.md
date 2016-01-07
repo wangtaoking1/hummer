@@ -32,13 +32,17 @@ http -a user:user123 POST http://127.0.0.1:8000/api/projects/1/applications/ <da
 
 data.json:
 {
-    "image": 12,
-    "name": "nginx",
-    "replicas": 2,
-    "is_public": false,
+    "image": 6,
+    "name": "my-nginx",
+    "replicas": 1,
+    "resource_limit": 1,
+    "is_public": true,
     "session_affinity": false,
     "ports": [
         {"name": "http", "port": 80, "protocol": "TCP"}
+    ],
+    "volumes": [
+        {"volume": 1, "mount_path": "/var/www/html"}
     ]
 }
 

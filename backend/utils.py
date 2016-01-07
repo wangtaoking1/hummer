@@ -41,3 +41,10 @@ def remove_file_from_disk(filename):
     """
     if os.path.exists(filename):
         os.remove(filename)
+
+
+def get_application_instance_name(application):
+    """
+    Return the name of the application instance.
+    """
+    return "{}-{}".format(application.image.project.name, application.name)

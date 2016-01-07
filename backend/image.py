@@ -166,8 +166,8 @@ class ImageBuilder(object):
         """
         Returns the complete name of the build image.
         """
-        return '%s/%s/%s' % (settings.IMAGE_REGISTRY, self.user.username,
-            self.image.name)
+        return '{}/{}/{}-{}'.format(settings.IMAGE_REGISTRY, self.user.username,
+            self.image.project.name, self.image.name)
 
     def _load_image_on_docker_host(self, base_url, build_file, image_name,
                 image_version='latest'):
@@ -183,6 +183,8 @@ class ImageBuilder(object):
         Returns:
         'token': the image token
         """
+        self._delete_image_on_docker_host(base_url, self.old_image_name,
+            self.old_image_version)
         self._delete_image_on_docker_host(base_url, image_name, image_version)
 
         client = Client(base_url=base_url)

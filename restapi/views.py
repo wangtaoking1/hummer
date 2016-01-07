@@ -285,8 +285,8 @@ application {}.".format(volume.name, volume.app.name))
         application = Application.objects.get(id=serializer.data['id'])
         logger.debug(application)
 
-        image_name = "{}/{}/{}:{}".format(settings.IMAGE_REGISTRY,
-            request.user.username, image.name, image.version)
+        image_name = "{}/{}/{}-{}:{}".format(settings.IMAGE_REGISTRY,
+            request.user.username, image.project.name, image.name, image.version)
         logger.debug(image_name)
         ports = request.data.get('ports', None)
 

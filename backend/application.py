@@ -6,7 +6,8 @@ from django.conf import settings
 from backend.models import Application, Port, Volume
 from backend.kubernetes.k8sclient import KubeClient
 from backend.schedule import DockerSchedulerFactory
-from backend.utils import get_optimal_docker_host
+from backend.utils import (get_optimal_docker_host,
+    get_application_instance_name)
 
 logger = logging.getLogger('hummer')
 
@@ -44,6 +45,7 @@ class ApplicationBuilder(object):
 
         self.namespace = namespace
         self.application = application
+        self.application_name = get_application_instance_name(self.application)
         self.image_name = image_name
         self.tcp_ports = tcp_ports
         self.udp_ports = udp_ports
@@ -71,24 +73,24 @@ class ApplicationBuilder(object):
         database at last.
         """
         logger.info('Create an application {} in namespace {} by image {}.'
-            .format(self.application.name, self.namespace, self.image_name))
+            .format(self.application_name, self.namespace, self.image_name))
 
         self._mount_volume_onto_application()
 
         if not self._create_controller():
             logger.debug('Create controller {} failed.'.format(
-                self.application.name))
+                self.application_name))
             logger.info('Create an application {} in namespace {} failed.'
-            .format(self.application.name, self.namespace, self.image_name))
+            .format(self.application_name, self.namespace, self.image_name))
 
             self._update_application_metadata(status='error')
             return None
 
         if not self._create_service():
             logger.debug('Create service {} failed.'.format(
-                self.application.name))
+                self.application_name))
             logger.info('Create an application {} in namespace {} failed.'
-            .format(self.application.name, self.namespace, self.image_name))
+            .format(self.application_name, self.namespace, self.image_name))
 
             self._update_application_metadata(status='error')
             return None
@@ -114,7 +116,7 @@ class ApplicationBuilder(object):
         Create a replicationcontroller by provided image.
         """
         return self.kubeclient.create_controller(namespace=self.namespace,
-            name=self.application.name,
+            name=self.application_name,
             image_name=self.image_name,
             cpu=self.cpu,
             memory=self.memory,
@@ -132,7 +134,7 @@ class ApplicationBuilder(object):
         Create a service on the replicationcontroller.
         """
         return self.kubeclient.create_service(namespace=self.namespace,
-            name=self.application.name,
+            name=self.application_name,
             tcp_ports=self.tcp_ports,
             udp_ports=self.udp_ports,
             is_public=self.is_public,
@@ -144,7 +146,7 @@ class ApplicationBuilder(object):
         Get internal_ip and ports of the service.
         """
         response = self.kubeclient.get_service_details(self.namespace,
-            self.application.name)
+            self.application_name)
         return (response['spec']['clusterIP'], response['spec']['ports'])
 
 
@@ -184,7 +186,7 @@ class ApplicationBuilder(object):
         for volume_item in self.volumes:
             volume = Volume.objects.get(id=volume_item['volume'])
             logger.debug("mount volume {} onto application {}.".format(
-                volume.name, self.application.name))
+                volume.name, self.application_name))
             volume.app = self.application
             volume.mount_path = volume_item['mount_path']
             volume.save()
@@ -199,8 +201,9 @@ class ApplicationBuilder(object):
         volume_name_path = {}
         for volume_item in self.volumes:
             volume = Volume.objects.get(id=int(volume_item['volume']))
-            volume_name_path[volume.project.name + '-' + volume.name] = \
-                volume_item['mount_path']
+            volume_name = "{}-{}-{}".format(self.namespace,
+                volume.project.name, volume.name)
+            volume_name_path[volume_name] = volume_item['mount_path']
         logger.debug(volume_name_path)
         return volume_name_path
 
@@ -214,9 +217,10 @@ class ApplicationDestroyer(object):
 
     def __init__(self, application):
         self.application = application
+        self.application_name = get_application_instance_name(self.application)
         self.namespace = self.application.image.project.user.username
-        self.service_name = self.application.name
-        self.controller_name = self.application.name
+        self.service_name = self.application_name
+        self.controller_name = self.application_name
 
         self.kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
             settings.K8S_PORT, settings.K8S_API_PATH))
@@ -290,7 +294,7 @@ class ApplicationDestroyer(object):
         volumes = Volume.objects.filter(app=self.application)
         for volume in volumes:
             logger.debug("umount volume {}-{} from application {}.".format(
-                volume.project.name, volume.name, self.application.name))
+                volume.project.name, volume.name, self.application_name))
             volume.app = None
             volume.mount_path = None
             volume.save()

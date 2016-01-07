@@ -116,7 +116,8 @@ class KubeClient(object):
         """
         Create persistentvolumeclaim called name.
         """
-        volumeclaim = PersistentVolumeClaim(name, capacity)
+        volume_name = namespace + '-' + name
+        volumeclaim = PersistentVolumeClaim(volume_name, capacity)
         response = self._send_request('POST',
             'namespaces/{}/persistentvolumeclaims'.format(namespace),
             body=volumeclaim.body)
@@ -126,8 +127,10 @@ class KubeClient(object):
         """
         Delete persistentvolumeclaim called name.
         """
+        volume_name = namespace + '-' + name
         response = self._send_request('DELETE',
-            'namespaces/{}/persistentvolumeclaims/{}'.format(namespace, name))
+            'namespaces/{}/persistentvolumeclaims/{}'.format(namespace,
+                volume_name))
         return self._is_creating_deleting_successful(response)
 
     def list_controllers(self, namespace):
