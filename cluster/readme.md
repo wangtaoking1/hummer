@@ -52,11 +52,10 @@ K8S是基于Docker的开源平台，所以我们首先需要在集群的每一�
 	$ sudo bash docker_install.sh
 在安装的过程中需要输入私有仓库的地址，用于快速下载镜像。
 
-由于GFW，为了能够成功安装，须先下载安装过程中会用到的pause镜像。
+在安装的过程中需要用到镜像pause，etcd，kube2sky，skydns，exechealthz，但是由于GFW的原因，通常会下载失败，所以我们需要提前从docker.io下载这些镜像。
 
-	# docker pull docker.io/kubernetes/pause
-	# docker tag kubernetes/pause gcr.io/google_containers/pause:0.8.0
-	# docker tag gcr.io/google_containers/pause:0.8.0 gcr.io/google_containers/pause
+	$ cd hummer/cluster
+	$ sudo bash download_k8s_images.sh
 
 需要使用NFS做持久化volume后端，因此需要在每一个集群节点上安装nfs-common，这样才能成功访问nfs server。
 

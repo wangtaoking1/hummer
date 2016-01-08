@@ -27,12 +27,6 @@ function install_key() {
     return 0
 }
 
-# download pause image for installing of k8s
-function download_pause_image() {
-    docker pull docker.io/kubernetes/pause
-    docker tag kubernetes/pause gcr.io/google_containers/pause:0.8.0
-    docker tag gcr.io/google_containers/pause:0.8.0 gcr.io/google_containers/pause
-}
 
 if [[ $UID -ne 0 ]]; then
     echo "Not root user. Please run as root."
@@ -64,5 +58,3 @@ sed -i "s|.*DOCKER_OPTS=.*|DOCKER_OPTS=\"-H 0.0.0.0:2357 -H unix:///var/run/dock
 
 service docker restart
 
-# download pause image if you need to install k8s
-download_pause_image
