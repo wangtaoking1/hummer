@@ -23,7 +23,7 @@ from backend.application import (ApplicationBuilder, ApplicationDestroyer)
 from backend.volume import (VolumeBuilder, VolumeDestroyer)
 from backend.kubernetes.k8sclient import KubeClient
 from backend.nfs import NFSLocalClient
-from backend.utils import (remove_file_from_disk)
+from backend.utils import (remove_file_from_disk, get_application_instance_name)
 
 logger = logging.getLogger("hummer")
 
@@ -320,6 +320,24 @@ application {}.".format(volume.name, volume.app.name))
         destroyer.destroy_application_instance()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def pod_lists(self, request, *args, **kwargs):
+        """
+        Return the pods list of the application with json.
+        """
+        application = self.get_object()
+
+        if not application:
+            raise ValidationError(detail="The application doesn't exist.")
+
+        kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+            settings.K8S_PORT, settings.K8S_API_PATH))
+        pods = kubeclient.list_pods(namespace=request.user.username,
+            label="app={}".format(get_application_instance_name(application)))
+        logger.debug(pods)
+
+        return Response({"pods": pods}, status=status.HTTP_200_OK)
+
 
 class PortViewSet(viewsets.ModelViewSet):
     serializer_class = PortSerializer

@@ -29,6 +29,9 @@ volume_download = VolumeViewSet.as_view({
 volume_upload = VolumeViewSet.as_view({
     'post': 'upload'
 })
+pod_list = ApplicationViewSet.as_view({
+    'get': 'pod_lists'
+})
 
 urlpatterns = [
     # Examples:
@@ -36,6 +39,8 @@ urlpatterns = [
     # url(r'^blog/', include('blog.urls')),
 
     url(r'', include(router.urls)),
+    url(r'projects/(?P<pid>[0-9]+)/applications/(?P<pk>[0-9]+)/pods/$',
+        pod_list, name='pod-list'),
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/ports/$',
         port_list, name='port-list'),
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/ports/(?P<pk>[0-9]+)/$',
