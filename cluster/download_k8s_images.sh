@@ -49,7 +49,8 @@ fi
 
 download_pause
 
-download_etcd
-download_kube2sky
-download_skydns
-download_exechealthz
+# For kube-dns
+# download_etcd
+# download_kube2sky
+# download_skydns
+# download_exechealthz

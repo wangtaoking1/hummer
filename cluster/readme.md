@@ -2,7 +2,7 @@
 ---
 ![物理架构图](http://img.blog.csdn.net/20151031165906356)
 
-我们现在按照如下步骤部署私有仓库Registry和K8S集群。
+我们现在按照如下步骤部署私有仓库Registry, NFS Server, K8S集群以及监控系统(heapster, influxdb and grafana)。
 
 #**私有仓库**
 ---
