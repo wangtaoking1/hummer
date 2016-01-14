@@ -45,6 +45,7 @@ INSTALLED_APPS = (
 )
 
 AUTH_USER_MODEL = 'backend.MyUser'
+LOGIN_URL = '/'
 
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [
@@ -164,3 +165,6 @@ K8S_API_PATH = '/api/v1/'
 # NFS server information
 NFS_IP = '192.168.0.15'
 NFS_BASE_DIR = '/hummer'
+
+# API Server
+API_SERVER = '127.0.0.1:8000'
