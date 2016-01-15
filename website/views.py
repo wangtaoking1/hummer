@@ -1,4 +1,5 @@
 import requests
+import logging
 
 from django.conf import settings
 from django.shortcuts import render
@@ -9,13 +10,17 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 
 from website.utils import (get_api_server_url)
+from website.communicate import Communicator
+from website.auth import is_authenticated
+
+logger = logging.getLogger("website")
 
 
 def home(request):
     """
     Return the home page before login in.
     """
-    if request.user and request.user.is_authenticated():
+    if is_authenticated(request):
         return HttpResponseRedirect(reverse('index'))
 
     return render(request, 'website/homepage.html', locals(),
@@ -29,23 +34,16 @@ def login(request):
     form = AuthenticationForm(request, data=request.POST)
 
     if form.is_valid():
-        username = request.POST['username']
-        password = request.POST['password']
-        csrf_token = request.COOKIES['csrftoken']
-
-        url = get_api_server_url('/api/auth/login/')
-        client = requests.session()
-        client.cookies['csrftoken'] = csrf_token
         data = {
-            'username': username,
-            'password': password,
-            'csrfmiddlewaretoken': csrf_token
+            'username': form.cleaned_data['username'],
+            'password': form.cleaned_data['password']
         }
-        client.post(url, data)
+        client = Communicator()
+        cookies = client.login(data)
 
-        if 'sessionid' in client.cookies:
+        if 'sessionid' in cookies:
             response = HttpResponseRedirect(reverse('index'))
-            response.set_cookie('sessionid', client.cookies['sessionid'])
+            response.set_cookie('sessionid', cookies['sessionid'])
             return response
 
         return HttpResponseRedirect(reverse('home'))
@@ -56,10 +54,9 @@ def logout(request):
     """
     Logout view.
     """
-    url = get_api_server_url('/api/auth/logout/')
-    client = requests.session()
-    client.cookies['sessionid'] = request.COOKIES['sessionid']
-    client.get(url)
+    cookies = {'sessionid': request.COOKIES.get('sessionid', None)}
+    client = Communicator(cookies=cookies)
+    client.logout()
     return HttpResponseRedirect(reverse('home'))
 
 

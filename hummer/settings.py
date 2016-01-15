@@ -132,10 +132,18 @@ LOGGING = {
     'filters': {
     },
     'handlers': {
-        'default': {
+        'hummer': {
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join('logs/','hummer.log'),
+            'filename': os.path.join('logs/','server.log'),
+            'maxBytes': 1024 * 1024 * 5, # 5 MB
+            'backupCount': 5,
+            'formatter':'standard',
+        },
+        'website': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join('logs/','website.log'),
             'maxBytes': 1024 * 1024 * 5, # 5 MB
             'backupCount': 5,
             'formatter':'standard',
@@ -143,7 +151,12 @@ LOGGING = {
     },
     'loggers': {
         'hummer': {
-            'handlers': ['default'],
+            'handlers': ['hummer'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+        'website': {
+            'handlers': ['website'],
             'level': 'DEBUG',
             'propagate': False
         },

@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.exceptions import (PermissionDenied, ValidationError,
     ParseError, NotFound)
+from rest_framework.decorators import api_view
 
 from restapi.serializers import (UserSerializer, ProjectSerializer,
     ImageSerializer, ApplicationSerializer, PortSerializer,
@@ -32,8 +33,6 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class = UserSerializer
 
-    permission_classes = (IsAdminUser,)
-
     def destroy(self, request, *args, **kwargs):
         """
         Destroy an user instance.
@@ -47,6 +46,18 @@ class UserViewSet(viewsets.ModelViewSet):
         kubeclient.delete_namespace(user.username)
 
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
+
+    def set_password(self, request, *args, **kwargs):
+        """
+        Set password after creating a user.
+        """
+        user = self.get_object()
+
+        password = request.data.get('password', None)
+        user.set_password(password)
+        user.save()
+
+        return Response(status=status.HTTP_202_ACCEPTED)
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -389,7 +400,26 @@ class ResourceLimitViewSet(viewsets.ModelViewSet):
     serializer_class = ResourceLimitSerializer
     queryset = ResourceLimit.objects.all()
 
-    permission_classes = (IsAdminUser,)
+    def create(self, request, *args, **kwargs):
+        if (not request.user) or (not request.user.is_staff):
+            raise PermissionDenied("Only admin can create resourcelimits.")
+
+        return super(ResourceLimitViewSet, self).create(request, *args,
+            **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if (not request.user) or (not request.user.is_staff):
+            raise PermissionDenied("Only admin can update resourcelimits.")
+
+        return super(ResourceLimitViewSet, self).update(request, *args,
+            **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        if (not request.user) or (not request.user.is_staff):
+            raise PermissionDenied("Only admin can create resourcelimits.")
+
+        return super(ResourceLimitViewSet, self).destroy(request, *args,
+            **kwargs)
 
 
 class VolumeViewSet(viewsets.ModelViewSet):
@@ -538,3 +568,16 @@ application {}, delete the application first.".format(volume.app.name))
         remove_file_from_disk(filename)
 
         return Response(status=status.HTTP_202_ACCEPTED)
+
+
+@api_view(['GET'])
+def is_authenticated(request):
+    """
+    Determine whether the user is authenticated.
+    Return user_name and status HTTP_200_OK if authenticated, else return
+    status HTTP_401_UNAUTHORIZED.
+    """
+    if request.user and request.user.is_authenticated():
+        return Response(data=request.user.username,
+            status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
