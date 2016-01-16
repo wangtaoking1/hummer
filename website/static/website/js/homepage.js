@@ -31,6 +31,10 @@ $(document).ready(function() {
         $('.login-body form').submit();
     });
 
+    $('.register-body button').click(function(){
+        $('.register-body form').submit();
+    })
+
     $('.box-body').click(function(){
         return false;
     });

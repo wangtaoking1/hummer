@@ -33,6 +33,18 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class = UserSerializer
 
+    def create(self, request, *args, **kwargs):
+        """
+        Create an user instance.
+        """
+        try:
+            kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+                settings.K8S_PORT, settings.K8S_API_PATH))
+            kubeclient.create_namespace(request.data.get('username'))
+        except Exception as error:
+            logger.error(error)
+        return super(UserViewSet, self).create(request, *args, **kwargs)
+
     def destroy(self, request, *args, **kwargs):
         """
         Destroy an user instance.
@@ -40,10 +52,12 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.get_object()
 
         # Delete the namespace
-        kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
-            settings.K8S_PORT, settings.K8S_API_PATH))
-
-        kubeclient.delete_namespace(user.username)
+        try:
+            kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+                settings.K8S_PORT, settings.K8S_API_PATH))
+            kubeclient.delete_namespace(user.username)
+        except Exception as e:
+            logger.error(e)
 
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
 

@@ -25,3 +25,15 @@ class CommunicatorTestCase(unittest.TestCase):
         ok, username = client.is_authenticated()
         print(ok)
         print(username)
+
+    def test_registry(self):
+        data = {
+            'username': 'test',
+            'password': 'test123',
+            'email': 'test@hummer.com',
+            'is_staff': False,
+            'is_active': True
+        }
+        client = Communicator()
+        cookies = client.registry(data)
+        print(cookies)

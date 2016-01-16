@@ -176,7 +176,9 @@
               注册
             </div>
             <div class="common-content register-content">
-              <form action="#" method="post">
+              <form action="{% url 'registry' %}" method="post">
+                {% csrf_token %}
+
                 <div class="form-group">
                     <div class="col-xs-12">
                       <div class="input-group">
@@ -184,7 +186,7 @@
                           <span class="glyphicon glyphicon-user">
                           </span>
                         </span>
-                        <input type="text" id="username" name="userName" class="form-control" placeholder="用户名">
+                        <input type="text" id="username" name="username" class="form-control" placeholder="用户名">
                       </div>
                     </div>
                     <div style="clear:both;"></div>
@@ -197,7 +199,33 @@
                           <span class="glyphicon glyphicon-user">
                           </span>
                         </span>
-                        <input type="password" id="password" name="userPwd" class="form-control" placeholder="密码">
+                        <input type="password" id="password1" name="password1" class="form-control" placeholder="密码">
+                      </div>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-12">
+                      <div class="input-group">
+                        <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-user">
+                          </span>
+                        </span>
+                        <input type="password" id="password2" name="password2" class="form-control" placeholder="密码确认">
+                      </div>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-12">
+                      <div class="input-group">
+                        <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-user">
+                          </span>
+                        </span>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="邮箱">
                       </div>
                     </div>
                     <div style="clear:both;"></div>
@@ -205,7 +233,7 @@
 
                 <div class="form-group form-actions">
                   <div class="col-xs-4 col-xs-offset-5">
-                    <button type="" class="btn btn-sm btn-info">
+                    <button type="submit" class="btn btn-sm btn-info">
                       注册
                     </button>
                   </div>
@@ -213,11 +241,10 @@
                 </div>
               </form>
             </div>
-            <div class="go go-login">
-                <a href="#">
-                  登录
-                </a>
-            </div>
+
+            <a href="#" class="go go-login">
+              登录
+            </a>
           </div>
         </div>
     </div>

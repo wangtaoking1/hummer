@@ -42,3 +42,15 @@ class Communicator(object):
             return True, json.loads(response.text)
         else:
             return False, None
+
+    def registry(self, data):
+        """
+        User registry.
+        """
+        url = get_api_server_url('/api/users/')
+        response = self.client.post(url, data)
+        user_url = json.loads(response.text)['url']
+        password_url = user_url + 'set_password/'
+        self.client.post(password_url, data)
+
+        return self.login(data)

@@ -3,15 +3,17 @@ import logging
 
 from django.conf import settings
 from django.shortcuts import render
-from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import (require_http_methods, require_GET,
+    require_POST)
 
+from website.auth import login_required
 from website.utils import (get_api_server_url)
 from website.communicate import Communicator
 from website.auth import is_authenticated
+from website.forms import (LoginForm, RegistryForm)
 
 logger = logging.getLogger("website")
 
@@ -20,18 +22,19 @@ def home(request):
     """
     Return the home page before login in.
     """
-    if is_authenticated(request):
+    if is_authenticated(request)[0]:
         return HttpResponseRedirect(reverse('index'))
 
     return render(request, 'website/homepage.html', locals(),
         RequestContext(request))
 
 
+@require_POST
 def login(request):
     """
     Login view.
     """
-    form = AuthenticationForm(request, data=request.POST)
+    form = LoginForm(data=request.POST)
 
     if form.is_valid():
         data = {
@@ -61,8 +64,33 @@ def logout(request):
 
 
 @login_required()
-def index(request):
+def index(request, *args, **kwargs):
     context = {
-        'user': request.user
+        'username': kwargs.get('username')
     }
     return render(request, 'website/dashboard.html', context)
+
+
+@require_POST
+def registry(request):
+    """
+    User registry view, should post username, password1, password2, email.
+    """
+    form = RegistryForm(request.POST)
+    if form.is_valid() and form.password_varify():
+        data = {
+            'username': form.cleaned_data['username'],
+            'password': form.cleaned_data['password1'],
+            'email': form.cleaned_data['email'],
+            'is_staff': False,
+            'is_active': True
+        }
+        client = Communicator()
+        cookies = client.registry(data)
+
+        if 'sessionid' in cookies:
+            response = HttpResponseRedirect(reverse('index'))
+            response.set_cookie('sessionid', cookies['sessionid'])
+            return response
+
+    return HttpResponseRedirect(reverse('home'))

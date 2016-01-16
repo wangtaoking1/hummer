@@ -7,7 +7,7 @@ from backend.models import (MyUser, Project, Image, Application, Port,
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ('url', 'username', 'email', 'is_staff', 'is_active')
+        fields = ('url', 'id', 'username', 'email', 'is_staff', 'is_active')
 
 
 class ProjectSerializer(serializers.ModelSerializer):
