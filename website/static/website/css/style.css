@@ -92,12 +92,13 @@ body{font-family: "Helvetica Neue",Helvetica,"Microsoft YaHei",Arial,"宋体","H
 .notshow{display: none;}
 
 /* footer */
-footer{height: 100px; width: 100%; background-color: #666;position: absolute; bottom: 0;}
-.main-footer{margin-top: 30px; color:white;}
+footer{height: 35px; width: 100%; background-color: #666;position: absolute; bottom: 0;}
+.main-footer{margin-top: 10px; color:white;}
 .main-footer>h4{color:white;}
 
 /* index main content */
 .introduction{font-size: 1.5em; line-height: 1.5em; vertical-align: middle;}
+.container-content{margin-bottom: 55px;}
 
 /* Login box */
 .center-box{position: absolute; top:300px; width: 100%;}
@@ -132,3 +133,4 @@ td a{margin-right: 5px;}
 
 /* Home projects show*/
 .table>tbody>tr>td{padding: 8px;  line-height: 2.42857143;  vertical-align: top;  border-top: 1px solid #ddd;}
+.project-part .all-project .btn-xs{width: 40px;}

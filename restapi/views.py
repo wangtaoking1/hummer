@@ -101,10 +101,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
             raise ValidationError(detail="Already has an project called {}."
                 .format(request.data['name']))
 
-        data = request.data
+        data = request.data.copy()
         data['user'] = user.id
 
-        logger.debug(data)
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -167,7 +166,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         assert 'pid' in self.kwargs
         pid = self.kwargs['pid']
 
-        data = request.data
+        data = request.data.copy()
         data['project'] = pid
         # create image metadata
         serializer = self.get_serializer(data=data)
@@ -185,7 +184,6 @@ class ImageViewSet(viewsets.ModelViewSet):
             headers=headers)
 
         image = serializer.data
-        logger.debug(image)
 
         is_image = is_image_or_dockerfile(request.data.get('is_image', None))
         dockerfile = None

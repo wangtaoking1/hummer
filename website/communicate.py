@@ -1,7 +1,10 @@
 import requests
 import json
+import logging
 
 from website.utils import (get_api_server_url)
+
+logger = logging.getLogger('website')
 
 
 class Communicator(object):
@@ -63,4 +66,15 @@ class Communicator(object):
         response = self.client.get(url)
         return json.loads(response.text)
 
+    def create_project(self, data):
+        """
+        Create an project for user.
+        """
+        url = get_api_server_url('/api/projects/')
+        logger.debug(data)
+        response = self.client.post(url, data)
+        if response.status_code == 201:
+            return True
+        else:
+            return False
 

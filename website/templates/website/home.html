@@ -3,7 +3,7 @@
 {% load staticfiles %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid container-content">
     <div class="col-sm-8 col-md-8 col-sm-offset-2 col-md-offset-2 main">
         <div class="simple-nav">
             <div class="col-sm-2 col-md-2 text-center">
@@ -35,9 +35,15 @@
                         {% for project in projects %}
                         <tr>
                             <td>{{ project.name }}</td>
-                            <td>{{ project.desc|truncatechars:10 }}</td>
+                            <td>{{ project.desc|truncatechars:20 }}</td>
                             <td>{{ project.create_time }}</td>
-                            <td><a class="btn btn-xs btn-danger">删除</a></td>
+                            <td>
+                            <form action="{% url 'delete-project' %}" method="post">
+                                <input type="hidden" name="project_id" value="{{ project.id }}">
+                                <input class="btn btn-xs btn-danger" type="submit
+                                " value="删除">
+                            </form>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -50,24 +56,26 @@
             <h2>创建项目</h2>
 
             <div class="create-project">
-                <form action ="#" method="post" class="form-horizontal">
+                <form action="{% url 'create-project' %}" method="post" class="form-horizontal">
+                    {% csrf_token %}
+
                     <div class="form-group">
-                        <label for="peojectName" class="col-sm-1 control-label">项目名称</label>
-                        <div class="col-sm-6">
+                        <label for="peojectName" class="col-sm-2 control-label">项目名称</label>
+                        <div class="col-sm-8">
                             <input type="text" class="form-control" id="peojectName" name="name" maxlength="32" placeholder="项目名称">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="description" class="col-sm-1 control-label">项目描述</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="description" name="desc" maxlength="256" placeholder="项目描述">
+                        <label for="description" class="col-sm-2 control-label">项目描述</label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control" id="description" name="desc" maxlength="256" placeholder="项目描述"></textarea>
                         </div>
                     </div>
 
                     <div class="form-group last-btns">
-                        <div class="col-sm-1 col-sm-offset-1">
-                            <button type="submit" class="btn btn-info"> 创建 </button>
+                        <div class="col-sm-1 col-sm-offset-2">
+                            <button type="submit" class="btn btn-info">创建</button>
                         </div>
                     </div>
                 </form>

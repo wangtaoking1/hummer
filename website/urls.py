@@ -13,4 +13,6 @@ urlpatterns = [
     url(r'^registry/$', views.registry, name='registry'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^home/$', views.home, name='home'),
+    url(r'^create_project/$', views.create_project, name='create-project'),
+    url(r'^delete_project/$', views.delete_project, name='delete-project'),
 ]

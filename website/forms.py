@@ -19,3 +19,8 @@ class RegistryForm(forms.Form):
         if self.cleaned_data['password1'] == self.cleaned_data['password2']:
             return True
         return False
+
+
+class ProjectForm(forms.Form):
+    name = forms.CharField(max_length=32)
+    desc = forms.CharField(max_length=256)

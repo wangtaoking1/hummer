@@ -13,7 +13,7 @@ from website.auth import login_required
 from website.utils import (get_api_server_url)
 from website.communicate import Communicator
 from website.auth import is_authenticated
-from website.forms import (LoginForm, RegistryForm)
+from website.forms import (LoginForm, RegistryForm, ProjectForm)
 
 logger = logging.getLogger("website")
 
@@ -101,4 +101,35 @@ def home(request, *args, **kwargs):
     projects = client.project_lists()
     context['projects'] = projects
 
-    return render(request, 'website/home.html', context)
+    return render(request, 'website/home.html', context,
+        RequestContext(request))
+
+
+@login_required()
+@require_POST
+def create_project(request, *args, **kwargs):
+    form = ProjectForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseRedirect(reverse('home'))
+
+    cookies = {
+        'sessionid': request.COOKIES.get('sessionid', None),
+        'csrftoken': request.COOKIES.get('csrftoken', None)
+    }
+    client = Communicator(cookies=cookies)
+    data = {
+        'name': form.cleaned_data['name'],
+        'desc': form.cleaned_data['desc'],
+        'csrfmiddlewaretoken': request.POST['csrfmiddlewaretoken']
+    }
+
+    ok = client.create_project(data)
+    logger.debug(ok)
+    return HttpResponseRedirect(reverse('home'))
+
+
+@login_required()
+@require_POST
+def delete_project(request, *args, **kwargs):
+    logger.debug("13231231323123")
+    return HttpResponseRedirect(reverse('home'))
