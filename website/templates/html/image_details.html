@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Dashboard for Docker</title>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link href="/static/css/style.css" rel="stylesheet">
+  </head>
+  <body>
+  <style>
+      body{font-family: "Helvetica Neue",Helvetica,"Microsoft YaHei",Arial,"宋体","Hiragino Sans GB",STHeiti,"WenQuanYi Micro Hei",SimSun,sans-serif;}
+   .self-active{background-color:  #444;}
+   .self-active:hover{background-color: #888;}
+   .notshow{display: none;}
+      .createPort{
+          height: 30px; text-align: center;color: #3f8ec3;line-height: 30px;background-color: #e4eaec }
+      .enable thead{background-color: #e4eaec}
+      thead{display: table-header-group;vertical-align: middle}
+  </style>
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"><img class="logo" src="/static/images/logo.png" height="40px"></a>
+          </div>
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li class="self-active"><a href="#">产品服务</a></li>
+              <li><a href="#">帮助文档</a></li>
+              <li><a href="#">{{ user.userName }}</a></li>
+            </ul>
+          </div>
+        </div>
+  </nav>
+<div class="container-fluid">
+    <div class="col-sm-10 col-md-10 col-sm-offset-1 col-md-offset-1 main">
+
+    <h1 class="page-header">镜像信息 </h1>
+        <h1 class="page-header">
+       {% if user.userName == '' %}
+       请先登录
+       {% else %}
+        基本配置
+       {% endif %}
+       </h1>
+       {% if user.userName != '' %}
+       <form action ="#" method="post" class="form-horizontal">
+          <div class="form-group">
+            <label for="appName" class="col-sm-2 control-label">APP Name </label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="appName" name="appName" placeholder="应用名称">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="resource" class="col-sm-2 control-label">Resource Limit </label>
+            <div class="col-sm-6">
+              <select class="form-control" id="resource" name="resource">
+                <option value="0">CPU:1 MEMORY:256M </option>
+                <option value="1">CPU:2 MEMORY:512M</option>
+                <option value="2">CPU:2 MENORY:1024M</option>
+                <option value="2">OTHER</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="volume" class="col-sm-2 control-label">Volume</label>
+            <div class="col-sm-6">
+                <select class="form-control" id="memorySize" name="memorySize">
+                <option value="0">默认存储卷</option>
+                <option value="1">256M</option>
+                <option value="2">512M</option>
+                <option value="3">1024M</option>
+                </select>
+            </div>
+
+          </div>
+          <div class="form-group">
+            <label for="description" class="col-sm-2 control-label">Description</label>
+            <div class="col-sm-6">
+            <input type="text" class="form-control" id="description" name="description" placeholder="描述">
+            </div>
+          </div>
+
+
+          <div class="form-group last-btns">
+            <div class="col-sm-1 col-sm-offset-2">
+              <button type="submit" class="btn btn-info"> 测试 </button>
+            </div>
+            <div class="col-sm-1">
+              <button  class="btn btn-info"> 高级配置 </button>
+            </div>
+          </div>
+       </form>
+           <hr>
+    {% endif %}
+    <h1 class="page-header">高级配置</h1>
+     <div action ="#" method="post" class="form-horizontal">
+          <div class="form-group">
+            <label for="containerLink" class="col-sm-2 control-label">Docker Link </label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="containerLink" name="containerLink" placeholder="链接服务">
+
+            </div>
+              <div class="col-sm-1">
+                  <a id="addcontainer" class="cursor">添加</a>
+              </div>
+          </div>
+         <div class="form-group">
+            <label for="env" class="col-sm-2 control-label">Environment Variable </label>
+            <div class="col-sm-3">
+              <input type="text" class="form-control" id="envVariable" name="envVariable" placeholder="">
+            </div>
+             <div class="col-sm-3">
+              <input type="text" class="form-control" id="envVariable" name="envVariable" placeholder="value">
+            </div>
+             <div class="col-sm-1">
+                  <a id="addcontainer" class="cursor">添加</a>
+             </div>
+          </div>
+         <div class="form-group">
+         <div class="envtable col-sm-6 col-sm-offset-2">
+             <div class="table-responsive  ">
+                 <table class="table table-hover enable" id="path">
+                     <thead>
+                     <tr>
+                         <th style="width: 45%">name</th>
+                         <th style="width: 45%">value</th>
+                         <th style="width: 10%">delete</th>
+                     </tr>
+                     </thead>
+                     <tbody>
+                     <tr>
+                         <td class="keys"><input type="text" style="width: 95%" disabled value="path"></td>
+                         <td class="vals"><input type="text" placeholder="value" value="/usr/local/sbin"></td>
+                         <td class="func"><a href="javascript:void(0)" onclick="deleteRow(this)" class="gray"><i class="fa fa-trash-o fa-lg"></i></a>
+                         <input type="hidden" class="oldvalue" value="/usr/local/sbin"></td>
+                     </tr>
+
+                     </tbody>
+                 </table>
+             </div>
+         </div>
+         </div>
+         <div class="form-group">
+            <label for="port" class="col-sm-2 control-label">Port Configure</label>
+            <div class="col-sm-2">
+              <input type="text" class="form-control" id="portname" name="portname" placeholder="端口名称">
+            </div>
+             <div class="col-sm-2">
+              <input type="text" class="form-control" id="port" name="port" placeholder="容器端口">
+             </div>
+
+             <div class="col-sm-2">
+                 <select class="form-control" id="protocol-select" name="protocol-select">
+                     <option value="1">TCP</option>
+                     <option value="2">UDP</option>
+                 </select>
+            </div>
+             <div class="col-sm-1">
+                 <a id="addport" class="cursor" >添加</a>
+             </div>
+         </div>
+         <div class="form-group">
+         <div class="envtable col-sm-6 col-sm-offset-2">
+             <div class="table-responsive table-striped">
+                 <table class="table table-hover enable" id="portconfig">
+                     <thead>
+                     <tr>
+                         <th style="width: 30%">port name</th>
+                         <th style="width: 30%">port</th>
+                         <th style="width: 30%">protocol</th>
+                         <th style="width: 10%">delete</th>
+                     </tr>
+                     </thead>
+                     <tbody>
+                     <tr>
+                         <td class="keys"><input type="text" style="width: 95%" disabled value="port name"></td>
+                         <td class="vals"><input type="text" placeholder="prot" value="22"></td>
+                         <td class="vals"><input type="text" placeholder="protocol" value="TCP"></td>
+                         <td class="func"><a href="javascript:void(0)" onclick="deleteRow(this)" class="gray"><i class="fa fa-trash-o fa-lg"></i></a>
+                         <input type="hidden" class="oldvalue" value="/usr/local/sbin"></td>
+                     </tr>
+                     <tr>
+                         <td class="keys"><input type="text"  disabled value="port name"></td>
+                         <td class="vals"><input type="text" placeholder="prot" value="22"></td>
+                         <td class="vals"><input type="text" placeholder="protocol" value="TCP"></td>
+                         <td class="func"><a href="javascript:void(0)" onclick="deleteRow(this)" class="gray"><i class="fa fa-trash-o fa-lg"></i></a>
+                         <input type="hidden" class="oldvalue" value="/usr/local/sbin"></td>
+                     </tr>
+
+                     </tbody>
+
+                 </table>
+                 <div class="createPort">
+                     <span><i class="fa fa-plus margin"></i></span>
+                 </div>
+             </div>
+         </div>
+         </div>
+             <div class="form-group last-btns">
+                <div class="col-sm-1 col-sm-offset-7">
+                  <button type="submit" class="btn btn-info"> 创建 </button>
+                </div>
+              </div>
+         </div>
+
+</div>
+</div>
+
+
+
+</form>
+
+
+           </div>
+           </div>
+
+      <!--/main-->
+
+</body>
+</html>

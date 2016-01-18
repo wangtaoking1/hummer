@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Dashboard for Docker</title>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link href="/static/css/style.css" rel="stylesheet">
+  </head>
+
+<body>
+<style>
+  body{font-family: "Helvetica Neue",Helvetica,"Microsoft YaHei",Arial,"宋体","Hiragino Sans GB",STHeiti,"WenQuanYi Micro Hei",SimSun,sans-serif;}
+   .custom-btn{height: 80%; line-height: 80%; padding: 5px 20px; background-color: #39b3d7; color:white; border:1px solid #39b3d7; border-radius: 5px;}
+   .self-active{background-color:  #444;}
+   .self-active:hover{background-color: #888;}
+   .notshow{display: none;}
+</style>
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"><img class="logo" src="/static/images/logo.png" height="40px"></a>
+          </div>
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li class="self-active"><a href="#">产品</a></li>
+              <li><a href="#">帮助文档</a></li>
+              <li><a href="#">{{ user.userName }}</a></li>
+            </ul>
+          </div>
+
+        </div>
+  </nav>
+
+<style type="text/css">
+  .simple-nav{border-bottom:1px solid #09f;}
+  .nav-item{padding: 8px 0; border-left: 1px solid #888; border-right: 1px solid #888; border-top:1px solid #888; border-radius: 5px 5px 0 0; cursor: pointer;}
+  .nav-item-active{border-left: 2px solid #09f; border-right: 2px solid #09f; border-top: 2px solid #09f;color:#09f; }
+  .fa_btn_plus{background: url('/static/images/btn-plus.png') no-repeat 0px 0px; width:20px; height:22px; display:inline-block;vertical-align:middle; margin-right:2px;)}
+  .btn-color-blue{background: #3c7bca; color:white;}
+  .action{margin-top: 10px; margin-bottom: 20px;}
+  td a{margin-right: 5px;} 
+  .all-project tbody tr{border-bottom: 1px solid #888;}
+  .all-project tbody tr:hover{border-left: 2px solid blue; background: #09d;}
+</style>
+  <div class="container-fluid">
+    <div class="col-sm-8 col-md-8 col-sm-offset-2 col-md-offset-2 main">
+      <div class="simple-nav">
+        <div class="col-sm-2 col-md-2 text-center">
+          <div class="nav-item nav-item-active" id="project"> 
+            项  目
+          </div>
+        </div>
+        <div class="col-sm-2 col-md-2 text-center" >
+          <div class="nav-item" id="image">
+            公共镜像
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+
+      <div class="project-part page">
+        <div class="action">
+          <a href="#" class="btn btn-color-blue">
+            <i class="fa_btn_plus"></i>
+            <span>创建项目</span>
+          </a>
+        </div>
+            <hr>
+        <div class="create-project notshow">
+          <form action ="#" method="post" class="form-horizontal">
+          <div class="form-group">
+            <label for="peojectName" class="col-sm-1 control-label">项目名称 </label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="peojectName" name="projectName" placeholder="项目名称">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description" class="col-sm-1 control-label">项目描述</label>
+            <div class="col-sm-6">
+            <input type="text" class="form-control" id="description" name="description" placeholder="项目描述">
+            </div>
+          </div>
+          <div class="form-group last-btns">
+            <div class="col-sm-1 col-sm-offset-1">
+              <button type="submit" class="btn btn-info"> 创建 </button>
+            </div>
+          </div>
+        </form>
+            <hr>
+        </div>
+          <style type="text/css">
+           .table>tbody>tr>td   {padding: 8px;  line-height: 2.42857143;  vertical-align: top;  border-top: 1px solid #ddd;}
+          </style>
+        <div class="table-responsive  all-project">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>名称</th>
+                <th>描述</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>test_01</td>
+                <td>test_01</td>
+                <td><a class="btn btn-xs btn-danger">删除</a><a href="{% url 'project_details' %}" class="btn btn-xs btn-info detail-btn">详细信息</a></td>
+              </tr>
+              <tr>
+                <td>test_02</td>
+                <td>test_02</td>
+                <td><a class="btn btn-xs btn-danger">删除</a><a href="{% url 'project_details' %}" class="btn btn-xs btn-info detail-btn">详细信息</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="image-part page notshow">
+        <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Image_picture</th>
+                  <th>Name </th>
+                  <th>Version</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><img class="common-images" src="/static/images/logo.png"  width="100px" height="40px"></td>
+                  <td>Docker</td>
+                  <td>1.0</td>
+                  <td><a href="{% url 'common_image_details' %}" class="btn btn-xs btn-info">详细信息</a></td>
+                </tr>
+                <tr>
+                  <td><img class="common-images" src="/static/images/logo.png"  width="100px" height="40px"></td>
+                  <td>Docker</td>
+                  <td>1.0</td>
+                  <td><a href="{% url 'common_image_details' %}" class="btn btn-xs btn-info detail-btn">详细信息</a></td>
+                </tr>
+                <tr>
+                  <td><img class="common-images" src="/static/images/logo.png"  width="100px" height="40px"></td>
+                  <td>Docker</td>
+                  <td>1.0</td>
+                  <td><a href="{% url 'common_image_details' %}" class="btn btn-xs btn-info">详细信息</a></td>
+                </tr>
+                <tr>
+                  <td>1,001</td>
+                  <td>A</td>
+                  <td>OK</td>
+                  <td>公共镜像库</td>
+                  <td>Now</td>
+                  <td>1</td>
+                  <td>Nothing</td>
+                  <td><a class="btn btn-xs btn-danger">删除</a><a class="btn btn-xs btn-info">创建应用</a><a class="btn btn-xs btn-info">导出</a></td>
+                </tr>
+
+              </tbody>
+            </table>
+        </div>
+        <a href="{% url 'image_coll' %}" class="btn btn-sm btn-info">
+            添加到项目
+        </a>
+      </div>
+    </div>
+  </div>
+<style>
+  footer{height: 200px; width: 100%; background-color: #666;position: absolute; bottom: 0;}
+  .main-footer{margin-top: 30px; color:white;}
+  .main-footer>h4{color:white;}
+</style>
+  <footer>
+    <div class="container-fluid">
+      <div class="col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 main-footer">
+        <div class="col-sm-4 col-md-4">
+          <h4> 产品详情 </h4>
+          <p>主要服务</p>
+          <p>平台优势</p>
+        </div>
+        <div class="col-sm-4 col-md-4">
+          <h4> 产品详情 </h4>
+          <p>主要服务</p>
+          <p>平台优势</p>
+        </div>
+        <div class="col-sm-4 col-md-4">
+          <h4> 联系方式 </h4>
+          <p>主要服务</p>
+          <p>平台优势</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+        
+  <!-- script references -->
+    <script src="/static/js/jquery-2.1.4.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/scripts.js"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $('#project').click(function(){
+          $('.project-part').removeClass('notshow');
+          $('.image-part').addClass('notshow');
+          $('.nav-item').removeClass('nav-item-active');
+          $(this).addClass('nav-item-active');
+        });
+
+        $('#image').click(function(){
+          $('.project-part').addClass('notshow');
+          $('.image-part').removeClass('notshow');
+          $('.nav-item').removeClass('nav-item-active');
+          $(this).addClass('nav-item-active');
+        });
+
+        $('tbody tr').click(function(){
+            window.location.href = "{% url 'common_image_details' %}";
+        });
+           $('tbody tr').click(function(){
+            window.location.href = "{% url 'common_image_details' %}";
+        });
+
+        $('.action a').click(function(){
+            var createPart = $('.create-project');
+            if($(createPart).hasClass('notshow'))
+              $(createPart).removeClass('notshow');
+            else
+              $(createPart).addClass('notshow');
+        });
+      });
+    </script>
+  </body>
+</html>
