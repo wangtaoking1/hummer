@@ -73,8 +73,8 @@ class Project(models.Model):
     """
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 
-    name = models.CharField(max_length=128, default='')
-    desc = models.TextField(max_length=254, null=True)
+    name = models.CharField(max_length=32, default='')
+    desc = models.TextField(max_length=256, null=True)
     create_time = models.DateTimeField(auto_now=True)
 
 

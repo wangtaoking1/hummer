@@ -54,3 +54,13 @@ class Communicator(object):
         self.client.post(password_url, data)
 
         return self.login(data)
+
+    def project_lists(self):
+        """
+        Return the project lists of the user.
+        """
+        url = get_api_server_url('/api/projects/')
+        response = self.client.get(url)
+        return json.loads(response.text)
+
+

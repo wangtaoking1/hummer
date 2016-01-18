@@ -1,193 +1,126 @@
-{% extends "website/home_base.html" %}
+{% extends "website/base_home.html" %}
 
 {% load staticfiles %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="col-sm-8 col-md-8 col-sm-offset-2 col-md-offset-2 main">
-        <h1 class="page-header">基于kubernetes 的 Docker 生产环境</h1>
-        <p class="introduction"><strong>kubernetes:</strong>&nbsp;Google开源的容器集群编排管理系统，该平台基于K8S系统实现
-          容器化服务。Google开源的容器集群编排管理系统，该平台基于K8S系统实现
-          容器化服务。Google开源的容器集群编排管理系统，该平台基于K8S系统实现
-          容器化服务。
-          <hr>
-        </p>
-
-        <h2>主要服务:</h2>
-        <div class="col-sm-4 col-md-4">
-            <a href="#" class="server-item">
-                <h3>镜像托管</h3>
-            </a>
-            <p>通过两种方式实现镜像托管：一种是直接上传镜像文件，一种是提供github地址然后镜像构建托管到镜像仓库。</p>
-        </div>
-
-        <div class="col-sm-4 col-md-4">
-            <a href="#" class="server-item">
-                <h3>应用部署</h3>
-            </a>
-            <p>对上传的镜像进行一键部署</p>
-        </div>
-
-
-        <div class="col-sm-4 col-md-4">
-            <a href="#" class="server-item">
-                <h3>日志与监控</h3>
-            </a>
-            <p>对上传的镜像进行一键部署</p>
-        </div>
-
-        <div class="clearfix"></div>
-        <hr>
-
-        <h2>平台优势:</h2>
-        <div class="col-sm-4 col-md-4">
-            <h3>镜像管理</h3>
-            <p>对上传的镜像进行一键部署</p>
-        </div>
-        <div class="col-sm-4 col-md-4">
-            <h3>应用部署</h3>
-            <p>对上传的镜像进行一键部署</p>
-        </div>
-
-        <div class="col-sm-4 col-md-4">
-            <h3>日志与监控</h3>
-            <p>对上传的镜像进行一键部署</p>
-        </div>
-    </div>
-</div><!--/.container-->
-
-
-<div class=" center-box login-area notshow">
-    <div class="set-width">
-        <div class="box-body login-body">
-            <div class="common-title text-center">
-                登录
+        <div class="simple-nav">
+            <div class="col-sm-2 col-md-2 text-center">
+                <div class="nav-item nav-item-active" id="project">
+                项  目
+                </div>
             </div>
-            <div class="common-content login-content">
-                <form action="{% url 'login' %}" method="post">
-                    {% csrf_token %}
+            <div class="col-sm-2 col-md-2 text-center" >
+                <div class="nav-item" id="image">
+                公共镜像
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
 
+        <div class="project-part page">
+            <!-- Projects show-->
+            <div class="table-responsive  all-project">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>项目名称</th>
+                            <th>简单描述</th>
+                            <th>创建时间</th>
+                            <th>删除</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project in projects %}
+                        <tr>
+                            <td>{{ project.name }}</td>
+                            <td>{{ project.desc|truncatechars:10 }}</td>
+                            <td>{{ project.create_time }}</td>
+                            <td><a class="btn btn-xs btn-danger">删除</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <hr>
+
+            <!-- Create project -->
+            <h2>创建项目</h2>
+
+            <div class="create-project">
+                <form action ="#" method="post" class="form-horizontal">
                     <div class="form-group">
-                        <div class="col-xs-12">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-user">
-                                </span>
-                                </span>
-                                <input type="text" id="username" name="username" class="form-control" placeholder="用户名">
-                            </div>
+                        <label for="peojectName" class="col-sm-1 control-label">项目名称</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="peojectName" name="name" maxlength="32" placeholder="项目名称">
                         </div>
-                        <div style="clear:both;"></div>
                     </div>
 
                     <div class="form-group">
-                        <div class="col-xs-12">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-user">
-                                </span>
-                                </span>
-                                <input type="password" id="password" name="password" class="form-control" placeholder="密码">
-                            </div>
+                        <label for="description" class="col-sm-1 control-label">项目描述</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="description" name="desc" maxlength="256" placeholder="项目描述">
                         </div>
-                        <div style="clear:both;"></div>
                     </div>
 
-                    <div class="form-group form-actions">
-                        <div class="col-xs-4 col-xs-offset-5">
-                            <button type="submit" class="btn btn-sm btn-info">
-                                登录
-                            </button>
+                    <div class="form-group last-btns">
+                        <div class="col-sm-1 col-sm-offset-1">
+                            <button type="submit" class="btn btn-info"> 创建 </button>
                         </div>
-                        <div style="clear:both;"></div>
                     </div>
                 </form>
             </div>
+        </div>
 
-            <a href="#" class="go go-register">
-                注册
+        <div class="image-part page notshow">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Image_picture</th>
+                            <th>Name </th>
+                            <th>Version</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><img class="common-images" src="{% static 'website/img/logo.png' %}"  width="100px" height="40px"></td>
+                            <td>Docker</td>
+                            <td>1.0</td>
+                            <td><a class="btn btn-xs btn-info">详细信息</a></td>
+                        </tr>
+                        <tr>
+                            <td><img class="common-images" src="{% static 'website/img/logo.png' %}"  width="100px" height="40px"></td>
+                            <td>Docker</td>
+                            <td>1.0</td>
+                            <td><a href="#" class="btn btn-xs btn-info detail-btn">详细信息</a></td>
+                        </tr>
+                        <tr>
+                            <td>1,001</td>
+                            <td>A</td>
+                            <td>OK</td>
+                            <td>公共镜像库</td>
+                            <td>Now</td>
+                            <td>1</td>
+                            <td>Nothing</td>
+                            <td><a class="btn btn-xs btn-danger">删除</a><a class="btn btn-xs btn-info">创建应用</a><a class="btn btn-xs btn-info">导出</a></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <a href="#" class="btn btn-sm btn-info">
+            添加到项目
             </a>
         </div>
     </div>
 </div>
+{% endblock %}
 
-<div class="center-box register-area notshow">
-    <div class="set-width">
-        <div class="box-body register-body">
-            <div class="common-title text-center">
-                注册
-            </div>
-            <div class="common-content register-content">
-                <form action="{% url 'registry' %}" method="post">
-                    {% csrf_token %}
 
-                    <div class="form-group">
-                        <div class="col-xs-12">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-user">
-                                </span>
-                                </span>
-                                <input type="text" id="username" name="username" class="form-control" placeholder="用户名">
-                            </div>
-                        </div>
-                        <div style="clear:both;"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-xs-12">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-user">
-                                </span>
-                                </span>
-                                <input type="password" id="password1" name="password1" class="form-control" placeholder="密码">
-                            </div>
-                        </div>
-                    <div style="clear:both;"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-xs-12">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-user">
-                                </span>
-                                </span>
-                                <input type="password" id="password2" name="password2" class="form-control" placeholder="密码确认">
-                            </div>
-                        </div>
-                        <div style="clear:both;"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-xs-12">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-user">
-                                </span>
-                                </span>
-                                <input type="email" id="email" name="email" class="form-control" placeholder="邮箱">
-                            </div>
-                        </div>
-                        <div style="clear:both;"></div>
-                    </div>
-
-                    <div class="form-group form-actions">
-                        <div class="col-xs-4 col-xs-offset-5">
-                            <button type="submit" class="btn btn-sm btn-info">
-                                注册
-                            </button>
-                        </div>
-                        <div style="clear:both;"></div>
-                    </div>
-                </form>
-            </div>
-
-            <a href="#" class="go go-login">
-                登录
-            </a>
-        </div>
-    </div>
-</div>
+{% block script %}
+<script src="{% static 'website/js/home.js' %}"></script>
 {% endblock %}

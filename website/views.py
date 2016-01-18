@@ -18,57 +18,15 @@ from website.forms import (LoginForm, RegistryForm)
 logger = logging.getLogger("website")
 
 
-def home(request):
+def index(request):
     """
     Return the home page before login in.
     """
     if is_authenticated(request)[0]:
-        return HttpResponseRedirect(reverse('index'))
-
-    return render(request, 'website/home.html', locals(),
-        RequestContext(request))
-
-
-@require_POST
-def login(request):
-    """
-    Login view.
-    """
-    form = LoginForm(data=request.POST)
-
-    if form.is_valid():
-        data = {
-            'username': form.cleaned_data['username'],
-            'password': form.cleaned_data['password']
-        }
-        client = Communicator()
-        cookies = client.login(data)
-
-        if 'sessionid' in cookies:
-            response = HttpResponseRedirect(reverse('index'))
-            response.set_cookie('sessionid', cookies['sessionid'])
-            return response
-
         return HttpResponseRedirect(reverse('home'))
-    return HttpResponseRedirect(reverse('home'))
 
-
-def logout(request):
-    """
-    Logout view.
-    """
-    cookies = {'sessionid': request.COOKIES.get('sessionid', None)}
-    client = Communicator(cookies=cookies)
-    client.logout()
-    return HttpResponseRedirect(reverse('home'))
-
-
-@login_required()
-def index(request, *args, **kwargs):
-    context = {
-        'username': kwargs.get('username')
-    }
-    return render(request, 'website/dashboard.html', context)
+    return render(request, 'website/index.html', locals(),
+        RequestContext(request))
 
 
 @require_POST
@@ -89,8 +47,58 @@ def registry(request):
         cookies = client.registry(data)
 
         if 'sessionid' in cookies:
-            response = HttpResponseRedirect(reverse('index'))
+            response = HttpResponseRedirect(reverse('home'))
             response.set_cookie('sessionid', cookies['sessionid'])
             return response
 
-    return HttpResponseRedirect(reverse('home'))
+    return HttpResponseRedirect(reverse('index'))
+
+
+@require_POST
+def login(request):
+    """
+    Login view.
+    """
+    form = LoginForm(data=request.POST)
+
+    if form.is_valid():
+        data = {
+            'username': form.cleaned_data['username'],
+            'password': form.cleaned_data['password']
+        }
+        client = Communicator()
+        cookies = client.login(data)
+
+        if 'sessionid' in cookies:
+            response = HttpResponseRedirect(reverse('home'))
+            response.set_cookie('sessionid', cookies['sessionid'])
+            return response
+
+        return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(reverse('index'))
+
+
+def logout(request):
+    """
+    Logout view.
+    """
+    cookies = {'sessionid': request.COOKIES.get('sessionid', None)}
+    client = Communicator(cookies=cookies)
+    client.logout()
+    return HttpResponseRedirect(reverse('index'))
+
+
+@login_required()
+def home(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username')
+    }
+
+    cookies = {'sessionid': request.COOKIES.get('sessionid', None)}
+    client = Communicator(cookies=cookies)
+
+    # Get project lists
+    projects = client.project_lists()
+    context['projects'] = projects
+
+    return render(request, 'website/home.html', context)

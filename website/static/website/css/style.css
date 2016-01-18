@@ -77,10 +77,17 @@ footer {
 }
 
 
-/* Nav */
+/* Index Nav */
 .custom-btn{height: 80%; line-height: 80%; padding: 5px 20px; background-color: #39b3d7; color:white; border:1px solid #39b3d7; border-radius: 5px;margin-top: auto;margin-bottom: auto;}
 .self-active{background-color:  #444;}
 .container-fluid{margin-top: auto;margin-bottom: auto;}
+.self-active:hover{background-color: #888;}
+.notshow{display: none;}
+
+/* Home Nav */
+body{font-family: "Helvetica Neue",Helvetica,"Microsoft YaHei",Arial,"宋体","Hiragino Sans GB",STHeiti,"WenQuanYi Micro Hei",SimSun,sans-serif;}
+.custom-btn{height: 80%; line-height: 80%; padding: 5px 20px; background-color: #39b3d7; color:white; border:1px solid #39b3d7; border-radius: 5px;}
+.self-active{background-color:  #444;}
 .self-active:hover{background-color: #888;}
 .notshow{display: none;}
 
@@ -89,7 +96,7 @@ footer{height: 100px; width: 100%; background-color: #666;position: absolute; bo
 .main-footer{margin-top: 30px; color:white;}
 .main-footer>h4{color:white;}
 
-/* home main content */
+/* index main content */
 .introduction{font-size: 1.5em; line-height: 1.5em; vertical-align: middle;}
 
 /* Login box */
@@ -111,3 +118,17 @@ footer{height: 100px; width: 100%; background-color: #666;position: absolute; bo
 .menu-s-box{width: 200%; z-index: 100; background-color: white;}
 .set-width{width: 30%; margin-left: 35%;}
 .go{margin-left: 2em;}
+
+/* Home simple nav */
+.simple-nav{border-bottom:1px solid #09f;}
+.nav-item{padding: 8px 0; border-left: 1px solid #888; border-right: 1px solid #888; border-top:1px solid #888; border-radius: 5px 5px 0 0; cursor: pointer;}
+.nav-item-active{border-left: 2px solid #09f; border-right: 2px solid #09f; border-top: 2px solid #09f;color:#09f; }
+.fa_btn_plus{background: url('/static/images/btn-plus.png') no-repeat 0px 0px; width:20px; height:22px; display:inline-block;vertical-align:middle; margin-right:2px;)}
+.btn-color-blue{background: #3c7bca; color:white;}
+.action{margin-top: 10px; margin-bottom: 20px;}
+td a{margin-right: 5px;}
+.all-project tbody tr{border-bottom: 1px solid #888;}
+.all-project tbody tr:hover{border-left: 2px solid blue; background: #09d;}
+
+/* Home projects show*/
+.table>tbody>tr>td{padding: 8px;  line-height: 2.42857143;  vertical-align: top;  border-top: 1px solid #ddd;}

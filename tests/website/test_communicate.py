@@ -37,3 +37,13 @@ class CommunicatorTestCase(unittest.TestCase):
         client = Communicator()
         cookies = client.registry(data)
         print(cookies)
+
+    def test_project_lists(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+        projects = client.project_lists()
+        print(projects)

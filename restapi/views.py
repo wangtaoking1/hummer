@@ -101,7 +101,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
             raise ValidationError(detail="Already has an project called {}."
                 .format(request.data['name']))
 
-        return super(ProjectViewSet, self).create(request, *args, **kwargs)
+        data = request.data
+        data['user'] = user.id
+
+        logger.debug(data)
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        response = Response(serializer.data, status=status.HTTP_201_CREATED,
+            headers=headers)
+
+        return response
 
 class ImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
