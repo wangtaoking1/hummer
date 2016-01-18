@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+    <head>
+    <title>{% block title %}{% endblock %}</title>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="generator" content="Bootply">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link href="{% static 'website/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'website/css/style.css' %}" rel="stylesheet">
+    {% block style %}{% endblock %}
+    </head>
+
+    <body>
+    {% block nav %}{% endblock %}
+
+    {% block content %}{% endblock %}
+
+    {% block footer %}
+    <footer>
+      <div class="container-fluid">
+        <div class="col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 main-footer">
+          <div class="col-sm-4 col-md-4">
+            <h4> 产品详情 </h4>
+            <p>主要服务</p>
+            <p>平台优势</p>
+          </div>
+          <div class="col-sm-4 col-md-4">
+            <h4> 产品详情 </h4>
+            <p>主要服务</p>
+            <p>平台优势</p>
+          </div>
+          <div class="col-sm-4 col-md-4">
+            <h4> 联系方式 </h4>
+            <p>主要服务</p>
+            <p>平台优势</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    {% endblock %}
+
+    <script src="{% static 'website/js/jquery-2.1.4.min.js' %}"></script>
+    <script src="{% static 'website/js/bootstrap.min.js' %}"></script>
+    {% block script %}
+    <script src="{% static 'website/js/homepage.js' %}"></script>
+    {% endblock %}
+    </body>
+</html>

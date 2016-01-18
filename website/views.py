@@ -25,7 +25,7 @@ def home(request):
     if is_authenticated(request)[0]:
         return HttpResponseRedirect(reverse('index'))
 
-    return render(request, 'website/homepage.html', locals(),
+    return render(request, 'website/home.html', locals(),
         RequestContext(request))
 
 
