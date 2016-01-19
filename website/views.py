@@ -8,6 +8,7 @@ from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import (require_http_methods, require_GET,
     require_POST)
+from django.views.decorators.csrf import csrf_exempt
 
 from website.auth import login_required
 from website.utils import (get_api_server_url)
@@ -82,8 +83,7 @@ def logout(request):
     """
     Logout view.
     """
-    cookies = {'sessionid': request.COOKIES.get('sessionid', None)}
-    client = Communicator(cookies=cookies)
+    client = Communicator(cookies=request.COOKIES)
     client.logout()
     return HttpResponseRedirect(reverse('index'))
 
@@ -94,8 +94,7 @@ def home(request, *args, **kwargs):
         'username': kwargs.get('username')
     }
 
-    cookies = {'sessionid': request.COOKIES.get('sessionid', None)}
-    client = Communicator(cookies=cookies)
+    client = Communicator(cookies=request.COOKIES)
 
     # Get project lists
     projects = client.project_lists()
@@ -106,17 +105,14 @@ def home(request, *args, **kwargs):
 
 
 @login_required()
+@csrf_exempt
 @require_POST
 def create_project(request, *args, **kwargs):
     form = ProjectForm(request.POST)
     if not form.is_valid():
         return HttpResponseRedirect(reverse('home'))
 
-    cookies = {
-        'sessionid': request.COOKIES.get('sessionid', None),
-        'csrftoken': request.COOKIES.get('csrftoken', None)
-    }
-    client = Communicator(cookies=cookies)
+    client = Communicator(cookies=request.COOKIES)
     data = {
         'name': form.cleaned_data['name'],
         'desc': form.cleaned_data['desc'],
@@ -129,7 +125,86 @@ def create_project(request, *args, **kwargs):
 
 
 @login_required()
+@csrf_exempt
 @require_POST
 def delete_project(request, *args, **kwargs):
-    logger.debug("13231231323123")
+    project_id = request.POST['id']
+    logger.debug(project_id)
+
+    client = Communicator(cookies=request.COOKIES)
+    ok = client.delete_project(project_id)
+    if ok:
+        return HttpResponseRedirect(reverse('home'))
     return HttpResponseRedirect(reverse('home'))
+
+
+@login_required()
+def list_images(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username')
+    }
+    return render(request, 'website/images.html', context,
+        RequestContext(request))
+
+
+@login_required()
+def project_home(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username')
+    }
+    return render(request, 'website/project_intro.html', context,
+        RequestContext(request))
+
+
+@login_required()
+def list_applications(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username')
+    }
+    return render(request, 'website/applications.html', context,
+        RequestContext(request))
+
+
+@login_required()
+def list_volumes(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username')
+    }
+    return render(request, 'website/volumes.html', context,
+        RequestContext(request))
+
+
+@login_required()
+def list_publics(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username')
+    }
+    return render(request, 'website/public_images.html', context,
+        RequestContext(request))
+
+
+@login_required()
+def show_image_detail(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username')
+    }
+    return render(request, 'website/image_detail.html', context,
+        RequestContext(request))
+
+
+@login_required()
+def show_application_detail(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username')
+    }
+    return render(request, 'website/application_detail.html', context,
+        RequestContext(request))
+
+
+@login_required()
+def show_volume_detail(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username')
+    }
+    return render(request, 'website/volume_detail.html', context,
+        RequestContext(request))

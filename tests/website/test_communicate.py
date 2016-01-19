@@ -47,3 +47,12 @@ class CommunicatorTestCase(unittest.TestCase):
         client.login(data)
         projects = client.project_lists()
         print(projects)
+
+    def test_delete_project(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+        client.delete_project(11)

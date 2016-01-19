@@ -1,0 +1,124 @@
+{% extends "website/base_project.html" %}
+
+{% load staticfiles %}
+
+
+{% block main-content %}
+        <div class="baseInfo center-style" style="display:block;">
+        <a class="BASE btn-prim">基本信息</a>
+        <a class="INSTANCES">容器实例</a>
+
+
+        <a class="DOMAIN">绑定域名</a>
+
+        <a class="PORTS">端口</a>
+        <a class="MONITOR">监控</a>
+
+        <a class="LOG">日志</a>
+
+        <a class="EVENT">事件</a>
+      </div>
+
+      <div class="containerInfo" style="display: block;">
+            <table class="table w50">
+              <thead>
+                <tr>
+                    <th> 基本信息</th>
+                    <th> &nbsp;</th>
+                </tr>
+              </thead>
+              <tbody class="BORDER">
+                <tr>
+                  <td> 应用名称：fdsfdd</td>
+                  <td> 运行状态：运行中</td>
+                </tr>
+                <tr>
+                  <td> 镜像名称：tenxcloud/mysql:latest</td>
+                  <td> 创建时间：2016-01-10 21:12:09</td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="table basicInfo w50">
+              <thead>
+                <tr>
+                  <th>配置信息</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody class="BORDER">
+                <tr>
+                  <td> 带宽：10 MB（公有网络）</td>
+                  <td> 系统盘：10GB</td>
+                </tr>
+                <tr>
+                  <td> CPU：125m</td>
+                  <td> 内存：512MB</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <table class="table basicInfo w50">
+              <thead>
+                <tr>
+                  <th>环境变量</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody class="BORDER">
+                <tr>
+                  <td> 变量名</td>
+                  <td> 变量值</td>
+                </tr>
+
+              </tbody>
+            </table>
+
+            <table class='table basicInfo w50'>
+              <thead>
+                <tr>
+                  <th>数据存储卷</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody class='BORDER'>
+
+                  <tr>
+                      <td>卷的名称</td>
+                      <td>卷的大小</td>
+                  </tr>
+
+              </tbody>
+            </table>
+      </div>
+        <div class="containerInstances" style="min-height: 300px;display: block;">
+            <h1>容器实例</h1>
+            <table class="table">
+                <thead>
+                <tr style="white-space: nowrap">
+                    <th>名称</th>
+                    <th>运行状态</th>
+                    <th>镜像</th>
+                    <th>内网地址</th>
+                    <th>外网地址</th>
+                    <th>创建时间</th>
+                </tr>
+                </thead>
+                <tbody class="BORDER">
+                <tr>
+                    <th>vinzor-mysql</th>
+                    <th>Running</th>
+                    <th>mysql_1.1</th>
+                    <th>172.12.12.34:22</th>
+                    <th>jjjjsda; df</th>
+                    <th>2016.12.2</th>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'website/js/application.js' %}"></script>
+{% endblock %}

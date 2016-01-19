@@ -26,13 +26,11 @@ class Communicator(object):
         self.client.get(url)
         data['csrfmiddlewaretoken'] = self.client.cookies['csrftoken']
         self.client.post(url, data)
-        return dict(self.client.cookies)
+        return self.client.cookies
 
     def logout(self):
         url = get_api_server_url('/api/auth/logout/')
         self.client.get(url)
-
-        return dict(self.client.cookies)
 
     def is_authenticated(self):
         """
@@ -71,10 +69,18 @@ class Communicator(object):
         Create an project for user.
         """
         url = get_api_server_url('/api/projects/')
-        logger.debug(data)
         response = self.client.post(url, data)
         if response.status_code == 201:
             return True
-        else:
-            return False
+        return False
 
+    def delete_project(self, project_id):
+        """
+        Delete the project with id project_id.
+        """
+        url = get_api_server_url('/api/projects/{}/'.format(project_id))
+        headers = {'X-CSRFToken': self.client.cookies['csrftoken']}
+        res = self.client.delete(url, headers=headers)
+        if res.status_code == 204:
+            return True
+        return False

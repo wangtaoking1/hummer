@@ -5,22 +5,9 @@
 {% block content %}
 <div class="container-fluid container-content">
     <div class="col-sm-8 col-md-8 col-sm-offset-2 col-md-offset-2 main">
-        <div class="simple-nav">
-            <div class="col-sm-2 col-md-2 text-center">
-                <div class="nav-item nav-item-active" id="project">
-                项  目
-                </div>
-            </div>
-            <div class="col-sm-2 col-md-2 text-center" >
-                <div class="nav-item" id="image">
-                公共镜像
-                </div>
-            </div>
-            <div class="clearfix"></div>
-        </div>
-
         <div class="project-part page">
             <!-- Projects show-->
+            <h2>项目列表</h2>
             <div class="table-responsive  all-project">
                 <table class="table">
                     <thead>
@@ -33,15 +20,14 @@
                     </thead>
                     <tbody>
                         {% for project in projects %}
-                        <tr>
+                        <tr onclick="show_project(this);">
                             <td>{{ project.name }}</td>
                             <td>{{ project.desc|truncatechars:20 }}</td>
                             <td>{{ project.create_time }}</td>
                             <td>
                             <form action="{% url 'delete-project' %}" method="post">
-                                <input type="hidden" name="project_id" value="{{ project.id }}">
-                                <input class="btn btn-xs btn-danger" type="submit
-                                " value="删除">
+                                <input type="hidden" name="id" value="{{ project.id }}">
+                                <button class="btn btn-xs btn-danger">删除</buuton>
                             </form>
                             </td>
                         </tr>
@@ -50,8 +36,8 @@
                 </table>
             </div>
 
-            <hr>
 
+            <hr><hr>
             <!-- Create project -->
             <h2>创建项目</h2>
 
@@ -75,54 +61,11 @@
 
                     <div class="form-group last-btns">
                         <div class="col-sm-1 col-sm-offset-2">
-                            <button type="submit" class="btn btn-info">创建</button>
+                            <button class="btn btn-info">创建</button>
                         </div>
                     </div>
                 </form>
             </div>
-        </div>
-
-        <div class="image-part page notshow">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Image_picture</th>
-                            <th>Name </th>
-                            <th>Version</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><img class="common-images" src="{% static 'website/img/logo.png' %}"  width="100px" height="40px"></td>
-                            <td>Docker</td>
-                            <td>1.0</td>
-                            <td><a class="btn btn-xs btn-info">详细信息</a></td>
-                        </tr>
-                        <tr>
-                            <td><img class="common-images" src="{% static 'website/img/logo.png' %}"  width="100px" height="40px"></td>
-                            <td>Docker</td>
-                            <td>1.0</td>
-                            <td><a href="#" class="btn btn-xs btn-info detail-btn">详细信息</a></td>
-                        </tr>
-                        <tr>
-                            <td>1,001</td>
-                            <td>A</td>
-                            <td>OK</td>
-                            <td>公共镜像库</td>
-                            <td>Now</td>
-                            <td>1</td>
-                            <td>Nothing</td>
-                            <td><a class="btn btn-xs btn-danger">删除</a><a class="btn btn-xs btn-info">创建应用</a><a class="btn btn-xs btn-info">导出</a></td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-            <a href="#" class="btn btn-sm btn-info">
-            添加到项目
-            </a>
         </div>
     </div>
 </div>
