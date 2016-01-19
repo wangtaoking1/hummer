@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Dashboard for Docker</title>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+      <link href="//netdna.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link href="/static/css/style.css" rel="stylesheet">
+  </head>
+<body>
+<style type="text/css">
+    .position-nav>a{width: 5em;}
+  .position-nav{margin-top: 20px;}
+  .position-nav a.go{color: #666;padding: 5px 10px 5px 10px;  }
+  .position-nav .goback{color: #0099ff}
+  .baseInfo{    height: 60px;  line-height: 60px;  border: 1px solid #DDDDDD;  background: #fff;  border-radius: 4px;  overflow: hidden;}
+ .baseInfo a {
+    width: 110px;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+}
+ .volumeInfo .table thead {
+    background: #e4eaec;
+}
+ table.w50 thead tr th {
+    border: 1px solid #e4eaec;
+}
+ .volumeInfo table.w50 td {
+    width: 50%;
+}
+.operatorInfo{padding: 0 25px 20px ;
+    overflow: hidden;width: 98%;margin-left: 1%}
+.caption{
+    height: 50px;}
+.caption>a {
+    color: #fff;
+    height: 36px;
+    display: inline-block;
+    text-align: center;
+    border-radius: 2px;
+    float: left;
+    margin: 20px 6px 20px 0;
+    cursor: pointer;
+}
+ .table {
+    margin: 0px;
+    background: #fff;
+  }
+ .table .border td {
+    border: 1px solid #eee;
+}
+ .border tr{
+     height: 30px;border-top: 1px solid #DDDDDD}
+ .btn-prim{background-color: #3C7BCA;color: #ffffff !important;}
+  .center-style{    width: 98%; margin: 30px auto;}
+  .simple-nav{border-bottom:1px solid #09f;}
+  .nav-item{padding: 8px 0; border-left: 1px solid #888; border-right: 1px solid #888; border-top:1px solid #888; border-radius: 5px 5px 0 0; cursor: pointer;}
+  .nav-item-active{border-left: 2px solid #09f; border-right: 2px solid #09f; border-top: 2px solid #09f;color:#09f; }
+    </style>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Docker 云平台</a>
+          </div>
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li class="self-active"><a href="#">产品服务</a></li>
+              <li><a href="#">帮助文档</a></li>
+              <li><a href="#">{{ user.userName }}</a></li>
+            </ul>
+          </div>
+        </div>
+  </nav>
+        <div class="container-fluid">
+            <div class="col-sm-8 col-md-8 col-sm-offset-2 col-md-offset-2 main">
+                <div class="simple-nav">
+        <div class="col-sm-2 col-md-2 text-center">
+          <div class="nav-item " id="project-introduction">
+            项目介绍
+          </div>
+        </div>
+        <div class="col-sm-2 col-md-2 text-center" >
+          <div class="nav-item " id="image-">
+            镜像空间
+          </div>
+        </div>
+          <div class="col-sm-2 col-md-2 text-center" >
+              <div class="nav-item" id="application-space">
+            应用空间
+              </div>
+        </div>
+          <div class="col-sm-2 col-md-2 text-center" >
+          <div class="nav-item nav-item-active" id="volume">
+            存储卷
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+                <div class="position-nav">
+                    <a href="{% url 'volume' %}" class="go">存储卷创建</a> > <a href="#" class="goback">存储卷详细信息</a>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="baseInfo center-style">
+                    <a class="base btn-prim">基本信息</a>
+                    <a class="operator">操作</a>
+
+                </div>
+                <div class="volumeInfo">
+                    <table class="table w50">
+                        <thead>
+                        <tr style="text-indent: 20px">
+                            <th>基本信息</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        </thead>
+                        <tbody class="border">
+                        <tr style="text-indent: 20px">
+                            <td>名称：test</td>
+                            <td>运行状态：运行中</td>
+                        </tr>
+                        <tr style="text-indent: 20px">
+                            <td>大小：256M</td>
+                            <td>使用量：100M</td>
+                        </tr>
+                        <tr style="text-indent: 20px">
+                            <td>挂载点：/usr/local/wss</td>
+                            <td>关键字描述：应用日志下载</td>
+                        </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                <div class="capacity-exchange col-sm-offset-10">
+                    <a class="btn btn-primary btn-danger" href="#">格式化</a>
+                    <a class="btn btn-primary btn-info" href="#">扩容缩容</a>
+                </div>
+                <div class="operatorInfo">
+                    <div class="caption">
+                        <a id="refreshBackup" class="btn btn-primary" style="font-size: 18px;">
+                            <i class="fa fa-repeat"></i>
+                        </a>
+                        <a id="createNewBackup" class="btn btn-success"style="font-size: 18px;" >
+                            <i class="fa fa-download"></i>
+
+                            <span>导出文件</span>
+                        </a>
+                        <a id="loadupBackup" class="btn btn-primary push-volume"style="font-size: 18px;" >
+                            <i class="fa fa-upload"></i>
+                            <span>导入文件</span>
+                        </a>
+                        <input type="hidden"  id="phone" value="15521037681">
+
+                    </div>
+                    <table class="table w50">
+                         <thead style="background: #f5f5f5">
+                <tr style="height: 45px">
+                        <th style="width:15%">文件名称</th>
+                        <th style="width: 15%">类型</th>
+                        <th style="width: 15%">运行状态</th>
+                        <th style="width: 15%">挂载容器</th>
+                        <th style="width: 20%">创建时间</th>
+                        <th style="width: 15%">操作</th>
+
+                </tr>
+            </thead>
+                        <tbody id="db-backups">
+                        <tr class="show-tr">
+                            <td>
+                                <div class="content-table">
+                                    <p style="text-indent: 20px;">
+                                    <i>无记录</i>
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+
+</body>
+</html>

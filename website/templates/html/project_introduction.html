@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Dashboard for Docker</title>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link href="/static/css/style.css" rel="stylesheet">
+  </head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Docker 云平台</a>
+          </div>
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li class="self-active"><a href="#">产品</a></li>
+              <li><a href="#">帮助文档</a></li>
+              <li><a href="#">{{ user.userName }}</a></li>
+            </ul>
+          </div>
+
+        </div>
+  </nav>
+<style type="text/css">
+  .simple-nav{border-bottom:1px solid #09f;}
+  .nav-item{padding: 8px 0; border-left: 1px solid #888; border-right: 1px solid #888; border-top:1px solid #888; border-radius: 5px 5px 0 0; cursor: pointer;}
+  .nav-item-active{border-left: 2px solid #09f; border-right: 2px solid #09f; border-top: 2px solid #09f;color:#09f; }
+.page-header{padding-top: 20px}
+</style>
+<div class="container-fluid">
+    <div class="col-sm-8 col-md-8 col-sm-offset-2 col-md-offset-2 main">
+      <div class="simple-nav">
+        <div class="col-sm-2 col-md-2 text-center">
+          <div class="nav-item nav-item-active" id="project-introduction">
+            项目介绍
+          </div>
+        </div>
+        <div class="col-sm-2 col-md-2 text-center" >
+          <div class="nav-item" id="image-">
+            镜像空间
+          </div>
+        </div>
+          <div class="col-sm-2 col-md-2 text-center" >
+              <div class="nav-item" id="application-space">
+            应用空间
+              </div>
+        </div>
+          <div class="col-sm-2 col-md-2 text-center" >
+          <div class="nav-item" id="volume">
+            存储卷
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+         <h1 class="page-header">
+{% if user.userName == '' %}
+请先登录
+{% else %}
+{{user.userName }}的项目project_01
+{% endif %}
+       </h1>
+          <p class="project-intro"><strong>project_01</strong>针对个人用户和中小型企业的的项目开发者，为他们提供开发，测试和部署的环境。</p>
+        <a href="{% url 'image_details' %}" class="btn btn-sm btn-info">
+            创建镜像
+        </a>
+    </div>
+    </div>
+</body>
+</html>
