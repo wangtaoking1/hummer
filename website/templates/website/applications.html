@@ -1,0 +1,37 @@
+{% extends "website/base_project.html" %}
+
+{% load staticfiles %}
+
+
+{% block main-content %}
+<div class="position-nav">
+      </div>
+          <div class="table-responsive">
+            <table class="table table-striped enable">
+              <thead>
+                <tr>
+                  <th>APP_Name</th>
+                  <th>From</th>
+                  <th>deployed_Time</th>
+                  <th>Short_Description</th>
+                  <th>Handle</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>shany_mysql</td>
+                  <td>mysql_1.1</td>
+                  <td>2019.10.01</td>
+                  <td>Now</td>
+                  <td><button class="btn btn-xs btn-danger">删除</button><button class="btn btn-xs btn-info">关闭应用</button><button class="btn btn-xs btn-info">重启</button>
+                  <button class="btn btn-xs btn-info">导出</button><button class="btn btn-xs btn-info">编辑应用</button><button class="btn btn-xs btn-info">详细信息</button></td>
+                </tr>
+                </tbody>
+                </table>
+              </div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'website/js/application.js' %}"></script>
+{% endblock %}

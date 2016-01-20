@@ -128,9 +128,185 @@ footer{height: 35px; width: 100%; background-color: #666;position: absolute; bot
 .btn-color-blue{background: #3c7bca; color:white;}
 .action{margin-top: 10px; margin-bottom: 20px;}
 td a{margin-right: 5px;}
-.all-project tbody tr{border-bottom: 1px solid #888;}
-.all-project tbody tr:hover{border-left: 2px solid blue; background: #09d;}
+.all-project>table>tbody{border-bottom: 1px solid #888;}
+.all-project>table>tbody>tr:hover{background: #C0C0C0; border-left border-right: 1px solid #000;}
 
 /* Home projects show*/
 .table>tbody>tr>td{padding: 8px;  line-height: 2.42857143;  vertical-align: top;  border-top: 1px solid #ddd;}
 .project-part .all-project .btn-xs{width: 40px;}
+
+
+/* volume */
+.baseInfo a {
+    width: 110px;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    height: 100%;
+}
+
+.table {
+    margin: 0px;
+    background: #fff;
+}
+.volume{
+    padding-top: 20px
+}
+
+.volume table thead {
+    background: #e4eaec;
+}
+
+.volume .table tr {
+    text-indent: 10px;
+}
+
+table .w50 td {
+    width: 50%;
+}
+
+.caption {
+    padding-top: 10px;
+}
+
+thead {
+    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+
+.table tr {
+    height: 40px;
+}
+
+table {
+    border-spacing: 2px;
+    border-color:#e4eaec;
+}
+
+.table>thead>tr>th {
+    line-height: 40px;
+    vertical-align: middle;
+}
+
+.volume-create {
+    padding-top: 20px;
+}
+
+.page-header{
+    padding: 10px;
+}
+
+
+/* image detail */
+body{font-family: "Helvetica Neue",Helvetica,"Microsoft YaHei",Arial,"宋体","Hiragino Sans GB",STHeiti,"WenQuanYi Micro Hei",SimSun,sans-serif;}
+.self-active{background-color:  #444;}
+.self-active:hover{background-color: #888;}
+.notshow{display: none;}
+.createPort{height: 30px; text-align: center;color: #3f8ec3;line-height: 30px;background-color: #e4eaec }
+.enable thead{background-color: #e4eaec}
+thead{display: table-header-group;vertical-align: middle}
+
+/* application detail */
+.position-nav>a{width: 5em;}
+.position-nav{margin-bottom: 20px;}
+
+.baseInfo {
+height: 60px;
+line-height: 60px;
+border: 1px solid #DDDDDD;
+background: #fff;
+border-radius: 4px;
+overflow: hidden;
+}
+.center-style {
+width: 98%;
+margin: 30px auto;
+}
+.baseInfo a {
+width: 110px;
+text-align: center;
+display: inline-block;
+cursor: pointer;
+height: 100%;
+}
+.btn-prim {
+background: #3C7BCA !important;
+color: #fff !important;
+}
+.containerInfo, .backupsInfo {
+overflow: hidden;
+width: 98%;
+margin-left: 1%;
+min-height: 200px;
+background: #fff;
+}
+.table {
+margin: 0px;
+background: #fff;
+}
+.containerInstances table thead, .containerInfo .table thead {
+  background: #e4eaec;
+}
+.containerInfo .table tr, .containerInstances .table tr {
+  text-indent: 10px;
+}
+table.w50 td {
+  width: 50%;
+}
+.table .BORDER td {
+  border: 1px solid #eee;
+}
+
+
+/* volume detail */
+.position-nav>a{width: 5em;}
+.position-nav{margin-top: 20px;}
+.position-nav a.go{color: #666;padding: 5px 10px 5px 10px;  }
+.position-nav .goback{color: #0099ff}
+.baseInfo{    height: 60px;  line-height: 60px;  border: 1px solid #DDDDDD;  background: #fff;  border-radius: 4px;  overflow: hidden;}
+.baseInfo a {
+width: 110px;
+text-align: center;
+display: inline-block;
+cursor: pointer;
+}
+.volumeInfo .table thead {
+background: #e4eaec;
+}
+table.w50 thead tr th {
+border: 1px solid #e4eaec;
+}
+.volumeInfo table.w50 td {
+width: 50%;
+}
+.operatorInfo{padding: 0 25px 20px ;
+    overflow: hidden;width: 98%;margin-left: 1%}
+.caption{
+    height: 50px;}
+.caption>a {
+    color: #fff;
+    height: 36px;
+    display: inline-block;
+    text-align: center;
+    border-radius: 2px;
+    float: left;
+    margin: 20px 6px 20px 0;
+    cursor: pointer;
+}
+.table {
+margin: 0px;
+background: #fff;
+}
+.table .border td {
+border: 1px solid #eee;
+}
+.border tr{
+ height: 30px;border-top: 1px solid #DDDDDD}
+.btn-prim{background-color: #3C7BCA;color: #ffffff !important;}
+.center-style{    width: 98%; margin: 30px auto;}
+.simple-nav{border-bottom:1px solid #09f;}
+.nav-item{padding: 8px 0; border-left: 1px solid #888; border-right: 1px solid #888; border-top:1px solid #888; border-radius: 5px 5px 0 0; cursor: pointer;}
+.nav-item-active{border-left: 2px solid #09f; border-right: 2px solid #09f; border-top: 2px solid #09f;color:#09f; }
+
+

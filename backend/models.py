@@ -44,8 +44,8 @@ class MyUserManager(BaseUserManager):
 
 
 class MyUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=254, unique=True, db_index=True)
-    email = models.EmailField('email address', max_length=254)
+    username = models.CharField(max_length=32, unique=True, db_index=True)
+    email = models.EmailField('email address', max_length=256)
 
     is_staff = models.BooleanField('staff status', default=False)
     is_active = models.BooleanField('active', default=True)
@@ -91,8 +91,9 @@ class Image(models.Model):
         ('failed', 'failed')
     )
 
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    name = models.CharField(max_length=128, default='')
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True,
+        default=True)
+    name = models.CharField(max_length=32, default='')
     desc = models.TextField(max_length=254, null=True)
     version = models.CharField(max_length=32)
     digest = models.CharField(max_length=64, blank=True, null=True, default='')
@@ -137,7 +138,7 @@ class Application(models.Model):
     )
 
     image = models.ForeignKey(Image, on_delete=models.CASCADE)
-    name = models.CharField(max_length=128, default='')
+    name = models.CharField(max_length=32, default='')
     replicas = models.IntegerField()
     resource_limit = models.ForeignKey(ResourceLimit, on_delete=models.CASCADE)
     session_affinity = models.BooleanField(default=False)
@@ -159,7 +160,7 @@ class Port(models.Model):
     )
 
     app = models.ForeignKey(Application, on_delete=models.CASCADE)
-    name = models.CharField(max_length=64, default='')
+    name = models.CharField(max_length=32, default='')
     protocol = models.CharField(max_length=3, choices=PROTOCOL_CHOICES,
         default='TCP')
     external_port = models.IntegerField(blank=True, null=True)
@@ -188,8 +189,8 @@ class Volume(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     app = models.ForeignKey(Application, blank=True, null=True)
     mount_path = models.CharField(max_length=256, null=True, blank=True)
-    name = models.CharField(max_length=64)
-    desc = models.TextField(max_length=254, null=True)
+    name = models.CharField(max_length=32)
+    desc = models.TextField(max_length=256, null=True)
     capacity = models.IntegerField()
     capacity_unit = models.CharField(max_length=4, choices=CAPACITY_UNIT,
         default='Mi')

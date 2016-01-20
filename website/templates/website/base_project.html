@@ -1,0 +1,49 @@
+{% extends "website/base_home.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+<div class="container-fluid container-content">
+    <div class="col-sm-8 col-md-8 col-sm-offset-2 col-md-offset-2 main">
+        <!-- Simple nav -->
+        <div class="simple-nav">
+            <div class="col-sm-2 col-md-2 text-center">
+                <div class="nav-item " id="project-introduction" onclick="show_introduction()">
+                项目介绍
+                </div>
+            </div>
+
+            <div class="col-sm-2 col-md-2 text-center" >
+                <div class="nav-item" id="image-space" onclick="show_images()">
+                镜像空间
+                </div>
+            </div>
+
+            <div class="col-sm-2 col-md-2 text-center" >
+                <div class="nav-item" id="application-space" onclick="show_applications()">
+                应用空间
+                </div>
+            </div>
+
+            <div class="col-sm-2 col-md-2 text-center" >
+                <div class="nav-item" id="volume-space" onclick="show_volumes()">
+                存储卷
+                </div>
+            </div>
+
+            <div class="col-sm-2 col-md-2 text-center" >
+                <div class="nav-item" id="public-image" onclick="show_publics()">
+                公共镜像
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+
+        <script src="{% static 'website/js/base_project.js' %}"></script>
+
+        {% block main-content %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

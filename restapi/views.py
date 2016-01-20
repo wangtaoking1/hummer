@@ -233,6 +233,25 @@ class ImageViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+    def list_public_images(self, request, *args, **kwargs):
+        """
+        List all public images.
+        """
+        pass
+
+    def delete_public_image(self, request, *args, **kwargs):
+        """
+        Delete public image.
+        """
+        pass
+
+    def add_public_image_to_project(self, request, *args, **kwargs):
+        """
+        Add one public image into a project of user.
+        """
+        pass
+
+
 class ApplicationViewSet(viewsets.ModelViewSet):
     serializer_class = ApplicationSerializer
 
