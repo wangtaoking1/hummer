@@ -11,6 +11,7 @@
 
     <link href="{% static 'website/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'website/css/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     {% block style %}{% endblock %}
     </head>
 
@@ -20,13 +21,13 @@
     {% block content %}{% endblock %}
 
     {% block footer %}
-    <!-- <footer class="footer navbar-fixed-bottom ">
+    <footer class="footer navbar-fixed-bottom ">
         <div class="container">
             <div class="col-sm-6 col-md-6 col-sm-offset-7">
                 <h6>Copyright © 2015-2016, Hummer, All Rights Reserved</h6>
             </div>
         </div>
-    </footer> -->
+    </footer>
     {% endblock %}
 
     <script src="{% static 'website/js/jquery-2.1.4.min.js' %}"></script>

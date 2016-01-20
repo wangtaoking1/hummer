@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container-fluid container-content">
-    <div class="col-sm-8 col-md-8 col-sm-offset-2 col-md-offset-2 main">
+    <div class="main">
         <div class="project-part page">
             <!-- Projects show-->
             <h2>项目列表</h2>
@@ -21,14 +21,14 @@
                     <tbody>
                         {% for project in projects %}
                         <tr onclick="show_project(this);">
+                            <input type="hidden" name="id" value="{{ project.id }}">
                             <td>{{ project.name }}</td>
                             <td>{{ project.desc|truncatechars:20 }}</td>
                             <td>{{ project.create_time }}</td>
                             <td>
-                            <form action="{% url 'delete-project' %}" method="post">
-                                <input type="hidden" name="id" value="{{ project.id }}">
-                                <button class="btn btn-xs btn-danger">删除</buuton>
-                            </form>
+                                <form action="{% url 'delete-project' pid=project.id %}" method="get">
+                                    <button class="btn btn-xs btn-danger">删除</buuton>
+                                </form>
                             </td>
                         </tr>
                         {% endfor %}

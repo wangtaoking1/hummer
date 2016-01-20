@@ -14,9 +14,11 @@ urlpatterns = [
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^home/$', views.home, name='home'),
     url(r'^create_project/$', views.create_project, name='create-project'),
-    url(r'^delete_project/$', views.delete_project, name='delete-project'),
+    url(r'^projects/(?P<pid>[0-9]+)/delete_project/$', views.delete_project,
+        name='delete-project'),
 
-    url(r'^projects/(?P<pid>[0-9]+)/introduction/$', views.project_home,
+    # project introduction
+    url(r'^projects/(?P<pid>[0-9]+)/introduction/$', views.project_intro,
         name='introduce-project'),
 
     # image
@@ -24,6 +26,8 @@ urlpatterns = [
         name='list-images'),
     url(r'^projects/(?P<pid>[0-9]+)/images/(?P<iid>[0-9]+)/$',
         views.show_image_detail, name='show-image-detail'),
+    url(r'^projects/(?P<pid>[0-9]+)/images/(?P<iid>[0-9]+)/delete_image/$',
+        views.delete_image, name='delete-image'),
 
     # application
     url(r'^projects/(?P<pid>[0-9]+)/applications/$', views.list_applications,

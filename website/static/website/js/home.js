@@ -14,11 +14,9 @@ $(document).ready(function(){
   	$('.form-group btn').click(function(){
 		$('.create-project form').submit();
   	});
-
-
 });
 
 function show_project(element) {
-    var id = $(element).find("input").first().val();
+    var id = $(element).find("input").val();
     window.location.href = "/projects/" + id + "/images/";
 }

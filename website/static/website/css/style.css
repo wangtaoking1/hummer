@@ -68,19 +68,25 @@ footer {
 }
 @media (min-width: 768px) {
     .main {
-    padding-right: 40px;
-    padding-left: 40px;
+    padding-right: 15%;
+    padding-left: 15%;
     }
 }
 .main .page-header {
     margin-top: 0;
 }
 
+.container-content {
+    margin-top: 5px;
+    margin-bottom: 100px;
+    padding-left: 8%;
+    padding-right: 2%;
+}
+
 
 /* Index Nav */
 .custom-btn{height: 80%; line-height: 80%; padding: 5px 20px; background-color: #39b3d7; color:white; border:1px solid #39b3d7; border-radius: 5px;margin-top: auto;margin-bottom: auto;}
 .self-active{background-color:  #444;}
-.container-fluid{margin-top: auto;margin-bottom: auto;}
 .self-active:hover{background-color: #888;}
 .notshow{display: none;}
 
@@ -91,6 +97,36 @@ body{font-family: "Helvetica Neue",Helvetica,"Microsoft YaHei",Arial,"宋体","H
 .self-active:hover{background-color: #888;}
 .notshow{display: none;}
 
+/* sidebar */
+.sidebar-offcanvas {
+    position: absolute;
+    #padding: 15px;
+    width: ６%;
+    height: 100%;
+    position: fixed;
+    background-color: #101010;
+
+    #margin-left: 10px;
+  }
+.nav-sidebar {
+  background-color: #101010;
+  height: 100%;
+  #margin-right: -15px;
+  #margin-bottom: 20px;
+  #margin-left: -15px;
+}
+.nav-sidebar li {
+    height: 70px;
+}
+.nav-sidebar > li > a {
+/*padding-right: 20px;
+padding-left: 20px;*/
+    text-align: center;
+}
+/*.nav-sidebar > .active > a {
+  background-color: #428bca;
+}*/
+
 /* footer */
 footer{height: 35px; width: 100%; background-color: #666;position: absolute; bottom: 0;}
 .main-footer{margin-top: 10px; color:white;}
@@ -98,7 +134,6 @@ footer{height: 35px; width: 100%; background-color: #666;position: absolute; bot
 
 /* index main content */
 .introduction{font-size: 1.5em; line-height: 1.5em; vertical-align: middle;}
-.container-content{margin-bottom: 55px;}
 
 /* Login box */
 .center-box{position: absolute; top:300px; width: 100%;}
@@ -121,7 +156,10 @@ footer{height: 35px; width: 100%; background-color: #666;position: absolute; bot
 .go{margin-left: 2em;}
 
 /* Home simple nav */
-.simple-nav{border-bottom:1px solid #09f;}
+.simple-nav {
+    border-bottom:1px solid #09f;
+    margin-bottom: 20px;
+}
 .nav-item{padding: 8px 0; border-left: 1px solid #888; border-right: 1px solid #888; border-top:1px solid #888; border-radius: 5px 5px 0 0; cursor: pointer;}
 .nav-item-active{border-left: 2px solid #09f; border-right: 2px solid #09f; border-top: 2px solid #09f;color:#09f; }
 .fa_btn_plus{background: url('/static/images/btn-plus.png') no-repeat 0px 0px; width:20px; height:22px; display:inline-block;vertical-align:middle; margin-right:2px;)}

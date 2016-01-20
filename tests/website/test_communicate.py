@@ -56,3 +56,12 @@ class CommunicatorTestCase(unittest.TestCase):
         }
         client.login(data)
         client.delete_project(11)
+
+    def test_delete_image(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+        client.delete_image(1, 2)

@@ -125,11 +125,8 @@ def create_project(request, *args, **kwargs):
 
 
 @login_required()
-@csrf_exempt
-@require_POST
 def delete_project(request, *args, **kwargs):
-    project_id = request.POST['id']
-    logger.debug(project_id)
+    project_id = kwargs['pid']
 
     client = Communicator(cookies=request.COOKIES)
     ok = client.delete_project(project_id)
@@ -143,12 +140,31 @@ def list_images(request, *args, **kwargs):
     context = {
         'username': kwargs.get('username')
     }
+
+    project_id = kwargs.get('pid')
+    client = Communicator(cookies=request.COOKIES)
+    context['images'] = client.image_lists(project_id=project_id)
+
     return render(request, 'website/images.html', context,
         RequestContext(request))
 
 
 @login_required()
-def project_home(request, *args, **kwargs):
+def delete_image(request, *args, **kwargs):
+    project_id = kwargs['pid']
+    image_id = kwargs['iid']
+
+    client = Communicator(cookies=request.COOKIES)
+    ok = client.delete_image(project_id=project_id, image_id=image_id)
+    if ok:
+        return HttpResponseRedirect(reverse('list-images',
+            kwargs={'pid': project_id}))
+    return HttpResponseRedirect(reverse('list-images',
+        kwargs={'pid': project_id}))
+
+
+@login_required()
+def project_intro(request, *args, **kwargs):
     context = {
         'username': kwargs.get('username')
     }

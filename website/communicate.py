@@ -84,3 +84,24 @@ class Communicator(object):
         if res.status_code == 204:
             return True
         return False
+
+    def image_lists(self, project_id):
+        """
+        Return the image lists of the project.
+        """
+        url = get_api_server_url('/api/projects/{}/images/'.format(project_id))
+        response = self.client.get(url)
+        return json.loads(response.text)
+
+    def delete_image(self, project_id, image_id):
+        """
+        Delete the image in the project.
+        """
+        url = get_api_server_url('/api/projects/{}/images/{}/'.format(
+            project_id, image_id))
+        headers = {'X-CSRFToken': self.client.cookies['csrftoken']}
+        res = self.client.delete(url, headers=headers)
+        print(res.status_code)
+        if res.status_code == 204:
+            return True
+        return False

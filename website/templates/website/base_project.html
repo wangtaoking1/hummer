@@ -3,8 +3,75 @@
 {% load staticfiles %}
 
 {% block content %}
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+      <div class="sidebar-offcanvas" id="sidebar" role="navigation">
+
+        <ul class="nav nav-sidebar">
+            <li class="active">
+                <a href="#">
+                    <i class="fa fa-home fa-2x"></i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-user fa-2x"></i>
+                    <p>项目介绍</p>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-list fa-2x"></i>
+                    <p>镜像空间</p>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-image fa-2x"></i>
+                    <p>应用空间</p>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-graduation-cap fa-2x"></i>
+                    <p>卷空间</p>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-navicon fa-2x"></i>
+                    <p>公共镜像</p>
+                </a>
+            </li>
+        </ul>
+
+        <!-- <ul class="nav nav-sidebar">
+          <li class="active"><a href="#"><i class="fa fa-user fa-2x"></i>&nbsp;首　页</a></li>
+        </ul>
+
+        <ul class="nav nav-sidebar">
+          <li><a href="#"><i class="fa fa-user fa-2x"></i>&nbsp;项 目</a></li>
+        </ul>
+        <ul class="nav nav-sidebar">
+          <li><a href="#"><i class="fa fa-list fa-2x"></i>&nbsp;镜像空间</a></li>
+        </ul>
+          <ul class="nav nav-sidebar">
+          <li><a href="#"><i class="fa fa-image fa-2x"></i>&nbsp;应用空间</a></li>
+        </ul>
+          <ul class="nav nav-sidebar">
+          <li><a href="#"><i class="fa fa-graduation-cap fa-2x"></i>&nbsp;存储卷</a></li>
+        </ul>
+          <ul class="nav nav-sidebar">
+          <li><a href="#"><i class="fa fa-navicon fa-2x"></i>&nbsp;公共镜像</a></li>
+        </ul> -->
+
+      </div><!--/span-->
+    </div>
+</div>
+
 <div class="container-fluid container-content">
-    <div class="col-sm-8 col-md-8 col-sm-offset-2 col-md-offset-2 main">
+    <div class="main">
         <!-- Simple nav -->
         <div class="simple-nav">
             <div class="col-sm-2 col-md-2 text-center">
@@ -41,6 +108,8 @@
         </div>
 
         <script src="{% static 'website/js/base_project.js' %}"></script>
+
+        <hr>
 
         {% block main-content %}
         {% endblock %}

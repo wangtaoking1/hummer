@@ -4,113 +4,128 @@
 
 
 {% block main-content %}
-          <h2 class="page-header">用户镜像库</h2>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Image_Picture</th>
-                  <th>Name </th>
-                  <th>From</th>
-                  <th>Upload_Time</th>
-                  <th>Short_Description</th>
-                  <th>Handle</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><img class="common-images" src="{% static 'website/img/logo.png' %}"  width="100px" height="40px"></td>
-                  <td>mysql_1.1</td>
-                  <td>公共镜像库</td>
-                  <td>Now</td>
-                  <td>Nothing</td>
-                  <td><button class="btn btn-xs btn-danger">删除</button><a href="#" class="btn btn-xs btn-info">创建应用</a><button class="btn btn-xs btn-info">导出</button></td>
-                </tr>
-                <tr>
-                  <td><img class="common-images" src="{% static 'website/img/logo.png' %}"  width="100px" height="40px"></td>
-                  <td>mysql_1.1</td>
-                  <td>公共镜像库</td>
-                  <td>Now</td>
-                  <td>Nothing</td>
-                 <td><button class="btn btn-xs btn-danger">删除</button><a href="#" class="btn btn-xs btn-info">创建应用</a><button class="btn btn-xs btn-info">导出</button></td>
-                </tr>
-                <tr>
-                  <td><img class="common-images" src="{% static 'website/img/logo.png' %}"  width="100px" height="40px"></td>
-                  <td>mysql_1.1</td>
-                  <td>公共镜像库</td>
-                  <td>Now</td>
-                  <td>Nothing</td>
-                 <td><button class="btn btn-xs btn-danger">删除</button><a href="#" class="btn btn-xs btn-info">创建应用</a><button class="btn btn-xs btn-info">导出</button></td>
-                </tr>
+<!-- Image lists -->
+<h2 class="page-header">镜像列表</h2>
+<div class="table-responsive">
+	<table class="table table-striped resource-lists">
+		<thead>
+			<tr>
+				<th>Logo</th>
+				<th>镜像名称</th>
+				<th>镜像版本</th>
+				<th>镜像简介</th>
+				<th>状态</th>
+				<th>创建时间</th>
+				<th>删除</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for image in images %}
+			<tr onclick="show_image(this);">
+                <input type="hidden" name="id" value="{{ image.id }}">
+				<td>
+					<img class="common-images" src="{% static 'website/img/default.jpg' %}"  width="40px" height="40px">
+				</td>
+				<td>{{ image.name }}</td>
+				<td>{{ image.version }}</td>
+				<td>{{ image.desc|truncatechars:20 }}</td>
+				<td>{{ image.status }}</td>
+				<td>{{ image.create_time }}</td>
+				<td>
+					<form action="{% url 'delete-image' pid=image.project iid=image.id %}" method="get">
+                        <button class="btn btn-xs btn-danger">删除</buuton>
+                    </form>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
 
-                <tr>
-                  <td><img class="common-images" src="{% static 'website/img/logo.png' %}"  width="100px" height="40px"></td>
-                  <td>mysql_1.1</td>
-                  <td>公共镜像库</td>
-                  <td>Now</td>
-                  <td>Nothing</td>
-                 <td><button class="btn btn-xs btn-danger">删除</button><a href="#" class="btn btn-xs btn-info">创建应用</a><button class="btn btn-xs btn-info">导出</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+<hr>
 
+<!-- Image upload -->
+<h2 class="page-header">上传镜像</h2>
+<div class="image-create">
+	<ul class="nav nav-tabs">
+		<li><a data-toggle="tab" href="#source">源码构建</a></li>
+		<li class="active"><a data-toggle="tab" href="#image">镜像文件</a></li>
+		<li><a data-toggle="tab" href="#snapshot">快照文件</a></li>
+		<li><a data-toggle="tab" href="#github">Github地址</a></li>
+	</ul>
+	<hr>
+	<div class="tab-content">
+		<div id="source" class="tab-pane fade">
+			<p>source</p>
+	  	</div>
 
+	  	<div id="image" class="tab-pane fade in active">
+		  	<form action ="#" method="post" class="form-horizontal">
+				<div class="form-group">
+					<label for="imageName" class="col-sm-2 control-label">Image Name </label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="imageName" name="imageName" placeholder="镜像名">
+					</div>
+				</div>
 
+				<div class="form-group">
+					<label for="description" class="col-sm-2 control-label">Description </label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="description" name="description" placeholder="描述">
+					</div>
+				</div>
 
-      <h1 class="page-header">
-       上传镜像
-       </h1>
-      <form action ="#" method="post" class="form-horizontal">
-        <div class="form-group">
-          <label for="imageName" class="col-sm-2 control-label">Image Name </label>
-          <div class="col-sm-6">
-            <input type="text" class="form-control" id="imageName" name="imageName" placeholder="镜像名">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="description" class="col-sm-2 control-label">Description </label>
-          <div class="col-sm-6">
-            <input type="text" class="form-control" id="description" name="description" placeholder="描述">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="uploadType" class="col-sm-2 control-label">Upload Type</label>
-          <div class="col-sm-6">
-            <select class="form-control">
-              <option value="0">镜像文件上传</option>
-              <option value="1">GitHub地址构建</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="sourcePackage" class="col-sm-2 control-label">Source File</label>
-          <div class="col-sm-6">
-            <input type="file" class='form-control' id="sourcePackage" name="sourcePackage" placeholder="源文件">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="githubLink" class="col-sm-2 control-label">Github Link</label>
-          <div class="col-sm-6">
-            <input type="text" class="form-control" id="githubLink" name="githubLink" placerholder="GitHub链接">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="version" class="col-sm-2 control-label">Version</label>
-          <div class="col-sm-6">
-          <input type="text" class="form-control" id="version" name="version" placerholder="版本">
-          </div>
-          <div class="col-sm-2">
-            <button class="btn btn-info">自动侦测版本</button>
-          </div>
-        </div>
+				<div class="form-group">
+					<label for="uploadType" class="col-sm-2 control-label">Upload Type</label>
+					<div class="col-sm-6">
+						<select class="form-control">
+							<option value="0">镜像文件上传</option>
+							<option value="1">GitHub地址构建</option>
+						</select>
+					</div>
+				</div>
 
-        <div class="form-group ">
-          <div class="col-sm-4 col-sm-offset-2">
-            <button type="submit" class="btn btn-info"> 上传 </button>
-          </div>
-        </div>
-      </form>
+				<div class="form-group">
+					<label for="sourcePackage" class="col-sm-2 control-label">Source File</label>
+					<div class="col-sm-6">
+						<input type="file" class='form-control' id="sourcePackage" name="sourcePackage" placeholder="源文件">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="githubLink" class="col-sm-2 control-label">Github Link</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="githubLink" name="githubLink" placerholder="GitHub链接">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="version" class="col-sm-2 control-label">Version</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="version" name="version" placerholder="版本">
+					</div>
+					<div class="col-sm-2">
+						<button class="btn btn-info">自动侦测版本</button>
+					</div>
+				</div>
+
+				<div class="form-group ">
+					<div class="col-sm-4 col-sm-offset-2">
+						<button type="submit" class="btn btn-info"> 上传 </button>
+					</div>
+				</div>
+			</form>
+	  	</div>
+
+	  	<div id="snapshot" class="tab-pane fade">
+	  		<p>snapshot</p>
+	  	</div>
+
+	  	<div id="github" class="tab-pane fade">
+	  		<p>github</p>
+	  	</div>
+	</div>
+</div>
 {% endblock %}
 
 

@@ -166,7 +166,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         assert 'pid' in self.kwargs
         pid = self.kwargs['pid']
 
-        data = request.data.copy()
+        data = request.data
         data['project'] = pid
         # create image metadata
         serializer = self.get_serializer(data=data)
