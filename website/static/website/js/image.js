@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  	$('#image-space').addClass('nav-item-active');
+  	$('.image-space').addClass('active');
 
     $('tbody btn').click(function(){
         $(this).parent().submit();

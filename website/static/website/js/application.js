@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('#application-space').addClass('nav-item-active');
+    $('.application-space').addClass('active');
 
     $('#project').click(function(){
         $('.project-part').removeClass('notshow');

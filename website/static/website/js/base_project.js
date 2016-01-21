@@ -1,26 +1,45 @@
-// $(document).ready(function(){
-//     $('#application-space').click(function(){
-//         alert("hello");
-//         window.location.href = "/projects/1/applications/";
-//     });
-// });
+$(document).ready(function(){
+    $(".nav-sidebar li").hover(
+        function() {
+            active_element = $(".nav-sidebar .active");
+            $(".nav-sidebar li").removeClass("active");
+        },
+        function() {
+            active_element.addClass("active");
+        }
+    );
+});
 
-function show_introduction() {
-    window.location.href = "/projects/1/introduction/";
+function show_home() {
+    window.location.href = "/home/";
 }
 
-function show_applications() {
-    window.location.href = "/projects/1/applications/";
+function show_introduction() {
+    var pid = window.location.href.split("//")[1].split("/")[2];
+    window.location.href = "/projects/" + pid + "/introduction/";
+    $('.project-intro').addClass('active');
 }
 
 function show_images() {
-    window.location.href = "/projects/1/images/";
+    var pid = window.location.href.split("//")[1].split("/")[2];
+    window.location.href = "/projects/" + pid + "/images/";
+    $('.image-space').addClass('active');
+}
+
+function show_applications() {
+    var pid = window.location.href.split("//")[1].split("/")[2];
+    window.location.href = "/projects/" + pid + "/applications/";
+    $('.application-space').addClass('active');
 }
 
 function show_volumes() {
-    window.location.href = "/projects/1/volumes/";
+    var pid = window.location.href.split("//")[1].split("/")[2];
+    window.location.href = "/projects/" + pid + "/volumes/";
+    $('.volume-space').addClass('active');
 }
 
 function show_publics() {
-    window.location.href = "/projects/1/publics/";
+    var pid = window.location.href.split("//")[1].split("/")[2];
+    window.location.href = "/projects/" + pid + "/publics/";
+    $('.public-image').addClass('active');
 }

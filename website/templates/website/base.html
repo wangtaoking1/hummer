@@ -12,6 +12,9 @@
     <link href="{% static 'website/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'website/css/style.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <script src="{% static 'website/js/jquery-2.1.4.min.js' %}"></script>
+    <script src="{% static 'website/js/bootstrap.min.js' %}"></script>
     {% block style %}{% endblock %}
     </head>
 
@@ -30,8 +33,6 @@
     </footer>
     {% endblock %}
 
-    <script src="{% static 'website/js/jquery-2.1.4.min.js' %}"></script>
-    <script src="{% static 'website/js/bootstrap.min.js' %}"></script>
     {% block script %}
     {% endblock %}
     </body>
