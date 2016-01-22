@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^login/$', views.login, name='login'),
     url(r'^registry/$', views.registry, name='registry'),
     url(r'^logout/$', views.logout, name='logout'),
-    url(r'^home/$', views.home, name='home'),
+    url(r'^dashboard/$', views.dashboard, name='dashboard'),
     url(r'^create_project/$', views.create_project, name='create-project'),
     url(r'^projects/(?P<pid>[0-9]+)/delete_project/$', views.delete_project,
         name='delete-project'),
@@ -34,6 +34,8 @@ urlpatterns = [
         name='list-applications'),
     url(r'^projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/$',
         views.show_application_detail, name='show-application-detail'),
+    url(r'^projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/delete_application/$',
+        views.delete_application, name='delete-application'),
 
     # volume
     url(r'^projects/(?P<pid>[0-9]+)/volumes/$', views.list_volumes,

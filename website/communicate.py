@@ -85,11 +85,28 @@ class Communicator(object):
             return True
         return False
 
+    def get_project(self, project_id):
+        """
+        Get the detail info of the project.
+        """
+        url = get_api_server_url('/api/projects/{}/'.format(project_id))
+        response = self.client.get(url)
+        return json.loads(response.text)
+
     def image_lists(self, project_id):
         """
         Return the image lists of the project.
         """
         url = get_api_server_url('/api/projects/{}/images/'.format(project_id))
+        response = self.client.get(url)
+        return json.loads(response.text)
+
+    def get_image(self, project_id, image_id):
+        """
+        Get the detail info of the image.
+        """
+        url = get_api_server_url('/api/projects/{}/images/{}/'.format(
+            project_id, image_id))
         response = self.client.get(url)
         return json.loads(response.text)
 
@@ -105,3 +122,50 @@ class Communicator(object):
         if res.status_code == 204:
             return True
         return False
+
+    def application_lists(self, project_id):
+        """
+        Return the application lists of the project.
+        """
+        url = get_api_server_url('/api/projects/{}/applications/'.format(project_id))
+        response = self.client.get(url)
+        return json.loads(response.text)
+
+    def get_application(self, project_id, application_id):
+        """
+        Get the detail info of the application.
+        """
+        url = get_api_server_url('/api/projects/{}/applications/{}/'.format(
+            project_id, application_id))
+        response = self.client.get(url)
+        return json.loads(response.text)
+
+    def delete_application(self, project_id, application_id):
+        """
+        Delete the application in the project.
+        """
+        url = get_api_server_url('/api/projects/{}/applications/{}/'.format(
+            project_id, application_id))
+        headers = {'X-CSRFToken': self.client.cookies['csrftoken']}
+        res = self.client.delete(url, headers=headers)
+        print(res.status_code)
+        if res.status_code == 204:
+            return True
+        return False
+
+    def volume_lists(self, project_id):
+        """
+        Return the volume lists of the project.
+        """
+        url = get_api_server_url('/api/projects/{}/volumes/'.format(project_id))
+        response = self.client.get(url)
+        return json.loads(response.text)
+
+    def get_volume(self, project_id, volume_id):
+        """
+        Get the detail info of the volume.
+        """
+        url = get_api_server_url('/api/projects/{}/volumes/{}/'.format(
+            project_id, volume_id))
+        response = self.client.get(url)
+        return json.loads(response.text)

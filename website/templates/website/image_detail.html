@@ -2,6 +2,10 @@
 
 {% load staticfiles %}
 
+{% block subposition %}
+>> <a href="{% url 'list-images' pid=project.id %}"><i class="fa fa-list-alt"></i>镜像空间</a>
+>> <a href="{% url 'show-image-detail' pid=project.id iid=image.id %}">{{ image.name }}</a>
+{% endblock %}
 
 {% block main-content %}
 <h1 class="page-header">镜像信息 </h1>

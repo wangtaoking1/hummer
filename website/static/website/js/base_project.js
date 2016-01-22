@@ -10,8 +10,9 @@ $(document).ready(function(){
     );
 });
 
-function show_home() {
-    window.location.href = "/home/";
+function show_dashboard() {
+    window.location.href = "/dashboard/";
+    $('.dashboard').addClass('active');
 }
 
 function show_introduction() {

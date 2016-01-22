@@ -1,0 +1,31 @@
+{% extends "website/base_home.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+      <div class="sidebar-offcanvas" id="sidebar" role="navigation">
+
+        <ul class="nav nav-sidebar">
+            <li class="dashboard" onclick="show_home()">
+                <a>
+                    <i class="fa fa-home fa-2x"></i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+        </ul>
+      </div>
+    </div>
+</div>
+
+<div class="container-fluid container-content">
+    <div class="main">
+        {% block main-content %}
+        {% endblock %}
+    </div>
+</div>
+
+<script src="{% static 'website/js/base_project.js' %}"></script>
+{% endblock %}

@@ -2,6 +2,9 @@
 
 {% load staticfiles %}
 
+{% block subposition %}
+>> <a href="{% url 'list-images' pid=project.id %}"><i class="fa fa-list-alt"></i>镜像空间</a>
+{% endblock %}
 
 {% block main-content %}
 <!-- Image lists -->

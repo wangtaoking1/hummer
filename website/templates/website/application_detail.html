@@ -2,6 +2,10 @@
 
 {% load staticfiles %}
 
+{% block subposition %}
+>> <a href="{% url 'list-applications' pid=project.id %}"><i class="fa fa-th"></i>应用空间</a>
+>> <a href="{% url 'show-application-detail' pid=project.id aid=application.id %}">{{ application.name }}</a>
+{% endblock %}
 
 {% block main-content %}
         <div class="baseInfo center-style" style="display:block;">

@@ -102,6 +102,8 @@ body{font-family: "Helvetica Neue",Helvetica,"Microsoft YaHei",Arial,"宋体","H
     background-color: #EEEEEE;
 }
 
+/* position navigation */
+
 
 /* footer */
 footer{height: 35px; width: 100%; background-color: #666;position: absolute; bottom: 0;}

@@ -1,4 +1,6 @@
 $(document).ready(function(){
+    $('.dashboard').addClass('active');
+
     $('tbody btn').click(function(){
         $(this).parent().submit();
     });
@@ -18,5 +20,5 @@ $(document).ready(function(){
 
 function show_project(element) {
     var id = $(element).find("input").val();
-    window.location.href = "/projects/" + id + "/images/";
+    window.location.href = "/projects/" + id + "/introduction/";
 }

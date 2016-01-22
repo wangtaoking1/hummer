@@ -2,6 +2,10 @@
 
 {% load staticfiles %}
 
+{% block subposition %}
+>> <a href="{% url 'list-volumes' pid=project.id %}"><i class="fa fa-floppy-o"></i>卷空间</a>
+>> <a href="{% url 'show-volume-detail' pid=project.id vid=volume.id %}">{{ volume.name }}</a>
+{% endblock %}
 
 {% block main-content %}
     <div class="baseInfo center-style">

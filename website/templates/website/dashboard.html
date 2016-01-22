@@ -1,0 +1,73 @@
+{% extends "website/base_dashboard.html" %}
+
+{% load staticfiles %}
+
+{% block main-content %}
+<div class="project-part page">
+    <!-- Projects show-->
+    <h2>项目列表</h2>
+    <div class="table-responsive  all-project">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>项目名称</th>
+                    <th>简单描述</th>
+                    <th>创建时间</th>
+                    <th>删除</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects %}
+                <tr onclick="show_project(this);">
+                    <input type="hidden" name="id" value="{{ project.id }}">
+                    <td>{{ project.name }}</td>
+                    <td>{{ project.desc|truncatechars:20 }}</td>
+                    <td>{{ project.create_time }}</td>
+                    <td>
+                        <form action="{% url 'delete-project' pid=project.id %}" method="get">
+                            <button class="btn btn-xs btn-danger">删除</buuton>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <hr><hr>
+    <!-- Create project -->
+    <h2>创建项目</h2>
+
+    <div class="create-project">
+        <form action="{% url 'create-project' %}" method="post" class="form-horizontal">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="peojectName" class="col-sm-2 control-label">项目名称</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="peojectName" name="name" maxlength="32" placeholder="项目名称">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="col-sm-2 control-label">项目描述</label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" id="description" name="desc" maxlength="256" placeholder="项目描述"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group last-btns">
+                <div class="col-sm-1 col-sm-offset-2">
+                    <button class="btn btn-info">创建</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'website/js/dashboard.js' %}"></script>
+{% endblock %}

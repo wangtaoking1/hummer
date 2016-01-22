@@ -2,33 +2,46 @@
 
 {% load staticfiles %}
 
+{% block subposition %}
+>> <a href="{% url 'list-applications' pid=project.id %}"><i class="fa fa-th"></i>应用空间</a>
+{% endblock %}
 
 {% block main-content %}
-<div class="position-nav">
-      </div>
-          <div class="table-responsive">
-            <table class="table table-striped enable">
-              <thead>
-                <tr>
-                  <th>APP_Name</th>
-                  <th>From</th>
-                  <th>deployed_Time</th>
-                  <th>Short_Description</th>
-                  <th>Handle</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>shany_mysql</td>
-                  <td>mysql_1.1</td>
-                  <td>2019.10.01</td>
-                  <td>Now</td>
-                  <td><button class="btn btn-xs btn-danger">删除</button><button class="btn btn-xs btn-info">关闭应用</button><button class="btn btn-xs btn-info">重启</button>
-                  <button class="btn btn-xs btn-info">导出</button><button class="btn btn-xs btn-info">编辑应用</button><button class="btn btn-xs btn-info">详细信息</button></td>
-                </tr>
-                </tbody>
-                </table>
-              </div>
+<!-- Application lists -->
+<h2 class="page-header">应用列表</h2>
+<div class="table-responsive">
+	<table class="table table-striped resource-lists">
+		<thead>
+			<tr>
+				<th>Logo</th>
+				<th>应用名称</th>
+				<th>副本数</th>
+				<th>状态</th>
+				<th>创建时间</th>
+				<th>删除</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for application in applications %}
+			<tr onclick="show_application(this);">
+                <input type="hidden" name="id" value="{{ application.id }}">
+				<td>
+					<img class="common-images" src="{% static 'website/img/default.jpg' %}"  width="40px" height="40px">
+				</td>
+				<td>{{ application.name }}</td>
+				<td>{{ application.replicas }}</td>
+				<td>{{ application.status }}</td>
+				<td>{{ application.create_time }}</td>
+				<td>
+					<form action="{% url 'delete-application' pid=project.id aid=application.id %}" method="get">
+                        <button class="btn btn-xs btn-danger">删除</buuton>
+                    </form>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
 {% endblock %}
 
 
