@@ -214,9 +214,25 @@ def list_volumes(request, *args, **kwargs):
     project_id = kwargs['pid']
     client = Communicator(cookies=request.COOKIES)
     context['project'] = client.get_project(project_id=project_id)
+    context['volumes'] = client.volume_lists(project_id=project_id)
 
     return render(request, 'website/volumes.html', context,
         RequestContext(request))
+
+
+@login_required()
+def delete_volume(request, *args, **kwargs):
+    project_id = kwargs['pid']
+    volume_id = kwargs['vid']
+
+    client = Communicator(cookies=request.COOKIES)
+    ok = client.delete_volume(project_id=project_id,
+        volume_id=volume_id)
+    if ok:
+        return HttpResponseRedirect(reverse('list-volumes',
+            kwargs={'pid': project_id}))
+    return HttpResponseRedirect(reverse('list-volumes',
+        kwargs={'pid': project_id}))
 
 
 @login_required()

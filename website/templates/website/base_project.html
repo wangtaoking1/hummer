@@ -36,7 +36,7 @@
             <li class="volume-space" onclick="show_volumes()">
                 <a>
                     <i class="fa fa-floppy-o fa-2x"></i>
-                    <p>卷空间</p>
+                    <p>存储卷</p>
                 </a>
             </li>
             <li class="public-image" onclick="show_publics()">
@@ -53,7 +53,7 @@
 <div class="container-fluid container-content">
     <div class="main">
         <div class="position-nav">
-            <a href="{% url 'dashboard' %}"><i class="fa fa-home"></i>Dashboard</a>
+            <a href="{% url 'dashboard' %}"><i class="fa fa-home"></i> Dashboard</a>
             >> <a href="{% url 'introduce-project' pid=project.id %}">{{ project.name }}</a>
             {% block subposition %}{% endblock %}
             <div class="clearfix"></div>

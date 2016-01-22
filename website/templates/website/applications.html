@@ -3,44 +3,44 @@
 {% load staticfiles %}
 
 {% block subposition %}
->> <a href="{% url 'list-applications' pid=project.id %}"><i class="fa fa-th"></i>应用空间</a>
+>> <i class="fa fa-th"></i> 应用空间
 {% endblock %}
 
 {% block main-content %}
 <!-- Application lists -->
 <h2 class="page-header">应用列表</h2>
 <div class="table-responsive">
-	<table class="table table-striped resource-lists">
-		<thead>
-			<tr>
-				<th>Logo</th>
-				<th>应用名称</th>
-				<th>副本数</th>
-				<th>状态</th>
-				<th>创建时间</th>
-				<th>删除</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for application in applications %}
-			<tr onclick="show_application(this);">
+    <table class="table table-striped resource-lists">
+        <thead>
+            <tr>
+                <th>Logo</th>
+                <th>应用名称</th>
+                <th>副本数</th>
+                <th>状态</th>
+                <th>创建时间</th>
+                <th>删除</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+            <tr onclick="show_application(this);">
                 <input type="hidden" name="id" value="{{ application.id }}">
-				<td>
-					<img class="common-images" src="{% static 'website/img/default.jpg' %}"  width="40px" height="40px">
-				</td>
-				<td>{{ application.name }}</td>
-				<td>{{ application.replicas }}</td>
-				<td>{{ application.status }}</td>
-				<td>{{ application.create_time }}</td>
-				<td>
-					<form action="{% url 'delete-application' pid=project.id aid=application.id %}" method="get">
+                <td>
+                    <img class="common-images" src="{% static 'website/img/default.jpg' %}"  width="40px" height="40px">
+                </td>
+                <td>{{ application.name }}</td>
+                <td>{{ application.replicas }}</td>
+                <td>{{ application.status }}</td>
+                <td>{{ application.create_time }}</td>
+                <td>
+                    <form action="{% url 'delete-application' pid=project.id aid=application.id %}" method="get">
                         <button class="btn btn-xs btn-danger">删除</buuton>
                     </form>
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
 

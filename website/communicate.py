@@ -169,3 +169,16 @@ class Communicator(object):
             project_id, volume_id))
         response = self.client.get(url)
         return json.loads(response.text)
+
+    def delete_volume(self, project_id, volume_id):
+        """
+        Delete the volume in the project.
+        """
+        url = get_api_server_url('/api/projects/{}/volumes/{}/'.format(
+            project_id, volume_id))
+        headers = {'X-CSRFToken': self.client.cookies['csrftoken']}
+        res = self.client.delete(url, headers=headers)
+        print(res.status_code)
+        if res.status_code == 204:
+            return True
+        return False

@@ -42,6 +42,8 @@ urlpatterns = [
         name='list-volumes'),
     url(r'^projects/(?P<pid>[0-9]+)/volumes/(?P<vid>[0-9]+)/$',
         views.show_volume_detail, name='show-volume-detail'),
+    url(r'^projects/(?P<pid>[0-9]+)/volumes/(?P<vid>[0-9]+)/delete_volume/$',
+        views.delete_volume, name='delete-volume'),
 
     # public image
     url(r'^projects/(?P<pid>[0-9]+)/publics/$', views.list_publics,

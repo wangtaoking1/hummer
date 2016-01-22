@@ -3,8 +3,8 @@
 {% load staticfiles %}
 
 {% block subposition %}
->> <a href="{% url 'list-volumes' pid=project.id %}"><i class="fa fa-floppy-o"></i>卷空间</a>
->> <a href="{% url 'show-volume-detail' pid=project.id vid=volume.id %}">{{ volume.name }}</a>
+>> <a href="{% url 'list-volumes' pid=project.id %}"><i class="fa fa-floppy-o"></i> 存储卷</a>
+>> {{ volume.name }}
 {% endblock %}
 
 {% block main-content %}

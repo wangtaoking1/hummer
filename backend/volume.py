@@ -82,6 +82,7 @@ class VolumeBuilder(object):
         Create direction on nfs server to store volume data.
         """
         client = NFSLocalClient()
+        client.removedir(self.nfs_path)
         client.makedir(self.nfs_path)
         return True
 

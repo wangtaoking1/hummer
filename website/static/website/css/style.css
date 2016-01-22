@@ -48,12 +48,13 @@ footer {
 
 .main {
     padding: 20px;
-    background-color: #fff;
+    background-color: #FFFFFF;
 }
 @media (min-width: 768px) {
     .main {
     padding-right: 15%;
-    padding-left: 15%;
+    padding-left: 10%;
+    padding-bottom: 100px;
     }
 }
 .main .page-header {
@@ -62,7 +63,7 @@ footer {
 
 .container-content {
     margin-top: 5px;
-    margin-bottom: 100px;
+    margin-bottom: 50px;
     padding-left: 9%;
     padding-right: 3%;
 }
@@ -97,12 +98,21 @@ body{font-family: "Helvetica Neue",Helvetica,"Microsoft YaHei",Arial,"宋体","H
 .nav-sidebar > li > a {
     text-align: center;
 }
+.nav-sidebar > li >p {
+    cursor: pointer;
+}
 .active > a {
     color: #2A6496;
     background-color: #EEEEEE;
 }
 
 /* position navigation */
+.position-nav {
+    font-size: 1.5em;
+}
+.position-nav > a {
+    text-decoration: none;
+}
 
 
 /* footer */
