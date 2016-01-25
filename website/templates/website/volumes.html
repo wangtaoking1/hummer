@@ -9,8 +9,8 @@
 {% block main-content %}
 <!-- Volume lists -->
 <h2 class="page-header">存储卷列表</h2>
-<div class="table-responsive">
-    <table class="table table-striped resource-lists">
+<div class="table-responsive resource-lists">
+    <table class="table">
         <thead>
             <tr>
                 <th>卷名称</th>
@@ -38,7 +38,7 @@
                 <td>{{ volume.create_time }}</td>
                 <td>
                     <form action="{% url 'delete-volume' pid=project.id vid=volume.id %}" method="get">
-                        <button class="btn btn-xs btn-danger">删除</buuton>
+                        <button class="btn btn-xs btn-danger">删除</button>
                     </form>
                 </td>
             </tr>

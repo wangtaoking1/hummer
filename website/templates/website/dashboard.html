@@ -6,7 +6,8 @@
 <div class="project-part page">
     <!-- Projects show-->
     <h2>项目列表</h2>
-    <div class="table-responsive  all-project">
+    <hr>
+    <div class="table-responsive resource-lists">
         <table class="table">
             <thead>
                 <tr>
@@ -25,7 +26,7 @@
                     <td>{{ project.create_time }}</td>
                     <td>
                         <form action="{% url 'delete-project' pid=project.id %}" method="get">
-                            <button class="btn btn-xs btn-danger">删除</buuton>
+                            <button class="btn btn-xs btn-danger">删除</button>
                         </form>
                     </td>
                 </tr>

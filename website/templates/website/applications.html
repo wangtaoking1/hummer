@@ -9,8 +9,8 @@
 {% block main-content %}
 <!-- Application lists -->
 <h2 class="page-header">应用列表</h2>
-<div class="table-responsive">
-    <table class="table table-striped resource-lists">
+<div class="table-responsive resource-lists">
+    <table class="table">
         <thead>
             <tr>
                 <th>Logo</th>
@@ -34,7 +34,7 @@
                 <td>{{ application.create_time }}</td>
                 <td>
                     <form action="{% url 'delete-application' pid=project.id aid=application.id %}" method="get">
-                        <button class="btn btn-xs btn-danger">删除</buuton>
+                        <button class="btn btn-xs btn-danger">删除</button>
                     </form>
                 </td>
             </tr>
