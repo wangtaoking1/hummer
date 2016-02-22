@@ -58,57 +58,96 @@
     </ul>
     <hr>
     <div class="tab-content">
+        <!-- Source -->
         <div id="source" class="tab-pane fade">
-            <p>source</p>
+            <form action ="#" method="post" class="form-horizontal">
+                <input type="hidden" name="is_image" value="1">
+                <div class="form-group">
+                    <label for="imagename" class="col-sm-2 control-label">镜像名称</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="imagename" name="imagename" placeholder="镜像名称">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="version" class="col-sm-2 control-label">镜像版本</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="version" name="version" placeholder="镜像版本">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="col-sm-2 control-label">镜像说明</label>
+                    <div class="col-sm-8">
+                        <textarea class="form-control" id="description" name="desc" maxlength="256" placeholder="镜像说明"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group ">
+                    <div class="col-sm-4 col-sm-offset-2">
+                        <button type="submit" class="btn btn-info"> 上传 </button>
+                    </div>
+                </div>
+            </form>
         </div>
 
+        <!-- Image -->
         <div id="image" class="tab-pane fade in active">
-            <form action ="#" method="post" class="form-horizontal">
+            <form class="form-horizontal">
+                <input type="hidden" name="is_image" value="1">
                 <div class="form-group">
-                    <label for="imageName" class="col-sm-2 control-label">Image Name </label>
+                    <label for="imagename" class="col-sm-2 control-label">镜像名称</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="imageName" name="imageName" placeholder="镜像名">
+                        <input type="text" class="form-control" id="imagename" name="imagename" placeholder="镜像名称">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="description" class="col-sm-2 control-label">Description </label>
+                    <label for="version" class="col-sm-2 control-label">镜像版本</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="description" name="description" placeholder="描述">
+                        <input type="text" class="form-control" id="version" name="version" placeholder="镜像版本">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="uploadType" class="col-sm-2 control-label">Upload Type</label>
+                    <label for="description" class="col-sm-2 control-label">镜像说明</label>
+                    <div class="col-sm-8">
+                        <textarea class="form-control" id="description" name="desc" maxlength="256" placeholder="镜像说明"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="imagetype" class="col-sm-2 control-label">镜像类型</label>
                     <div class="col-sm-6">
-                        <select class="form-control">
-                            <option value="0">镜像文件上传</option>
-                            <option value="1">GitHub地址构建</option>
+                        <select class="form-control" id="imagetype" name="imagetype">
+                            <option value="0">私有</option>
+                            <option value="1">公有</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="sourcePackage" class="col-sm-2 control-label">Source File</label>
+                    <label for="fileupload" class="col-sm-2 control-label">镜像文件</label>
                     <div class="col-sm-6">
-                        <input type="file" class='form-control' id="sourcePackage" name="sourcePackage" placeholder="源文件">
+                        <input type="file" class='form-control' id="fileupload" name="buildfile" data-url="{% url 'upload-file' pid=project.id %}">
+
+                        <div class="progress progress-striped active">
+                            <div class="progress-bar progress-bar-success" role="progressbar" style="width: 0%;">0%</div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="githubLink" class="col-sm-2 control-label">Github Link</label>
+                    <label for="oldimagename" class="col-sm-2 control-label">原镜像名称</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="githubLink" name="githubLink" placerholder="GitHub链接">
+                        <input type="text" class="form-control" id="oldimagename" name="oldimagename" placeholder="原镜像名称">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="version" class="col-sm-2 control-label">Version</label>
+                    <label for="oldversion" class="col-sm-2 control-label">原镜像版本</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="version" name="version" placerholder="版本">
-                    </div>
-                    <div class="col-sm-2">
-                        <button class="btn btn-info">自动侦测版本</button>
+                        <input type="text" class="form-control" id="oldversion" name="oldversion" placeholder="原镜像版本">
                     </div>
                 </div>
 

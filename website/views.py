@@ -1,9 +1,10 @@
 import requests
 import logging
+import os
 
 from django.conf import settings
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import (require_http_methods, require_GET,
@@ -11,7 +12,7 @@ from django.views.decorators.http import (require_http_methods, require_GET,
 from django.views.decorators.csrf import csrf_exempt
 
 from website.auth import login_required
-from website.utils import (get_api_server_url)
+from website.utils import (get_api_server_url, save_buildfile_to_disk)
 from website.communicate import Communicator
 from website.auth import is_authenticated
 from website.forms import (LoginForm, RegistryForm, ProjectForm)
@@ -178,6 +179,16 @@ def delete_image(request, *args, **kwargs):
 
 
 @login_required()
+@csrf_exempt
+@require_POST
+def upload_build_file(request, *args, **kwargs):
+    project_id = kwargs['pid']
+
+    save_buildfile_to_disk(request.FILES['buildfile'], project_id)
+    return JsonResponse({})
+
+
+@login_required()
 def list_applications(request, *args, **kwargs):
     context = {
         'username': kwargs.get('username')
@@ -291,3 +302,7 @@ def show_volume_detail(request, *args, **kwargs):
 
     return render(request, 'website/volume_detail.html', context,
         RequestContext(request))
+
+
+def test(request, *args, **kwargs):
+    return render(request, 'website/test.html')

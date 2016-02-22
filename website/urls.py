@@ -24,6 +24,8 @@ urlpatterns = [
     # image
     url(r'^projects/(?P<pid>[0-9]+)/images/$', views.list_images,
         name='list-images'),
+    url(r'^projects/(?P<pid>[0-9]+)/uploadfile/$', views.upload_build_file,
+        name='upload-file'),
     url(r'^projects/(?P<pid>[0-9]+)/images/(?P<iid>[0-9]+)/$',
         views.show_image_detail, name='show-image-detail'),
     url(r'^projects/(?P<pid>[0-9]+)/images/(?P<iid>[0-9]+)/delete_image/$',
@@ -50,4 +52,5 @@ urlpatterns = [
         name='list-publics'),
 
 
+    url(r'^test/$', views.test),
 ]

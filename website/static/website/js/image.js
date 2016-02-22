@@ -14,10 +14,30 @@ $(document).ready(function(){
         $('#' + id).addClass('in');
         $('#' + id).addClass('active');
     });
+
+    $('#fileupload').fileupload({
+        dataType: 'json',
+
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100);
+            $('.progress .progress-bar').css(
+                'width',
+                progress + '%'
+            );
+            $('.progress .progress-bar').text(progress + '%');
+        },
+
+        done: function(e, data) {
+            $('.progress .progress-bar').text("Finished");
+            $('.progress').removeClass('active');
+        }
+    });
 });
 
 function show_image(element) {
     var id = $(element).find("input").first().val();
-    var new_url = window.location.href + id + "/";
+    var base_url = window.location.href.split("#")[0];
+    var new_url = base_url + id + "/";
     window.location.href = new_url;
 }
+
