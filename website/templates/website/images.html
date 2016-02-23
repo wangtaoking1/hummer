@@ -60,52 +60,24 @@
     <div class="tab-content">
         <!-- Source -->
         <div id="source" class="tab-pane fade">
-            <form action ="#" method="post" class="form-horizontal">
-                <input type="hidden" name="is_image" value="1">
-                <div class="form-group">
-                    <label for="imagename" class="col-sm-2 control-label">镜像名称</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="imagename" name="imagename" placeholder="镜像名称">
-                    </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="version" class="col-sm-2 control-label">镜像版本</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="version" name="version" placeholder="镜像版本">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="description" class="col-sm-2 control-label">镜像说明</label>
-                    <div class="col-sm-8">
-                        <textarea class="form-control" id="description" name="desc" maxlength="256" placeholder="镜像说明"></textarea>
-                    </div>
-                </div>
-
-                <div class="form-group ">
-                    <div class="col-sm-4 col-sm-offset-2">
-                        <button type="submit" class="btn btn-info"> 上传 </button>
-                    </div>
-                </div>
-            </form>
         </div>
 
         <!-- Image -->
         <div id="image" class="tab-pane fade in active">
             <form class="form-horizontal">
-                <input type="hidden" name="is_image" value="1">
+                <input type="hidden" name="build_type" value="1">
                 <div class="form-group">
                     <label for="imagename" class="col-sm-2 control-label">镜像名称</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="imagename" name="imagename" placeholder="镜像名称">
+                        <input type="text" class="form-control" id="imagename" name="name" maxlength="32" placeholder="镜像名称">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="version" class="col-sm-2 control-label">镜像版本</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="version" name="version" placeholder="镜像版本">
+                        <input type="text" class="form-control" id="version" name="version" maxlength="32" placeholder="镜像版本">
                     </div>
                 </div>
 
@@ -117,9 +89,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="imagetype" class="col-sm-2 control-label">镜像类型</label>
+                    <label for="image_type" class="col-sm-2 control-label">镜像类型</label>
                     <div class="col-sm-6">
-                        <select class="form-control" id="imagetype" name="imagetype">
+                        <select class="form-control" id="image_type" name="image_type">
                             <option value="0">私有</option>
                             <option value="1">公有</option>
                         </select>
@@ -140,20 +112,21 @@
                 <div class="form-group">
                     <label for="oldimagename" class="col-sm-2 control-label">原镜像名称</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="oldimagename" name="oldimagename" placeholder="原镜像名称">
+                        <input type="text" class="form-control" id="oldimagename" name="old_name" maxlength="32" placeholder="原镜像名称">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="oldversion" class="col-sm-2 control-label">原镜像版本</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="oldversion" name="oldversion" placeholder="原镜像版本">
+                        <input type="text" class="form-control" id="oldversion" name="old_version" maxlength="32" placeholder="原镜像版本">
                     </div>
                 </div>
 
-                <div class="form-group ">
+                <div class="form-group">
                     <div class="col-sm-4 col-sm-offset-2">
-                        <button type="submit" class="btn btn-info"> 上传 </button>
+                        <input type="button" class="btn btn-info submit" value=" 上传 ">
+                        <p style="display: none;">提示信息</p>
                     </div>
                 </div>
             </form>

@@ -32,6 +32,32 @@ $(document).ready(function(){
             $('.progress').removeClass('active');
         }
     });
+
+    $('.image-create .submit').click(function() {
+        var form = $(this).parents("form");
+        var url = window.location.href.split("#")[0].replace("images",
+            "create-image");
+
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: url,
+            data: form.serialize(),
+            async: false,
+            success: function(data) {
+                if (data.hasOwnProperty("success")) {
+                    form[0].reset();
+                    // $(this).next().css({"display": "inline", "color": "green"});
+                }
+                else {
+                    alert("error");
+                }
+            },
+            error: function(request) {
+                alert("error");
+            }
+        });
+    });
 });
 
 function show_image(element) {

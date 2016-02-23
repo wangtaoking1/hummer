@@ -24,3 +24,13 @@ class RegistryForm(forms.Form):
 class ProjectForm(forms.Form):
     name = forms.CharField(max_length=32)
     desc = forms.CharField(max_length=256)
+
+
+class ImageForm(forms.Form):
+    name = forms.CharField(max_length=32)
+    version = forms.CharField(max_length=32)
+    desc = forms.CharField(max_length=256)
+    build_type = forms.IntegerField()
+    image_type = forms.IntegerField()
+    old_name = forms.CharField(max_length=32)
+    old_version = forms.CharField(max_length=32)

@@ -30,6 +30,8 @@ urlpatterns = [
         views.show_image_detail, name='show-image-detail'),
     url(r'^projects/(?P<pid>[0-9]+)/images/(?P<iid>[0-9]+)/delete_image/$',
         views.delete_image, name='delete-image'),
+    url(r'^projects/(?P<pid>[0-9]+)/create-image/$', views.create_image,
+        name='create-image'),
 
     # application
     url(r'^projects/(?P<pid>[0-9]+)/applications/$', views.list_applications,

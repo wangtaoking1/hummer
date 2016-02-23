@@ -1,6 +1,7 @@
 import requests
 import logging
 import os
+import time
 
 from django.conf import settings
 from django.shortcuts import render
@@ -15,7 +16,7 @@ from website.auth import login_required
 from website.utils import (get_api_server_url, save_buildfile_to_disk)
 from website.communicate import Communicator
 from website.auth import is_authenticated
-from website.forms import (LoginForm, RegistryForm, ProjectForm)
+from website.forms import (LoginForm, RegistryForm, ProjectForm, ImageForm)
 
 logger = logging.getLogger("website")
 
@@ -186,6 +187,20 @@ def upload_build_file(request, *args, **kwargs):
 
     save_buildfile_to_disk(request.FILES['buildfile'], project_id)
     return JsonResponse({})
+
+
+@login_required()
+@csrf_exempt
+@require_POST
+def create_image(request, *args, **kwargs):
+    project_id = kwargs['pid']
+
+    form = ImageForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse({"error": "data invalid"})
+
+
+    return JsonResponse({"success": "success"})
 
 
 @login_required()
