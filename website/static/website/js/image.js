@@ -34,27 +34,30 @@ $(document).ready(function(){
     });
 
     $('.image-create .submit').click(function() {
+        $('.image-create .submit').val("上传中...");
         var form = $(this).parents("form");
-        var url = window.location.href.split("#")[0].replace("images",
-            "create-image");
+        var url = window.location.href.split("#")[0]
+        var create_url = url.replace("images", "create-image");
 
         $.ajax({
             cache: true,
             type: "POST",
-            url: url,
+            url: create_url,
             data: form.serialize(),
             async: false,
             success: function(data) {
                 if (data.hasOwnProperty("success")) {
                     form[0].reset();
-                    // $(this).next().css({"display": "inline", "color": "green"});
+                    window.location.href = url;
                 }
                 else {
-                    alert("error");
+                    $('.image-create .submit').val(" 上 传 ");
+                    $('.image-create .submit-notice').html("上传失败！");
                 }
             },
             error: function(request) {
-                alert("error");
+                $('.image-create .submit').val(" 上 传 ");
+                $('.image-create .submit-notice').html("上传失败！");
             }
         });
     });

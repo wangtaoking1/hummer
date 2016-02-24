@@ -194,6 +194,9 @@ body {
     min-height: 200px;
     background: #fff;
 }
+.image-create .submit-notice {
+    color: red;
+}
 
 
 /*

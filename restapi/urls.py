@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from rest_framework import routers
 from restapi.views import (UserViewSet, ProjectViewSet, ImageViewSet,
     ApplicationViewSet, PortViewSet, ResourceLimitViewSet, VolumeViewSet,
-    is_authenticated)
+    is_authenticated, create_image)
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -48,6 +48,9 @@ urlpatterns = [
     url(r'users/(?P<pk>[0-9]+)/set_password/$', set_password,
         name='set-password'),
     url(r'auth/is_authenticated/$', is_authenticated, name='is_authenticated'),
+
+    # create image
+    url(r'projects/(?P<pid>[0-9]+)/create_image/$', create_image),
 
     # pod
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<pk>[0-9]+)/pods/$',

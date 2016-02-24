@@ -65,3 +65,22 @@ class CommunicatorTestCase(unittest.TestCase):
         }
         client.login(data)
         client.delete_image(1, 2)
+
+    def test_create_image(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+        params = {
+            'name': 'nginx-a',
+            'version': '1.9.9',
+            'desc': 'nginx',
+            'is_public': 'false',
+            'is_image': '1',
+            'old_image_name': 'nginx',
+            'old_image_version': '1.9.9'
+        }
+        buildfile = '/home/wangtao/images/nginx.tar'
+        client.create_image(1, params, buildfile)

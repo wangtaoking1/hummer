@@ -3,13 +3,17 @@ import os
 
 from django.contrib.auth.models import AnonymousUser
 from django.conf import settings
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import (require_POST)
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.exceptions import (PermissionDenied, ValidationError,
     ParseError, NotFound)
 from rest_framework.decorators import api_view
+from rest_framework.settings import api_settings
 
 from restapi.serializers import (UserSerializer, ProjectSerializer,
     ImageSerializer, ApplicationSerializer, PortSerializer,
@@ -162,6 +166,8 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         if not request.FILES.get('file'):
             raise ParseError(detail="There is no image build file.")
+
+        return JsonResponse({"success": "success"})
 
         assert 'pid' in self.kwargs
         pid = self.kwargs['pid']
@@ -623,3 +629,62 @@ def is_authenticated(request):
         return Response(data=request.user.username,
             status=status.HTTP_200_OK)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@csrf_exempt
+@require_POST
+def create_image(request, *args, **kwargs):
+    """
+    """
+    if not (request.user and request.user.is_authenticated()):
+        raise PermissionDenied()
+
+    if not request.FILES.get('file'):
+        raise ParseError(detail="There is no image build file.")
+
+    assert 'pid' in kwargs
+    pid = kwargs['pid']
+
+    data = request.POST
+    data['project'] = pid
+
+    # create image metadata
+    serializer = ImageSerializer(data=data)
+    serializer.is_valid(raise_exception=True)
+
+    images = Image.objects.filter(project__id=pid, name=data['name'],
+        version=data['version'])
+    if images:
+        raise ValidationError(detail="Already has an image called {}."
+            .format(data['name']))
+    serializer.save()
+
+    image = serializer.data
+
+    is_image = is_image_or_dockerfile(data.get('is_image', None))
+    dockerfile = None
+    old_image_name = None
+    old_image_version = None
+    if is_image == 0:
+        dockerfile = data.get('dockerfile', 'Dockerfile')
+    if is_image == 1:
+        old_image_name = data.get('old_image_name', image['name'])
+        old_image_version = data.get('old_image_version', image['version'])
+
+    filename = get_upload_image_filename(image, request.user)
+
+    save_upload_file_to_disk(request.FILES['file'], filename)
+
+    # create a true image instance, and upload into private registry
+    builder = ImageBuilder(
+        build_file=filename,
+        is_image=is_image,
+        dockerfile=dockerfile,
+        image_id=image['id'],
+        user=request.user,
+        old_image_name=old_image_name,
+        old_image_version=old_image_version
+        )
+    builder.create_image()
+
+    return JsonResponse({"detail": "success"})

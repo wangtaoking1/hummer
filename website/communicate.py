@@ -1,6 +1,7 @@
-import requests
 import json
 import logging
+
+import requests
 
 from website.utils import (get_api_server_url)
 
@@ -101,6 +102,25 @@ class Communicator(object):
         response = self.client.get(url)
         return json.loads(response.text)
 
+
+    def create_image(self, project_id, data, buildfile):
+        """
+        Create an image in project project_id with data and buildfile.
+        """
+        url = get_api_server_url('/api/projects/{}/create_image/'.format(project_id))
+
+        files = {'file': open(buildfile, 'rb')}
+        headers = {
+            'X-CSRFToken': self.client.cookies['csrftoken'],
+        }
+        response = self.client.post(url, data=data, files=files,
+            headers=headers)
+        print(response.status_code)
+        print(response.text)
+        if response.status_code == 200:
+            return True
+        return False
+
     def get_image(self, project_id, image_id):
         """
         Get the detail info of the image.
@@ -118,7 +138,7 @@ class Communicator(object):
             project_id, image_id))
         headers = {'X-CSRFToken': self.client.cookies['csrftoken']}
         res = self.client.delete(url, headers=headers)
-        print(res.status_code)
+        # print(res.status_code)
         if res.status_code == 204:
             return True
         return False

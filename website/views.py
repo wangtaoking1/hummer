@@ -13,7 +13,8 @@ from django.views.decorators.http import (require_http_methods, require_GET,
 from django.views.decorators.csrf import csrf_exempt
 
 from website.auth import login_required
-from website.utils import (get_api_server_url, save_buildfile_to_disk)
+from website.utils import (get_api_server_url, save_buildfile_to_disk,
+    get_filename_of_buildfile)
 from website.communicate import Communicator
 from website.auth import is_authenticated
 from website.forms import (LoginForm, RegistryForm, ProjectForm, ImageForm)
@@ -199,8 +200,27 @@ def create_image(request, *args, **kwargs):
     if not form.is_valid():
         return JsonResponse({"error": "data invalid"})
 
+    buildfile = get_filename_of_buildfile(project_id)
+    if form.cleaned_data['image_type'] == '0':
+        is_public = 'false'
+    else:
+        is_public = 'true'
+    data = {
+        'name': form.cleaned_data['name'],
+        'version': form.cleaned_data['version'],
+        'desc': form.cleaned_data['desc'],
+        'is_public': is_public,
+        'is_image': form.cleaned_data['build_type'],
+        'old_image_name': form.cleaned_data['old_name'],
+        'old_image_version': form.cleaned_data['old_version']
+    }
 
-    return JsonResponse({"success": "success"})
+    client = Communicator(cookies=request.COOKIES)
+    ok = client.create_image(project_id, data, buildfile)
+    if ok:
+        return JsonResponse({"success": "success"})
+    else:
+        return JsonResponse({"error": "failed"})
 
 
 @login_required()
@@ -319,5 +339,11 @@ def show_volume_detail(request, *args, **kwargs):
         RequestContext(request))
 
 
+@login_required()
+@csrf_exempt
+@require_POST
 def test(request, *args, **kwargs):
-    return render(request, 'website/test.html')
+    print(request.POST)
+    if not request.FILES.get('file'):
+        return JsonResponse({"error": "no file"})
+    return JsonResponse({"success": "success"})
