@@ -26,6 +26,14 @@ class ProjectForm(forms.Form):
     desc = forms.CharField(max_length=256)
 
 
+class SourceForm(forms.Form):
+    name = forms.CharField(max_length=32)
+    version = forms.CharField(max_length=32)
+    desc = forms.CharField(max_length=256)
+    build_type = forms.IntegerField()
+    image_type = forms.IntegerField()
+    dockerfile = forms.CharField(max_length=256)
+
 class ImageForm(forms.Form):
     name = forms.CharField(max_length=32)
     version = forms.CharField(max_length=32)
@@ -34,3 +42,10 @@ class ImageForm(forms.Form):
     image_type = forms.IntegerField()
     old_name = forms.CharField(max_length=32)
     old_version = forms.CharField(max_length=32)
+
+class SnapshotForm(forms.Form):
+    name = forms.CharField(max_length=32)
+    version = forms.CharField(max_length=32)
+    desc = forms.CharField(max_length=256)
+    build_type = forms.IntegerField()
+    image_type = forms.IntegerField()

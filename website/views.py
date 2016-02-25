@@ -17,7 +17,8 @@ from website.utils import (get_api_server_url, save_buildfile_to_disk,
     get_filename_of_buildfile)
 from website.communicate import Communicator
 from website.auth import is_authenticated
-from website.forms import (LoginForm, RegistryForm, ProjectForm, ImageForm)
+from website.forms import (LoginForm, RegistryForm, ProjectForm, SourceForm,
+    ImageForm, SnapshotForm)
 
 logger = logging.getLogger("website")
 
@@ -186,7 +187,7 @@ def delete_image(request, *args, **kwargs):
 def upload_build_file(request, *args, **kwargs):
     project_id = kwargs['pid']
 
-    save_buildfile_to_disk(request.FILES['buildfile'], project_id)
+    save_buildfile_to_disk(request.FILES['file'], project_id)
     return JsonResponse({})
 
 
@@ -196,7 +197,14 @@ def upload_build_file(request, *args, **kwargs):
 def create_image(request, *args, **kwargs):
     project_id = kwargs['pid']
 
-    form = ImageForm(request.POST)
+    build_type = request.POST.get('build_type', '0')
+    if build_type == '0':
+        form = SourceForm(request.POST)
+    elif build_type == '1':
+        form = ImageForm(request.POST)
+    elif build_type == '2':
+        form= SnapshotForm(request.POST)
+
     if not form.is_valid():
         return JsonResponse({"error": "data invalid"})
 
@@ -211,9 +219,14 @@ def create_image(request, *args, **kwargs):
         'desc': form.cleaned_data['desc'],
         'is_public': is_public,
         'is_image': form.cleaned_data['build_type'],
-        'old_image_name': form.cleaned_data['old_name'],
-        'old_image_version': form.cleaned_data['old_version']
     }
+
+    build_type = form.cleaned_data['build_type']
+    if build_type == '0':
+        data['dockerfile'] = form.cleaned_data['dockerfile']
+    elif build_type == '1':
+        data['old_image_name'] = form.cleaned_data['old_name']
+        data['old_image_version'] = form.cleaned_data['old_version']
 
     client = Communicator(cookies=request.COOKIES)
     ok = client.create_image(project_id, data, buildfile)

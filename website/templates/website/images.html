@@ -51,22 +51,29 @@
 <h2 class="page-header">上传镜像</h2>
 <div class="image-create">
     <ul class="nav nav-tabs">
-        <li><a data-toggle="tab" href="#source">源码构建</a></li>
-        <li class="active"><a data-toggle="tab" href="#image">镜像文件</a></li>
-        <li><a data-toggle="tab" href="#snapshot">快照文件</a></li>
+        <li class="active"><a data-toggle="tab" href="#source">源码构建</a></li>
+        <li><a data-toggle="tab" href="#image">镜像构建</a></li>
+        <li><a data-toggle="tab" href="#snapshot">快照构建</a></li>
         <li><a data-toggle="tab" href="#github">Github地址</a></li>
     </ul>
     <hr>
     <div class="tab-content">
         <!-- Source -->
-        <div id="source" class="tab-pane fade">
-
-        </div>
-
-        <!-- Image -->
-        <div id="image" class="tab-pane fade in active">
+        <div id="source" class="tab-pane fade in active">
             <form class="form-horizontal">
-                <input type="hidden" name="build_type" value="1">
+                <input type="hidden" name="build_type" value="0">
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">源码包</label>
+                    <div class="col-sm-6">
+                        <input type="file" class='form-control fileupload' name="file" data-url="{% url 'upload-file' pid=project.id %}">
+
+                        <div class="progress progress-striped active">
+                            <div class="progress-bar progress-bar-success" role="progressbar" style="width: 0%;">0%</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="imagename" class="col-sm-2 control-label">镜像名称</label>
                     <div class="col-sm-6">
@@ -99,9 +106,30 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="fileupload" class="col-sm-2 control-label">镜像文件</label>
+                    <label for="dockerfile" class="col-sm-2 control-label">Dockerfile</label>
                     <div class="col-sm-6">
-                        <input type="file" class='form-control' id="fileupload" name="buildfile" data-url="{% url 'upload-file' pid=project.id %}">
+                        <input type="text" class="form-control" id="dockerfile" name="dockerfile" maxlength="32" placeholder="Dockerfile相对路径">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-2">
+                        <input type="button" class="btn btn-info submit" value=" 上 传 ">
+                        <p class="submit-notice"></p>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Image -->
+        <div id="image" class="tab-pane fade">
+            <form class="form-horizontal">
+                <input type="hidden" name="build_type" value="1">
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">镜像文件</label>
+                    <div class="col-sm-6">
+                        <input type="file" class='form-control fileupload required' name="file" data-url="{% url 'upload-file' pid=project.id %}">
 
                         <div class="progress progress-striped active">
                             <div class="progress-bar progress-bar-success" role="progressbar" style="width: 0%;">0%</div>
@@ -110,16 +138,47 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="imagename" class="col-sm-2 control-label">镜像名称</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control required" id="imagename" name="name" maxlength="32" placeholder="镜像名称">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="version" class="col-sm-2 control-label">镜像版本</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control required" id="version" name="version" maxlength="32" placeholder="镜像版本">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="col-sm-2 control-label">镜像说明</label>
+                    <div class="col-sm-6">
+                        <textarea class="form-control" id="description" name="desc" maxlength="256" placeholder="镜像说明"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="image_type" class="col-sm-2 control-label">镜像类型</label>
+                    <div class="col-sm-6">
+                        <select class="form-control" id="image_type" name="image_type">
+                            <option value="0">私有</option>
+                            <option value="1">公有</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label for="oldimagename" class="col-sm-2 control-label">原镜像名称</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="oldimagename" name="old_name" maxlength="32" placeholder="原镜像名称">
+                        <input type="text" class="form-control required" id="oldimagename" name="old_name" maxlength="32" placeholder="原镜像名称">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="oldversion" class="col-sm-2 control-label">原镜像版本</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="oldversion" name="old_version" maxlength="32" placeholder="原镜像版本">
+                        <input type="text" class="form-control required" id="oldversion" name="old_version" maxlength="32" placeholder="原镜像版本">
                     </div>
                 </div>
 
@@ -133,7 +192,58 @@
         </div>
 
         <div id="snapshot" class="tab-pane fade">
-            <p>snapshot</p>
+            <form class="form-horizontal">
+                <input type="hidden" name="build_type" value="2">
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">快照文件</label>
+                    <div class="col-sm-6">
+                        <input type="file" class='form-control fileupload' name="file" data-url="{% url 'upload-file' pid=project.id %}">
+
+                        <div class="progress progress-striped active">
+                            <div class="progress-bar progress-bar-success" role="progressbar" style="width: 0%;">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="imagename" class="col-sm-2 control-label">镜像名称</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="imagename" name="name" maxlength="32" placeholder="镜像名称">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="version" class="col-sm-2 control-label">镜像版本</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="version" name="version" maxlength="32" placeholder="镜像版本">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="col-sm-2 control-label">镜像说明</label>
+                    <div class="col-sm-6">
+                        <textarea class="form-control" id="description" name="desc" maxlength="256" placeholder="镜像说明"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="image_type" class="col-sm-2 control-label">镜像类型</label>
+                    <div class="col-sm-6">
+                        <select class="form-control" id="image_type" name="image_type">
+                            <option value="0">私有</option>
+                            <option value="1">公有</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-2">
+                        <input type="button" class="btn btn-info submit" value=" 上 传 ">
+                        <p class="submit-notice"></p>
+                    </div>
+                </div>
+            </form>
         </div>
 
         <div id="github" class="tab-pane fade">

@@ -15,11 +15,16 @@ $(document).ready(function(){
         $('#' + id).addClass('active');
     });
 
-    $('#fileupload').fileupload({
+    $('.image-create .fileupload').fileupload({
         dataType: 'json',
 
+        add: function (e, data) {
+            $('.progress').css('display', 'block');
+            data.submit();
+        },
+
         progressall: function (e, data) {
-            var progress = parseInt(data.loaded / data.total * 100);
+            var progress = parseInt(data.loaded / data.total * 100 - 1);
             $('.progress .progress-bar').css(
                 'width',
                 progress + '%'
@@ -28,22 +33,25 @@ $(document).ready(function(){
         },
 
         done: function(e, data) {
-            $('.progress .progress-bar').text("Finished");
+            $('.progress .progress-bar').css('width', '100%');
+            $('.progress .progress-bar').text("finished");
             $('.progress').removeClass('active');
         }
     });
 
+    $('.image-create form').validate();
     $('.image-create .submit').click(function() {
         $('.image-create .submit').val("上传中...");
         var form = $(this).parents("form");
-        var url = window.location.href.split("#")[0]
+        var url = window.location.href.split("#")[0];
         var create_url = url.replace("images", "create-image");
+        var data = form.serialize();
 
         $.ajax({
             cache: true,
             type: "POST",
             url: create_url,
-            data: form.serialize(),
+            data: data,
             async: false,
             success: function(data) {
                 if (data.hasOwnProperty("success")) {
