@@ -74,5 +74,4 @@ class DockerSchedulerFactory(object):
         if not self._scheduler:
             self._scheduler = DockerScheduler(settings.MASTER_IP,
                 settings.ETCD_PORT)
-
         return self._scheduler

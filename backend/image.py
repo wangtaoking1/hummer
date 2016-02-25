@@ -98,7 +98,7 @@ class ImageBuilder(object):
         """
         logger.debug("creating an image by dockerfile.")
 
-        docker_host = self.get_optimal_docker_host()
+        docker_host = get_optimal_docker_host()
         if not docker_host:
             logger.error("there is no available active docker host.")
             self._update_image_status(status="failed")

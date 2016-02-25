@@ -167,8 +167,6 @@ class ImageViewSet(viewsets.ModelViewSet):
         if not request.FILES.get('file'):
             raise ParseError(detail="There is no image build file.")
 
-        return JsonResponse({"success": "success"})
-
         assert 'pid' in self.kwargs
         pid = self.kwargs['pid']
 
