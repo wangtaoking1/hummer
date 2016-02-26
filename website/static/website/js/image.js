@@ -78,3 +78,6 @@ function show_image(element) {
     window.location.href = new_url;
 }
 
+function add_env() {
+    alert("hello");
+}

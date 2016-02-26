@@ -115,8 +115,8 @@ class Communicator(object):
         }
         response = self.client.post(url, data=data, files=files,
             headers=headers)
-        print(response.status_code)
-        print(response.text)
+        # print(response.status_code)
+        # print(response.text)
         if response.status_code == 200:
             return True
         return False
