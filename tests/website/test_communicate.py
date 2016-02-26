@@ -84,3 +84,22 @@ class CommunicatorTestCase(unittest.TestCase):
         }
         buildfile = '/home/wangtao/images/nginx.tar'
         client.create_image(1, params, buildfile)
+
+    def test_create_application(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+
+        data = {
+            'image': 1,
+            'name': 'test-app',
+            'replicas': 1,
+            'resource_limit': 1,
+            'is_public': True,
+            'session_affinity': False,
+            'ports': [{'name': 'http', 'port': 80, 'protocol': 'TCP'}],
+        }
+        client.create_application(1, data)

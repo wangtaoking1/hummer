@@ -252,6 +252,17 @@ def list_applications(request, *args, **kwargs):
 
 
 @login_required()
+@csrf_exempt
+@require_POST
+def create_application(request, *args, **kwargs):
+    project_id = kwargs['pid']
+
+    #TODO: Check validation
+
+    return JsonResponse({"success": "success"})
+
+
+@login_required()
 def delete_application(request, *args, **kwargs):
     project_id = kwargs['pid']
     application_id = kwargs['aid']
@@ -319,6 +330,8 @@ def show_image_detail(request, *args, **kwargs):
     volumes = client.volume_lists(project_id=project_id)
     simple_volumes = []
     for volume in volumes:
+        if volume.get('app'):
+            continue
         simple_volume = {}
         simple_volume['id'] = volume['id']
         simple_volume['name'] = volume['name']

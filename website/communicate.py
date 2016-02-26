@@ -151,6 +151,22 @@ class Communicator(object):
         response = self.client.get(url)
         return json.loads(response.text)
 
+    def create_application(self, project_id, json_data):
+        """
+        Create an application in project project_id with data.
+        """
+        url = get_api_server_url('/api/projects/{}/applications/'.format(project_id))
+
+        headers = {
+            'X-CSRFToken': self.client.cookies['csrftoken'],
+        }
+        response = self.client.post(url, json=json_data, headers=headers)
+        print(response.status_code)
+        print(response.text)
+        if response.status_code == 200:
+            return True
+        return False
+
     def get_application(self, project_id, application_id):
         """
         Get the detail info of the application.
@@ -168,7 +184,7 @@ class Communicator(object):
             project_id, application_id))
         headers = {'X-CSRFToken': self.client.cookies['csrftoken']}
         res = self.client.delete(url, headers=headers)
-        print(res.status_code)
+        # print(res.status_code)
         if res.status_code == 204:
             return True
         return False
