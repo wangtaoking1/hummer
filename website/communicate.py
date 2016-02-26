@@ -198,7 +198,15 @@ class Communicator(object):
             project_id, volume_id))
         headers = {'X-CSRFToken': self.client.cookies['csrftoken']}
         res = self.client.delete(url, headers=headers)
-        print(res.status_code)
+        # print(res.status_code)
         if res.status_code == 204:
             return True
         return False
+
+    def get_resourcelimits(self):
+        """
+        Get the resource limits list.
+        """
+        url = get_api_server_url('/api/resourcelimits/')
+        res = self.client.get(url)
+        return json.loads(res.text)

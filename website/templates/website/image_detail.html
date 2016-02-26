@@ -75,28 +75,31 @@
         <label for="resource_limit" class="col-sm-2 control-label">资源类型</label>
         <div class="col-sm-4">
             <select class="form-control" id="resource_limit" name="resource_limit">
-                <option value="１">CPU: 40m / Mem: 32Mb</option>
-                <option value="２">CPU: 40m / Mem: 32Mb</option>
+                {% for limit in resource_limits %}
+                    <option value="{{ limit.id }}">CPU: {{ limit.cpu }}{{ limit.cpu_unit }} / Mem: {{ limit.memory }}{{ limit.memory_unit }}</option>
+                {% endfor %}
             </select>
         </div>
     </div>
 
     <div class="form-group">
         <label class="col-sm-2 control-label">环境变量</label>
-        <!-- <table class="col-sm-6">
-            <tbody>
-                <tr>
+        <input type="hidden" id="env-number" name="env_number" value="0">
+        <table class="col-sm-6">
+            <tbody id="env-table">
+                <!-- <tr>
                     <td  class="col-sm-1">
                         <input type="text" class="form-control" name="env_name_0" placeholder="键">
                     </td>
                     <td class="col-sm-1">
                         <input type="text" class="form-control" name="env_value_0" placeholder="值">
                     </td>
-                </tr>
+                </tr> -->
             </tbody>
-        </table> -->
+        </table>
         <div>
-            <input type="button" class="btn btn-info add-option" value="添加">
+            <input type="button" id="env-add" class="btn btn-info" value="添加">
+            <input type="button" id="env-del" class="btn btn-info" value="删除">
         </div>
     </div>
 
@@ -121,7 +124,7 @@
             </tbody>
         </table> -->
         <div>
-            <input type="button" class="btn btn-info add-option" value="添加">
+            <input type="button" class="btn btn-info" value="添加">
         </div>
     </div>
 
@@ -143,7 +146,7 @@
             </tbody>
         </table> -->
         <div>
-            <input type="button" class="btn btn-info add-option" value="添加">
+            <input type="button" class="btn btn-info" value="添加">
         </div>
     </div>
 

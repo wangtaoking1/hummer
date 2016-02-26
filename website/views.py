@@ -314,6 +314,7 @@ def show_image_detail(request, *args, **kwargs):
     context['project'] = client.get_project(project_id=project_id)
     context['image'] = client.get_image(project_id=project_id,
         image_id=image_id)
+    context['resource_limits'] = client.get_resourcelimits()
 
     return render(request, 'website/image_detail.html', context,
         RequestContext(request))

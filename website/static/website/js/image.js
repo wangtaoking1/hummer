@@ -39,7 +39,6 @@ $(document).ready(function(){
         }
     });
 
-    $('.image-create form').validate();
     $('.image-create .submit').click(function() {
         $('.image-create .submit').val("上传中...");
         var form = $(this).parents("form");
@@ -69,6 +68,19 @@ $(document).ready(function(){
             }
         });
     });
+
+    $('#env-add').click(function() {
+        var number = parseInt($('#env-number').val());
+        var row = get_env_row(number);
+        $('#env-table').append(row);
+        $('#env-number').val(number + 1);
+    });
+
+    $('#env-del').click(function() {
+        var number = parseInt($('#env-number').val()) - 1;
+        $('#env_' + number).remove();
+        $('#env-number').val(number);
+    });
 });
 
 function show_image(element) {
@@ -78,6 +90,16 @@ function show_image(element) {
     window.location.href = new_url;
 }
 
-function add_env() {
-    alert("hello");
+function get_env_row(number) {
+    var name = "env_name_" + number;
+    var value = "env_value_" + number;
+    var id = "env_" + number;
+    return '<tr id="' + id + '">\
+                <td  class="col-sm-1">\
+                    <input type="text" class="form-control" name="' + name + '" placeholder="键">\
+                </td>\
+                <td class="col-sm-1">\
+                    <input type="text" class="form-control" name="' + value + '" placeholder="值">\
+                </td>\
+                </tr>';
 }
