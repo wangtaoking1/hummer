@@ -105,9 +105,10 @@
 
     <div class="form-group">
         <label class="col-sm-2 control-label">开放端口</label>
-        <!-- <table class="col-sm-6">
-            <tbody>
-                <tr>
+        <input type="hidden" id="port-number" name="port_number" value="0">
+        <table class="col-sm-6">
+            <tbody id="port-table">
+                <!-- <tr>
                     <td  class="col-sm-1">
                         <input type="text" class="form-control" name="port_name_0" placeholder="端口名">
                     </td>
@@ -120,33 +121,38 @@
                             <option value="UDP">UDP</option>
                         </select>
                     </td>
-                </tr>
+                </tr> -->
             </tbody>
-        </table> -->
+        </table>
         <div>
-            <input type="button" class="btn btn-info" value="添加">
+            <input type="button" id="port-add" class="btn btn-info" value="添加">
+            <input type="button" id="port-del" class="btn btn-info" value="删除">
         </div>
     </div>
 
     <div class="form-group">
         <label class="col-sm-2 control-label">挂载卷</label>
-        <!-- <table class="col-sm-6">
-            <tbody>
-                <tr>
+        <input type="hidden" id="volume-number" name="volume_number" value="0">
+        <input type="hidden" id="volumes" value="{{ volumes }}">
+        <table class="col-sm-6">
+            <tbody id="volume-table">
+                <!-- <tr id="volume_0">
                     <td class="col-sm-1">
                         <select class="form-control" name="volume_name_0">
-                            <option value="0">volume0</option>
-                            <option value="1">volume1</option>
+                            {% for volume in volumes %}
+                                <option value="{{ volume.id }}">{{ volume.name }}</option>
+                            {% endfor %}
                         </select>
                     </td>
                     <td  class="col-sm-1">
                         <input type="text" class="form-control" name="volume_path_0" placeholder="挂载目录">
                     </td>
-                </tr>
+                </tr> -->
             </tbody>
-        </table> -->
+        </table>
         <div>
-            <input type="button" class="btn btn-info" value="添加">
+            <input type="button" id="volume-add" class="btn btn-info" value="添加">
+            <input type="button" id="volume-del" class="btn btn-info" value="删除">
         </div>
     </div>
 

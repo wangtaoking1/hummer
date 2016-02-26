@@ -2,6 +2,7 @@ import requests
 import logging
 import os
 import time
+import json
 
 from django.conf import settings
 from django.shortcuts import render
@@ -315,6 +316,14 @@ def show_image_detail(request, *args, **kwargs):
     context['image'] = client.get_image(project_id=project_id,
         image_id=image_id)
     context['resource_limits'] = client.get_resourcelimits()
+    volumes = client.volume_lists(project_id=project_id)
+    simple_volumes = []
+    for volume in volumes:
+        simple_volume = {}
+        simple_volume['id'] = volume['id']
+        simple_volume['name'] = volume['name']
+        simple_volumes.append(simple_volume)
+    context['volumes'] = json.dumps(simple_volumes)
 
     return render(request, 'website/image_detail.html', context,
         RequestContext(request))
