@@ -40,6 +40,8 @@ urlpatterns = [
         views.show_application_detail, name='show-application-detail'),
     url(r'^projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/delete_application/$',
         views.delete_application, name='delete-application'),
+    url(r'^projects/(?P<pid>[0-9]+)/create-application/$', views.create_application,
+        name='create-application'),
 
     # volume
     url(r'^projects/(?P<pid>[0-9]+)/volumes/$', views.list_volumes,

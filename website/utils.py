@@ -27,3 +27,32 @@ def get_filename_of_buildfile(project_id):
     return os.path.join(settings.FILE_DIR, "buildfiles",
         project_id + ".tar")
 
+
+# Get params from request.POST
+def get_envs(number, data):
+    envs = {}
+    for i in range(number):
+        key = 'env_name_' + str(i)
+        val = 'env_value_' + str(i)
+        envs[data[key]] = data[val]
+    return envs
+
+def get_ports(number, data):
+    ports = []
+    for i in range(number):
+        port = {}
+        port['name'] = data['port_name_' + str(i)]
+        port['port'] = int(data['port_value_' + str(i)])
+        port['protocol'] = data['port_protocol_' + str(i)]
+        ports.append(port)
+    return ports
+
+def get_volumes(number, data):
+    volumes = []
+    for i in range(number):
+        volume = {}
+        volume['volume'] = int(data['volume_name_' + str(i)])
+        volume['mount_path'] = data['volume_path_' + str(i)]
+        volumes.append(volume)
+    return volumes
+

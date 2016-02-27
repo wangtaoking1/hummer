@@ -38,8 +38,8 @@ class ImageForm(forms.Form):
     name = forms.CharField(max_length=32)
     version = forms.CharField(max_length=32)
     desc = forms.CharField(max_length=256)
-    build_type = forms.IntegerField()
-    image_type = forms.IntegerField()
+    build_type = forms.CharField()
+    image_type = forms.CharField()
     old_name = forms.CharField(max_length=32)
     old_version = forms.CharField(max_length=32)
 
@@ -49,3 +49,14 @@ class SnapshotForm(forms.Form):
     desc = forms.CharField(max_length=256)
     build_type = forms.IntegerField()
     image_type = forms.IntegerField()
+
+class ApplicationForm(forms.Form):
+    image = forms.IntegerField()
+    name = forms.CharField(max_length=32)
+    replicas = forms.IntegerField()
+    resource_limit = forms.IntegerField()
+    service_type = forms.CharField()
+    session_affinity = forms.CharField()
+    env_number = forms.IntegerField()
+    port_number = forms.IntegerField()
+    volume_number = forms.IntegerField()

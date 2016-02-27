@@ -51,10 +51,10 @@
 <h2 class="page-header">上传镜像</h2>
 <div class="image-create">
     <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#source">源码构建</a></li>
-        <li><a data-toggle="tab" href="#image">镜像构建</a></li>
-        <li><a data-toggle="tab" href="#snapshot">快照构建</a></li>
-        <li><a data-toggle="tab" href="#github">Github地址</a></li>
+        <li class="active"><a data-toggle="tab" data-id="source">源码构建</a></li>
+        <li><a data-toggle="tab" data-id="image">镜像构建</a></li>
+        <li><a data-toggle="tab" data-id="snapshot">快照构建</a></li>
+        <li><a data-toggle="tab" data-id="github">Github地址</a></li>
     </ul>
     <hr>
     <div class="tab-content">
@@ -62,6 +62,7 @@
         <div id="source" class="tab-pane fade in active">
             <form class="form-horizontal">
                 <input type="hidden" name="build_type" value="0">
+                <input type="hidden" name="image_type" value="0">
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label">源码包</label>
@@ -95,7 +96,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="image_type" class="col-sm-2 control-label">镜像类型</label>
                     <div class="col-sm-6">
                         <select class="form-control" id="image_type" name="image_type">
@@ -103,7 +104,7 @@
                             <option value="1">公有</option>
                         </select>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="form-group">
                     <label for="dockerfile" class="col-sm-2 control-label">Dockerfile</label>
@@ -125,6 +126,7 @@
         <div id="image" class="tab-pane fade">
             <form class="form-horizontal">
                 <input type="hidden" name="build_type" value="1">
+                <input type="hidden" name="image_type" value="0">
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label">镜像文件</label>
@@ -158,7 +160,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="image_type" class="col-sm-2 control-label">镜像类型</label>
                     <div class="col-sm-6">
                         <select class="form-control" id="image_type" name="image_type">
@@ -166,7 +168,7 @@
                             <option value="1">公有</option>
                         </select>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="form-group">
                     <label for="oldimagename" class="col-sm-2 control-label">原镜像名称</label>
@@ -194,6 +196,7 @@
         <div id="snapshot" class="tab-pane fade">
             <form class="form-horizontal">
                 <input type="hidden" name="build_type" value="2">
+                <input type="hidden" name="image_type" value="0">
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label">快照文件</label>
@@ -227,7 +230,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="image_type" class="col-sm-2 control-label">镜像类型</label>
                     <div class="col-sm-6">
                         <select class="form-control" id="image_type" name="image_type">
@@ -235,7 +238,7 @@
                             <option value="1">公有</option>
                         </select>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="form-group">
                     <div class="col-sm-4 col-sm-offset-2">

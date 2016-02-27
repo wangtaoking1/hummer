@@ -161,9 +161,9 @@ class Communicator(object):
             'X-CSRFToken': self.client.cookies['csrftoken'],
         }
         response = self.client.post(url, json=json_data, headers=headers)
-        print(response.status_code)
-        print(response.text)
-        if response.status_code == 200:
+        # print(response.status_code)
+        # print(response.text)
+        if response.status_code == 201:
             return True
         return False
 

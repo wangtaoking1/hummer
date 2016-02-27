@@ -137,7 +137,7 @@ class Application(models.Model):
         ('error', 'error'),
     )
 
-    image = models.ForeignKey(Image, on_delete=models.CASCADE)
+    image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=32, default='')
     replicas = models.IntegerField()
     resource_limit = models.ForeignKey(ResourceLimit, on_delete=models.CASCADE)
@@ -187,7 +187,7 @@ class Volume(models.Model):
     )
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    app = models.ForeignKey(Application, blank=True, null=True)
+    app = models.ForeignKey(Application, blank=True, null=True, on_delete=models.SET_NULL)
     mount_path = models.CharField(max_length=256, null=True, blank=True)
     name = models.CharField(max_length=32)
     desc = models.TextField(max_length=256, null=True)

@@ -15,11 +15,11 @@ from django.views.decorators.csrf import csrf_exempt
 
 from website.auth import login_required
 from website.utils import (get_api_server_url, save_buildfile_to_disk,
-    get_filename_of_buildfile)
+    get_filename_of_buildfile, get_envs, get_ports, get_volumes)
 from website.communicate import Communicator
 from website.auth import is_authenticated
 from website.forms import (LoginForm, RegistryForm, ProjectForm, SourceForm,
-    ImageForm, SnapshotForm)
+    ImageForm, SnapshotForm, ApplicationForm)
 
 logger = logging.getLogger("website")
 
@@ -229,6 +229,8 @@ def create_image(request, *args, **kwargs):
         data['old_image_name'] = form.cleaned_data['old_name']
         data['old_image_version'] = form.cleaned_data['old_version']
 
+    logger.debug(data)
+
     client = Communicator(cookies=request.COOKIES)
     ok = client.create_image(project_id, data, buildfile)
     if ok:
@@ -259,7 +261,64 @@ def create_application(request, *args, **kwargs):
 
     #TODO: Check validation
 
-    return JsonResponse({"success": "success"})
+    form = ApplicationForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse({"error": "data invalid"})
+
+    service_type = (False if form.cleaned_data['service_type'] == 'false'
+        else True)
+    session_affinity = (False if form.cleaned_data['session_affinity'] ==
+        'false' else True)
+    # logger.debug(service_type)
+    # logger.debug(session_affinity)
+
+    data = {
+        'image': form.cleaned_data['image'],
+        'name': form.cleaned_data['name'],
+        'replicas': form.cleaned_data['replicas'],
+        'resource_limit': form.cleaned_data['resource_limit'],
+        'is_public': service_type,
+        'session_affinity': session_affinity
+    }
+
+    # envs
+    envs = get_envs(form.cleaned_data['env_number'], request.POST)
+    if envs:
+        data['envs'] = envs
+
+    # ports
+    ports = get_ports(form.cleaned_data['port_number'], request.POST)
+    if ports:
+        data['ports'] = ports
+
+    # volumes
+    volumes = get_volumes(form.cleaned_data['volume_number'], request.POST)
+    if volumes:
+        data['volumes'] = volumes
+
+    logger.debug(data)
+
+    # data = {
+    #     'image': 1,
+    #     'session_affinity': False,
+    #     'name': 'test',
+    #     'resource_limit': 1,
+    #     'replicas': 1,
+    #     'ports': [
+    #         {'port': 80, 'protocol': 'TCP', 'name': 'http'}
+    #     ],
+    #     'is_public': True,
+    #     'volumes': [
+    #         {'volume': 2, 'mount_path': '/var/www/html'}
+    #     ]
+    # }
+
+    client = Communicator(cookies=request.COOKIES)
+    ok = client.create_application(project_id, data)
+    if ok:
+        return JsonResponse({"success": "success"})
+    else:
+        return JsonResponse({"error": "failed"})
 
 
 @login_required()

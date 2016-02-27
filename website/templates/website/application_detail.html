@@ -8,9 +8,30 @@
 {% endblock %}
 
 {% block main-content %}
-        <div class="baseInfo center-style" style="display:block;">
-        <a class="BASE btn-prim">基本信息</a>
-        <a class="INSTANCES">容器实例</a>
+<div class="application-details">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-id="tab0">源码构建</a></li>
+        <li><a data-id="tab1">镜像构建</a></li>
+        <li><a data-id="tab2">快照构建</a></li>
+    </ul>
+    <hr>
+    <div class="tab-content">
+        <div id="tab0" class="tab-pane fade in active">
+
+        </div>
+
+        <div id="tab1" class="tab-pane fade">
+
+        </div>
+
+        <div id="tab2" class="tab-pane fade">
+        </div>
+    </div>
+</div>
+
+        <!-- <div class="baseInfo center-style" style="display:block;">
+        <a class="BASE ">基本信息</a>
+        <a class="INSTANCES btn-prim">容器实例</a>
 
 
         <a class="DOMAIN">绑定域名</a>
@@ -119,7 +140,7 @@
 
                 </tbody>
             </table>
-        </div>
+        </div> -->
 {% endblock %}
 
 

@@ -1,16 +1,12 @@
 $(document).ready(function(){
   	$('.image-space').addClass('active');
 
-    $('tbody btn').click(function(){
-        $(this).parent().submit();
-    });
-
     $('.image-create ul li').click(function() {
         $('.image-create ul li').removeClass('active');
         $(this).addClass('active');
         $('.image-create .tab-pane').removeClass('in');
         $('.image-create .tab-pane').removeClass('active');
-        var id = $(this).children('a')[0].href.split('#')[1];
+        var id = $(this).children('a')[0].getAttribute('data-id');
         $('#' + id).addClass('in');
         $('#' + id).addClass('active');
     });
@@ -65,6 +61,37 @@ $(document).ready(function(){
             error: function(request) {
                 $('.image-create .submit').val(" 上 传 ");
                 $('.image-create .submit-notice').html("上传失败！");
+            }
+        });
+    });
+
+    $('.app-create .submit').click(function() {
+        $('.app-create .submit').val("创建中...");
+        var form = $(this).parents("form");
+        var url = window.location.href.split("images")[0];
+        var application_url = url + "applications/";
+        var create_url = url + "create-application/";
+        var data = form.serialize();
+
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: create_url,
+            data: data,
+            async: false,
+            success: function(data) {
+                if (data.hasOwnProperty("success")) {
+                    form[0].reset();
+                    window.location.href = application_url;
+                }
+                else {
+                    $('.app-create .submit').val(" 创　建 ");
+                    $('.app-create .submit-notice').html("创建失败！");
+                }
+            },
+            error: function(request) {
+                $('.app-create .submit').val(" 创　建 ");
+                $('.app-create .submit-notice').html("服务器出错！");
             }
         });
     });
