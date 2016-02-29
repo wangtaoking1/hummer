@@ -56,3 +56,21 @@ def get_volumes(number, data):
         volumes.append(volume)
     return volumes
 
+
+def get_filename_of_volume_data(volume_id):
+    return os.path.join(settings.FILE_DIR, "volumes",
+        volume_id)
+
+
+def save_volume_data_to_disk(file_obj, volume_id):
+    """
+    Save the upload volume data into directory with volume_id on disk.
+    """
+    filename = get_filename_of_volume_data(volume_id)
+    file_dir = os.path.dirname(filename)
+    if not os.path.exists(file_dir):
+        os.makedirs(file_dir)
+
+    with open(filename, 'wb+') as destination:
+        for chunk in file_obj.chunks():
+            destination.write(chunk)

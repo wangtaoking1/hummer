@@ -15,11 +15,12 @@ from django.views.decorators.csrf import csrf_exempt
 
 from website.auth import login_required
 from website.utils import (get_api_server_url, save_buildfile_to_disk,
-    get_filename_of_buildfile, get_envs, get_ports, get_volumes)
+    get_filename_of_buildfile, get_envs, get_ports, get_volumes,
+    save_volume_data_to_disk)
 from website.communicate import Communicator
 from website.auth import is_authenticated
 from website.forms import (LoginForm, RegistryForm, ProjectForm, SourceForm,
-    ImageForm, SnapshotForm, ApplicationForm)
+    ImageForm, SnapshotForm, ApplicationForm, VolumeForm)
 
 logger = logging.getLogger("website")
 
@@ -351,6 +352,36 @@ def list_volumes(request, *args, **kwargs):
 
 
 @login_required()
+@csrf_exempt
+@require_POST
+def create_volume(request, *args, **kwargs):
+    project_id = kwargs['pid']
+
+    #TODO: Check validation
+
+    form = VolumeForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse({"error": "data invalid"})
+
+    data = {
+        'project': int(project_id),
+        'name': form.cleaned_data['name'],
+        'desc': form.cleaned_data['desc'],
+        'capacity': int(form.cleaned_data['capacity']),
+        'capacity_unit': form.cleaned_data['capacity_unit']
+    }
+
+    logger.debug(data)
+
+    client = Communicator(cookies=request.COOKIES)
+    ok = client.create_volume(project_id, data)
+    if ok:
+        return JsonResponse({"success": "success"})
+    else:
+        return JsonResponse({"error": "failed"})
+
+
+@login_required()
 def delete_volume(request, *args, **kwargs):
     project_id = kwargs['pid']
     volume_id = kwargs['vid']
@@ -363,6 +394,21 @@ def delete_volume(request, *args, **kwargs):
             kwargs={'pid': project_id}))
     return HttpResponseRedirect(reverse('list-volumes',
         kwargs={'pid': project_id}))
+
+
+@login_required()
+@csrf_exempt
+@require_POST
+def upload_volume(request, *args, **kwargs):
+    """
+    Upload data into volume.
+    """
+    pid = kwargs['pid']
+    vid = kwargs['vid']
+
+    save_volume_data_to_disk(request.FILES['file'], vid)
+
+    return JsonResponse({})
 
 
 @login_required()
@@ -412,6 +458,14 @@ def show_application_detail(request, *args, **kwargs):
     context['project'] = client.get_project(project_id=project_id)
     context['application'] = client.get_application(project_id=project_id,
         application_id=application_id)
+    context['image'] = client.get_image(project_id=project_id,
+        image_id=context['application']['image'])
+    context['resource_limit'] = client.get_resourcelimit(
+        context['application']['resource_limit'])
+    context['ports'] = client.get_ports(project_id=project_id,
+        application_id=application_id)
+    context['volumes'] = client.get_volume_of_application(project_id=project_id,
+        app_id=application_id)
 
     return render(request, 'website/application_detail.html', context,
         RequestContext(request))
@@ -429,6 +483,9 @@ def show_volume_detail(request, *args, **kwargs):
     context['project'] = client.get_project(project_id=project_id)
     context['volume'] = client.get_volume(project_id=project_id,
         volume_id=volume_id)
+    if context['volume']['app']:
+        context['app_name'] = client.get_application(project_id,
+            context['volume']['app'])['name']
 
     return render(request, 'website/volume_detail.html', context,
         RequestContext(request))

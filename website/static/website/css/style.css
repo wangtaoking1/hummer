@@ -107,7 +107,7 @@ body {
  * ----------------------------------------
  */
 .position-nav {
-    font-size: 1.5em;
+    font-size: 1em;
     margin-top: 20px;
 }
 .position-nav > a {
@@ -235,7 +235,9 @@ body {
     width: 98%;
     margin-left: 1%;
 }
-
+.volume-upload .progress {
+    display: none;
+}
 
 /*
  * footer

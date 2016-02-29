@@ -197,6 +197,34 @@ class Communicator(object):
         response = self.client.get(url)
         return json.loads(response.text)
 
+    def get_volume_of_application(self, project_id, app_id):
+        """
+        Return the volume lists mounted on the application with id app_id.
+        """
+        volume_lists = self.volume_lists(project_id)
+        volumes = []
+        for volume in volume_lists:
+            if volume['app'] == int(app_id):
+                volumes.append(volume)
+
+        return volumes
+
+    def create_volume(self, project_id, data):
+        """
+        Create an application in project project_id with data.
+        """
+        url = get_api_server_url('/api/projects/{}/volumes/'.format(project_id))
+
+        headers = {
+            'X-CSRFToken': self.client.cookies['csrftoken'],
+        }
+        response = self.client.post(url, data=data, headers=headers)
+        # print(response.status_code)
+        # print(response.text)
+        if response.status_code == 201:
+            return True
+        return False
+
     def get_volume(self, project_id, volume_id):
         """
         Get the detail info of the volume.
@@ -226,3 +254,22 @@ class Communicator(object):
         url = get_api_server_url('/api/resourcelimits/')
         res = self.client.get(url)
         return json.loads(res.text)
+
+    def get_resourcelimit(self, lid):
+        """
+        Get the resource limit with id lid.
+        """
+        url = get_api_server_url('/api/resourcelimits/{}/'.format(lid))
+        res = self.client.get(url)
+        return json.loads(res.text)
+
+    def get_ports(self, project_id, application_id):
+        """
+        Get the port lists of app with application_id in project project_id.
+        """
+        url = get_api_server_url('/api/projects/{}/applications/{}/ports/'
+            .format(project_id, application_id))
+        res = self.client.get(url)
+        return json.loads(res.text)
+
+

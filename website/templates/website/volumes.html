@@ -46,6 +46,51 @@
         </tbody>
     </table>
 </div>
+
+<!-- create volume-->
+<h2 class="page-header">创建存储卷</h2>
+<div class="volume-create">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="volumename" class="col-sm-2 control-label">卷名称</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="volumename" name="name" maxlength="32" placeholder="卷名称">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description" class="col-sm-2 control-label">卷说明</label>
+            <div class="col-sm-6">
+                <textarea class="form-control" id="description" name="desc" maxlength="256" placeholder="卷说明"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="capacity" class="col-sm-2 control-label">容量</label>
+            <table class="col-sm-3">
+                <tr>
+                    <td class="col-sm-2">
+                        <input type="text" class="form-control" id="capacity" name="capacity" placeholder="容量大小" onkeyup="value=value.replace(/[^\d]/g,'')">
+                    </td>
+                    <td class="col-sm-1">
+                        <select class="form-control" id="capacity_unit" name="capacity_unit">
+                            <option value="Ki">Ki</option>
+                            <option value="Mi" selected="selected">Mi</option>
+                            <option value="Gi">Gi</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-4 col-sm-offset-2">
+                <input type="button" class="btn btn-info submit" value="  创　建 ">
+                <p class="submit-notice"></p>
+            </div>
+        </div>
+    </form>
+</div>
 {% endblock %}
 
 

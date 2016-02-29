@@ -60,3 +60,10 @@ class ApplicationForm(forms.Form):
     env_number = forms.IntegerField()
     port_number = forms.IntegerField()
     volume_number = forms.IntegerField()
+
+
+class VolumeForm(forms.Form):
+    name = forms.CharField(max_length=32)
+    desc = forms.CharField(max_length=256)
+    capacity = forms.IntegerField()
+    capacity_unit = forms.CharField()

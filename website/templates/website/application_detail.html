@@ -10,137 +10,118 @@
 {% block main-content %}
 <div class="application-details">
     <ul class="nav nav-tabs">
-        <li class="active"><a data-id="tab0">源码构建</a></li>
-        <li><a data-id="tab1">镜像构建</a></li>
-        <li><a data-id="tab2">快照构建</a></li>
+        <li class="active"><a data-id="info">基本信息</a></li>
+        <li><a data-id="port">端口映射</a></li>
+        <li><a data-id="volume">存储卷</a></li>
+        <li><a data-id="logs">日志管理</a></li>
+        <li><a data-id="monitor">监控信息</a></li>
     </ul>
     <hr>
     <div class="tab-content">
-        <div id="tab0" class="tab-pane fade in active">
+        <!-- 基本信息　-->
+        <div id="info" class="tab-pane fade in active">
+            <table class="table w50">
+                <tbody>
+                    <tr>
+                        <td colspan="2"> <b>应用名称：</b> {{ application.name }}</td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2"> <b>镜像：</b> <a href="{% url 'show-image-detail' pid=project.id iid=image.id %}">{{ image.name }}</a></td>
+                    </tr>
+                    <tr>
+                        <td> <b>CPU：</b> {{ resource_limit.cpu }}{{ resource_limit.cpu_unit }}</td>
+                        <td> <b>Mem：</b> {{ resource_limit.memory }}{{ resource_limit.memory_unit }}</td>
+                    </tr>
+                    <tr>
+                        <td> <b>副本数：</b> {{ application.replicas }}</td>
+                        <td> <b>Session关联：</b>
+                        {% if application.session_affinity %}
+                        是
+                        {% else %}
+                        否
+                        {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> <b>应用状态：</b>{{ application.status }}</td>
+                        <td> <b>创建时间：</b>{{ application.create_time }}</td>
+                    </tr>
+                    <tr>
+                        <td> <b>内部地址：</b>{{ application.internal_ip }}</td>
+                        <td> <b>内部域名：</b>{{ application.internal_name }}</td>
+                    </tr>
+                    <tr>
+                        <td> <b>外部地址：</b>{{ application.external_ip }}</td>
+                        <td> <b>外部域名：</b>{{ application.external_name }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 端口映射 -->
+        <div id="port" class="tab-pane fade">
+            <div class="table-responsive resource-lists">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>端口名</th>
+                            <th>协议</th>
+                            <th>内部端口</th>
+                            <th>外部端口</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for port in ports %}
+                        <tr>
+                            <td>{{ port.name }}</td>
+                            <td>{{ port.protocol }}</td>
+                            <td>{{ port.internal_port }}</td>
+                            <td>{{ port.external_port }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 存储卷 -->
+        <div id="volume" class="tab-pane fade">
+            <div class="table-responsive resource-lists">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>卷名</th>
+                            <th>挂载目录</th>
+                            <th>容量</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for volume in volumes %}
+                        <tr onclick="show_volume(this);">
+                            <input type="hidden" name="vid" value="{{ volume.id }}">
+                            <td>{{ volume.name }}</td>
+                            <td>{{ volume.mount_path }}</td>
+                            <td>{{ volume.capacity }}{{ volume.capacity_unit }}</td>
+                            <td>{{ volume.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 日志管理 -->
+        <div id="logs" class="tab-pane fade">
 
         </div>
 
-        <div id="tab1" class="tab-pane fade">
-
-        </div>
-
-        <div id="tab2" class="tab-pane fade">
+        <!-- 监控信息 -->
+        <div id="monitor" class="tab-pane fade">
         </div>
     </div>
 </div>
-
-        <!-- <div class="baseInfo center-style" style="display:block;">
-        <a class="BASE ">基本信息</a>
-        <a class="INSTANCES btn-prim">容器实例</a>
-
-
-        <a class="DOMAIN">绑定域名</a>
-
-        <a class="PORTS">端口</a>
-        <a class="MONITOR">监控</a>
-
-        <a class="LOG">日志</a>
-
-        <a class="EVENT">事件</a>
-      </div>
-
-      <div class="containerInfo" style="display: block;">
-            <table class="table w50">
-              <thead>
-                <tr>
-                    <th> 基本信息</th>
-                    <th> &nbsp;</th>
-                </tr>
-              </thead>
-              <tbody class="BORDER">
-                <tr>
-                  <td> 应用名称：fdsfdd</td>
-                  <td> 运行状态：运行中</td>
-                </tr>
-                <tr>
-                  <td> 镜像名称：tenxcloud/mysql:latest</td>
-                  <td> 创建时间：2016-01-10 21:12:09</td>
-                </tr>
-              </tbody>
-            </table>
-            <table class="table basicInfo w50">
-              <thead>
-                <tr>
-                  <th>配置信息</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody class="BORDER">
-                <tr>
-                  <td> 带宽：10 MB（公有网络）</td>
-                  <td> 系统盘：10GB</td>
-                </tr>
-                <tr>
-                  <td> CPU：125m</td>
-                  <td> 内存：512MB</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <table class="table basicInfo w50">
-              <thead>
-                <tr>
-                  <th>环境变量</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody class="BORDER">
-                <tr>
-                  <td> 变量名</td>
-                  <td> 变量值</td>
-                </tr>
-
-              </tbody>
-            </table>
-
-            <table class='table basicInfo w50'>
-              <thead>
-                <tr>
-                  <th>数据存储卷</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody class='BORDER'>
-
-                  <tr>
-                      <td>卷的名称</td>
-                      <td>卷的大小</td>
-                  </tr>
-
-              </tbody>
-            </table>
-      </div>
-        <div class="containerInstances" style="min-height: 300px;display: block;">
-            <h1>容器实例</h1>
-            <table class="table">
-                <thead>
-                <tr style="white-space: nowrap">
-                    <th>名称</th>
-                    <th>运行状态</th>
-                    <th>镜像</th>
-                    <th>内网地址</th>
-                    <th>外网地址</th>
-                    <th>创建时间</th>
-                </tr>
-                </thead>
-                <tbody class="BORDER">
-                <tr>
-                    <th>vinzor-mysql</th>
-                    <th>Running</th>
-                    <th>mysql_1.1</th>
-                    <th>172.12.12.34:22</th>
-                    <th>jjjjsda; df</th>
-                    <th>2016.12.2</th>
-                </tr>
-
-                </tbody>
-            </table>
-        </div> -->
 {% endblock %}
 
 
