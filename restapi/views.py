@@ -590,30 +590,23 @@ application {}, delete the application first.".format(volume.app.name))
 
         return response
 
-    def upload(self, request, *args, **kwargs):
+    def clear_volume(self, request, *args, **kwargs):
         """
-        User upload volume data, delete the original data first.
+        Clear volume.
         """
+        user = request.user
         volume = self.get_object()
-        if not request.FILES.get('file'):
-            raise ParseError(detail="There is no upload file.")
 
-        logger.info("User {} upload files to volume {}-{}.".format(
-            request.user.username, volume.project.name, volume.name))
-
-        filename = get_upload_volume_filename(volume, request.user)
-        save_upload_file_to_disk(request.FILES['file'], filename)
+        logger.info("User {} clear volume {}-{}.".format(user.username,
+            volume.project.name, volume.name))
 
         client = NFSLocalClient()
-        volume_dir = get_volume_direction_on_nfs(volume, request.user)
-        # Clear the dir first
+        volume_dir = get_volume_direction_on_nfs(volume, user)
+        # Clear the dir
         client.removedir(volume_dir)
         client.makedir(volume_dir)
 
-        client.copy_file_to_remote_and_untar(filename, volume_dir)
-        remove_file_from_disk(filename)
-
-        return Response(status=status.HTTP_202_ACCEPTED)
+        return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -684,5 +677,48 @@ def create_image(request, *args, **kwargs):
         old_image_version=old_image_version
         )
     builder.create_image()
+
+    return JsonResponse({"detail": "success"})
+
+
+@csrf_exempt
+@require_POST
+def upload_volume(request, *args, **kwargs):
+    """
+    User upload volume data, delete the original data first.
+    """
+    if not (request.user and request.user.is_authenticated()):
+        raise PermissionDenied()
+
+    user = request.user
+
+    assert 'pid' in kwargs
+    pid = kwargs['pid']
+
+    assert 'pk' in kwargs
+    id = kwargs['pk']
+    volume = Volume.objects.get(project__id=pid, id=id)
+
+    # Check user permission
+    if not user.is_staff and user != volume.project.user:
+        raise PermissionDenied()
+
+    if not request.FILES.get('file'):
+        raise ParseError(detail="There is no upload file.")
+
+    logger.info("User {} upload files to volume {}-{}.".format(
+        user.username, volume.project.name, volume.name))
+
+    filename = get_upload_volume_filename(volume, user)
+    save_upload_file_to_disk(request.FILES['file'], filename)
+
+    client = NFSLocalClient()
+    volume_dir = get_volume_direction_on_nfs(volume, user)
+    # Clear the dir first
+    client.removedir(volume_dir)
+    client.makedir(volume_dir)
+
+    client.copy_file_to_remote_and_untar(filename, volume_dir)
+    remove_file_from_disk(filename)
 
     return JsonResponse({"detail": "success"})

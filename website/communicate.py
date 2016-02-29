@@ -272,4 +272,42 @@ class Communicator(object):
         res = self.client.get(url)
         return json.loads(res.text)
 
+    def upload_to_volume(self, project_id, volume_id, fileobj):
+        """
+        Upload data into volume.
+        """
+        url = get_api_server_url('/api/projects/{}/volumes/{}/upload/'.format(
+            project_id, volume_id))
+
+        files = {'file': fileobj}
+        headers = {
+            'X-CSRFToken': self.client.cookies['csrftoken'],
+        }
+        response = self.client.post(url, files=files, headers=headers)
+        # print(response.status_code)
+        # print(response.text)
+        if response.status_code == 200:
+            return True
+        return False
+
+    def download_from_volume(self, project_id, volume_id):
+        """
+        Download data from volume with id volume_id.
+        """
+        url = get_api_server_url('/api/projects/{}/volumes/{}/download/'
+            .format(project_id, volume_id))
+        response = self.client.get(url)
+        return response
+
+    def clear_volume(self, project_id, volume_id):
+        """
+        Clear data of volume with id volume_id.
+        """
+        url = get_api_server_url('/api/projects/{}/volumes/{}/clear/'
+            .format(project_id, volume_id))
+        response = self.client.get(url)
+        if response.status_code == 200:
+            return True
+        else:
+            return False
 

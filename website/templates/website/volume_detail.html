@@ -35,6 +35,16 @@
 
 <hr>
 
+<h2 class="page-header">格式化</h2>
+<div class="volume-clear">
+    <a class="btn btn-success clear">
+        <i class="fa fa-repeat"></i>
+        <span>格式化</span>
+    </a>
+    <p class="submit-notice"></p>
+</div>
+<hr>
+
 <h2 class="page-header">导入数据</h2>
 <div class="volume-upload">
     <form class="form-horizontal">
@@ -60,7 +70,13 @@
 <hr>
 
 <h2 class="page-header">导出数据</h2>
-<p>开发中...</p>
+<div class="volume-download">
+    <a class="btn btn-success download" href="{% url 'download-volume' pid=project.id vid=volume.id %}">
+        <i class="fa fa-download"></i>
+        <span>导 出</span>
+    </a>
+</div>
+
 <hr>
 
 <h2 class="page-header">扩容缩容</h2>

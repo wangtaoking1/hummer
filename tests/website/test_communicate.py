@@ -103,3 +103,24 @@ class CommunicatorTestCase(unittest.TestCase):
             'ports': [{'name': 'http', 'port': 80, 'protocol': 'TCP'}],
         }
         client.create_application(1, data)
+
+    def test_upload_to_volume(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+
+        files = "/home/wangtao/hummer-test/buildfiles/myubuntu/myubuntu.tar"
+        client.upload_to_volume(1, 5, files)
+
+    def test_clear_volume(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+
+        client.clear_volume(1, 5)

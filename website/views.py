@@ -6,7 +6,8 @@ import json
 
 from django.conf import settings
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import (HttpResponse, HttpResponseRedirect, JsonResponse,
+    StreamingHttpResponse)
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import (require_http_methods, require_GET,
@@ -16,7 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from website.auth import login_required
 from website.utils import (get_api_server_url, save_buildfile_to_disk,
     get_filename_of_buildfile, get_envs, get_ports, get_volumes,
-    save_volume_data_to_disk)
+    save_volume_data_to_disk, get_filename_of_volume_data)
 from website.communicate import Communicator
 from website.auth import is_authenticated
 from website.forms import (LoginForm, RegistryForm, ProjectForm, SourceForm,
@@ -406,9 +407,48 @@ def upload_volume(request, *args, **kwargs):
     pid = kwargs['pid']
     vid = kwargs['vid']
 
-    save_volume_data_to_disk(request.FILES['file'], vid)
+    client = Communicator(cookies=request.COOKIES)
+    ok = client.upload_to_volume(pid, vid, request.FILES['file'])
 
-    return JsonResponse({})
+    if ok:
+        return JsonResponse({"success": "success"})
+    else:
+        return JsonResponse({"error": "failed"})
+
+
+@login_required()
+def download_volume(request, *args, **kwargs):
+    """
+    Download data from volume.
+    """
+    pid = kwargs['pid']
+    vid = kwargs['vid']
+
+    client = Communicator(cookies=request.COOKIES)
+    volume = client.get_volume(project_id=pid, volume_id=vid)
+    res = client.download_from_volume(pid, vid)
+
+    response = StreamingHttpResponse(res.iter_content(chunk_size=512))
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="{}"'.format(
+        volume['name'] + ".tar")
+    return response
+
+
+@login_required()
+def clear_volume(request, *args, **kwargs):
+    """
+    Clear data of volume.
+    """
+    pid = kwargs['pid']
+    vid = kwargs['vid']
+
+    client = Communicator(cookies=request.COOKIES)
+    ok = client.clear_volume(pid, vid)
+    if ok:
+        return JsonResponse({"success": "success"})
+    else:
+        return JsonResponse({"error": "failed"})
 
 
 @login_required()

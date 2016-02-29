@@ -54,6 +54,10 @@ urlpatterns = [
         name='create-volume'),
     url(r'^projects/(?P<pid>[0-9]+)/volumes/(?P<vid>[0-9]+)/upload/$',
         views.upload_volume, name='upload-volume'),
+    url(r'^projects/(?P<pid>[0-9]+)/volumes/(?P<vid>[0-9]+)/download/$',
+        views.download_volume, name='download-volume'),
+    url(r'^projects/(?P<pid>[0-9]+)/volumes/(?P<vid>[0-9]+)/clear/$',
+        views.clear_volume, name='clear-volume'),
 
     # public image
     url(r'^projects/(?P<pid>[0-9]+)/publics/$', views.list_publics,

@@ -59,7 +59,7 @@ def get_volumes(number, data):
 
 def get_filename_of_volume_data(volume_id):
     return os.path.join(settings.FILE_DIR, "volumes",
-        volume_id)
+        volume_id + ".tar")
 
 
 def save_volume_data_to_disk(file_obj, volume_id):

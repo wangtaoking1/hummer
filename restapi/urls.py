@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from rest_framework import routers
 from restapi.views import (UserViewSet, ProjectViewSet, ImageViewSet,
     ApplicationViewSet, PortViewSet, ResourceLimitViewSet, VolumeViewSet,
-    is_authenticated, create_image)
+    is_authenticated, create_image, upload_volume)
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -30,9 +30,11 @@ port_detail = PortViewSet.as_view({
 volume_download = VolumeViewSet.as_view({
     'get': 'download'
 })
-volume_upload = VolumeViewSet.as_view({
-    'post': 'upload'
+
+clear_volume = VolumeViewSet.as_view({
+    'get': 'clear_volume'
 })
+
 pod_list = ApplicationViewSet.as_view({
     'get': 'pod_lists'
 })
@@ -67,7 +69,9 @@ urlpatterns = [
     url(r'projects/(?P<pid>[0-9]+)/volumes/(?P<pk>[0-9]+)/download/$',
         volume_download, name='volume-download'),
     url(r'projects/(?P<pid>[0-9]+)/volumes/(?P<pk>[0-9]+)/upload/$',
-        volume_upload, name='volume-upload'),
+        upload_volume, name='volume-upload'),
+    url(r'projects/(?P<pid>[0-9]+)/volumes/(?P<pk>[0-9]+)/clear/$',
+        clear_volume, name='volume-clear'),
 
     # auth
     url(r'auth/', include('rest_framework.urls',

@@ -56,6 +56,28 @@ $(document).ready(function(){
             $('.volume-upload .submit-notice').html("导入成功！");
         }
     });
+
+    $('.volume-clear a').click(function(){
+        var clear_url = window.location.href + "clear/";
+
+        $.ajax({
+            cache: true,
+            type: "GET",
+            url: clear_url,
+            async: false,
+            success: function(data) {
+                if (data.hasOwnProperty("success")) {
+                    $('.volume-clear .submit-notice').html("格式化完成！");
+                }
+                else {
+                     $('.volume-clear .submit-notice').html("格式化失败！");
+                }
+            },
+            error: function(request) {
+                $('.volume-clear .submit-notice').html("格式化失败！");
+            }
+        });
+    });
 });
 
 
