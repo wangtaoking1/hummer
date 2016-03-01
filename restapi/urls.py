@@ -39,6 +39,10 @@ pod_list = ApplicationViewSet.as_view({
     'get': 'pod_lists'
 })
 
+logs_pod = ApplicationViewSet.as_view({
+    'get': 'logs_pod'
+})
+
 urlpatterns = [
     # Examples:
     # url(r'^$', 'hummer.views.home', name='home'),
@@ -57,13 +61,14 @@ urlpatterns = [
     # pod
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<pk>[0-9]+)/pods/$',
         pod_list, name='pod-list'),
+    url(r'projects/(?P<pid>[0-9]+)/pods/(?P<pod>.+)/logs/$', logs_pod,
+        name='logs-pod'),
 
     # port
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/ports/$',
         port_list, name='port-list'),
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/ports/\
-(?P<pk>[0-9]+)/$',
-        port_detail, name='port-detail'),
+(?P<pk>[0-9]+)/$', port_detail, name='port-detail'),
 
     # volume
     url(r'projects/(?P<pid>[0-9]+)/volumes/(?P<pk>[0-9]+)/download/$',

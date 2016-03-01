@@ -74,3 +74,16 @@ def save_volume_data_to_disk(file_obj, volume_id):
     with open(filename, 'wb+') as destination:
         for chunk in file_obj.chunks():
             destination.write(chunk)
+
+
+def get_url_of_monitor_iframe(type, namespace, pod_name):
+    """
+    Get the url of monitor iframe in user dashboard.
+    """
+    items = pod_name.split('-')
+    container = '-'.join(items[0:-1])
+    url = 'http://{}/dashboard-solo/db/containers?panelId={}&fullscreen&\
+var-namespace={}&var-pod={}&var-container={}'.format(settings.GRAFANA_SERVER,
+    type, namespace, pod_name, container)
+
+    return url

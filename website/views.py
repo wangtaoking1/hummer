@@ -17,7 +17,8 @@ from django.views.decorators.csrf import csrf_exempt
 from website.auth import login_required
 from website.utils import (get_api_server_url, save_buildfile_to_disk,
     get_filename_of_buildfile, get_envs, get_ports, get_volumes,
-    save_volume_data_to_disk, get_filename_of_volume_data)
+    save_volume_data_to_disk, get_filename_of_volume_data,
+    get_url_of_monitor_iframe)
 from website.communicate import Communicator
 from website.auth import is_authenticated
 from website.forms import (LoginForm, RegistryForm, ProjectForm, SourceForm,
@@ -506,9 +507,29 @@ def show_application_detail(request, *args, **kwargs):
         application_id=application_id)
     context['volumes'] = client.get_volume_of_application(project_id=project_id,
         app_id=application_id)
+    context['pods'] = client.get_pods(project_id=project_id,
+        application_id=application_id)
+    context['logs'] = '\n'.join(client.get_pod_logs(project_id=project_id,
+        pod_name=context['pods'][0]))
+    context['mem_url'] = get_url_of_monitor_iframe(1, context['username'],
+        context['pods'][0])
+    context['cpu_url'] = get_url_of_monitor_iframe(14, context['username'],
+        context['pods'][0])
 
     return render(request, 'website/application_detail.html', context,
         RequestContext(request))
+
+
+@login_required()
+def get_logs_of_pod(request, *args, **kwargs):
+    project_id = kwargs['pid']
+    pod = kwargs['pod']
+    tail = int(request.GET.get('tail', 20))
+
+    client = Communicator(cookies=request.COOKIES)
+    response = client.get_pod_logs(project_id=project_id, pod_name=pod,
+        tail=tail)
+    return JsonResponse('\n'.join(response), safe=False)
 
 
 @login_required()

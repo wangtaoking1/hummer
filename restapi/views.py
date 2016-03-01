@@ -393,7 +393,24 @@ application {}.".format(volume.name, volume.app.name))
             label="app={}".format(get_application_instance_name(application)))
         logger.debug(pods)
 
-        return Response({"pods": pods}, status=status.HTTP_200_OK)
+        return Response(pods, status=status.HTTP_200_OK)
+
+    def logs_pod(self, request, *args, **kwargs):
+        """
+        Return the tail n lines logs of pod.
+        """
+        user = request.user
+
+        assert 'pod' in self.kwargs
+        pod = self.kwargs['pod']
+        tailLine = int(request.query_params['tail'])
+
+        kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+            settings.K8S_PORT, settings.K8S_API_PATH))
+        logs = kubeclient.get_logs_of_pod(user.username, pod, tailLine)
+        # print(logs)
+
+        return Response(data=logs, status=status.HTTP_200_OK)
 
 
 class PortViewSet(viewsets.ModelViewSet):

@@ -181,3 +181,6 @@ NFS_BASE_DIR = '/hummer'
 
 # API Server
 API_SERVER = '127.0.0.1:8000'
+
+# Grafana server
+GRAFANA_SERVER = '192.168.0.15:3000'

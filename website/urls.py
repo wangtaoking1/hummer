@@ -42,6 +42,8 @@ urlpatterns = [
         views.delete_application, name='delete-application'),
     url(r'^projects/(?P<pid>[0-9]+)/create-application/$', views.create_application,
         name='create-application'),
+    url(r'^projects/(?P<pid>[0-9]+)/pods/(?P<pod>.+)/logs/$',
+        views.get_logs_of_pod, name='logs-pod'),
 
     # volume
     url(r'^projects/(?P<pid>[0-9]+)/volumes/$', views.list_volumes,

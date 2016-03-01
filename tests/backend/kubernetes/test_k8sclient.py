@@ -41,7 +41,7 @@ class KubeClientTestCase(unittest.TestCase):
         self.client.delete_namespace('abcd')
 
     def test_list_controllers(self):
-        controllers = self.client.list_controllers('test-space')
+        controllers = self.client.list_controllers('user')
         print(controllers)
 
     def test_create_controller_1(self):
@@ -121,3 +121,12 @@ class KubeClientTestCase(unittest.TestCase):
     def test_delete_persistentvolumeclaim(self):
         res = self.client.delete_persistentvolumeclaim('default', 'project0-volume0')
         print(res)
+
+    def test_list_pods(self):
+        res = self.client.list_pods('user', label="app=project0-nginx-test")
+        print(res)
+
+    def test_get_logs_of_pod(self):
+        res = self.client.get_logs_of_pod('user', 'project0-nginx-test-3uhej', 20)
+        lines = res.split('\n')
+        print(lines)

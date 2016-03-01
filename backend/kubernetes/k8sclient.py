@@ -32,7 +32,7 @@ class KubeClient(object):
     def base_url(self):
         return self._base_url
 
-    def _send_request(self, method, path, query=None, body=None):
+    def _send_request(self, method, path, label=None, query=None, body=None):
         """
         Send requests to k8s server and get the response.
         Returns a response dict.
@@ -41,8 +41,10 @@ class KubeClient(object):
         query: str, "app=name"
         """
         url = self._base_url + path
+        if label:
+            url = '{}?labelSelector={}'.format(url, label)
         if query:
-            url = '{}?labelSelector={}'.format(url, query)
+            url = url + '?' + query
         kwargs = {}
         if body:
             kwargs['data'] = json.dumps(body)
@@ -54,7 +56,11 @@ class KubeClient(object):
             logger.error(res)
             return None
 
-        return res.json()
+        try:
+            response = json.loads(res.text)
+            return response
+        except Exception as error:
+            return res.text
 
     def list_nodes(self):
         """
@@ -174,7 +180,7 @@ class KubeClient(object):
         label: str, "app=name"
         """
         path = 'namespaces/{}/pods/'.format(namespace)
-        response = self._send_request('GET', path, query=label)
+        response = self._send_request('GET', path, label=label)
         # logger.debug(response)
         pods = []
         for item in response.get('items'):
@@ -239,3 +245,12 @@ class KubeClient(object):
             logger.debug(response['message'])
             return False
         return True
+
+    def get_logs_of_pod(self, namespace, pod_name, tail_line):
+        """
+        Return the tail tail_line lines of logs of pod named pod_name.
+        """
+        path = 'namespaces/{}/pods/{}/log'.format(namespace, pod_name)
+        query = "tailLines=" + str(tail_line)
+        response = self._send_request('GET', path, query=query)
+        return response.split('\n')

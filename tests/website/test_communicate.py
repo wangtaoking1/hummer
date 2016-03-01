@@ -124,3 +124,14 @@ class CommunicatorTestCase(unittest.TestCase):
         client.login(data)
 
         client.clear_volume(1, 5)
+
+    def test_get_pod_logs(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+
+        res = client.get_pod_logs(1, "project0-nginx-test-n9oky", 20)
+        print(res)

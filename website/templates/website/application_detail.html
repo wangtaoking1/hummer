@@ -114,11 +114,50 @@
 
         <!-- 日志管理 -->
         <div id="logs" class="tab-pane fade">
-
+            <div class="logs-option">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-4">
+                            <select class="form-control pod-name" name="pod_name">
+                                {% for pod in pods %}
+                                    <option value="{{ pod }}">{{ pod }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control tail-number" name="tail">
+                                <option value="10">10行</option>
+                                <option value="20" selected="selected">20行</option>
+                                <option value="30">30行</option>
+                                <option value="50">50行</option>
+                                <option value="100">100行</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <textarea class="col-sm-12 logs-show" readonly>{{ logs }}</textarea>
         </div>
 
         <!-- 监控信息 -->
         <div id="monitor" class="tab-pane fade">
+            <div class="monitor-option">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-4">
+                            <select class="form-control pod-name" name="pod_name">
+                                {% for pod in pods %}
+                                    <option value="{{ pod }}">{{ pod }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="form-group monitor-show">
+                <iframe class="col-sm-6 mem-show" src="{{ mem_url }}"></iframe>
+                <iframe class="col-sm-6 cpu-show" src="{{ cpu_url }}"></iframe>
+            </div>
         </div>
     </div>
 </div>

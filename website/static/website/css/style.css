@@ -202,6 +202,23 @@ body {
     display: none;
 }
 
+/*
+ * application page
+ */
+.logs-show {
+    background: black;
+    color: green;
+    height: 400px;
+    font-size: 1.2em;
+    padding-top: 10px;
+}
+.monitor-show {
+    height: 250px;
+}
+.monitor-show iframe {
+    height: 250px;
+}
+
 
 
 /*

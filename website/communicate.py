@@ -272,6 +272,25 @@ class Communicator(object):
         res = self.client.get(url)
         return json.loads(res.text)
 
+    def get_pods(self, project_id, application_id):
+        """
+        Get the pod lists of app with application_id in project project_id.
+        """
+        url = get_api_server_url('/api/projects/{}/applications/{}/pods/'
+            .format(project_id, application_id))
+        res = self.client.get(url)
+        return json.loads(res.text)
+
+    def get_pod_logs(self, project_id, pod_name, tail=20):
+        """
+        Get the tail n lines logs of pod named pod_name in project project_id.
+        """
+        url = get_api_server_url('/api/projects/{}/pods/{}/logs/'.format(
+            project_id, pod_name))
+        params = {'tail': tail}
+        res = self.client.get(url, params=params)
+        return json.loads(res.text)
+
     def upload_to_volume(self, project_id, volume_id, fileobj):
         """
         Upload data into volume.
