@@ -1,7 +1,9 @@
 import logging
 import os
+import json
 
 from django.contrib.auth.models import AnonymousUser
+from django.core import serializers
 from django.conf import settings
 from django.http import StreamingHttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -129,12 +131,12 @@ class ImageViewSet(viewsets.ModelViewSet):
         """
         user = self.request.user
 
-        assert 'pid' in self.kwargs
+        if 'pid' not in self.kwargs:
+            return Image.objects.all()
+
         pid = self.kwargs['pid']
-        if user.is_staff:
-            return Image.objects.filter(project__id=pid)
-        else:
-            return Image.objects.filter(project__id=pid, project__user=user)
+
+        return Image.objects.filter(project__id=pid, project__user=user)
 
     def get_object(self):
         """
@@ -150,7 +152,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         obj = Image.objects.get(project__id=pid, id=id)
 
         # Check user permission
-        if not user.is_staff and user != obj.project.user:
+        if not user.is_staff and not obj and user != obj.project.user:
             raise PermissionDenied()
 
         # May raise a permission denied
@@ -241,7 +243,20 @@ class ImageViewSet(viewsets.ModelViewSet):
         """
         List all public images.
         """
-        pass
+        publics = Image.objects.filter(is_public=True)
+        data = [self.get_serializer(public).data for public in publics]
+
+        return Response(data, status=status.HTTP_200_OK)
+
+    def get_public_image(self, request, *args, **kwargs):
+        """
+        Get the requested public image.
+        """
+        puid = kwargs['puid']
+        public = Image.objects.get(id=puid)
+
+        return Response(self.get_serializer(public).data)
+
 
     def delete_public_image(self, request, *args, **kwargs):
         """
@@ -266,10 +281,8 @@ class ApplicationViewSet(viewsets.ModelViewSet):
 
         assert 'pid' in self.kwargs
         pid = self.kwargs['pid']
-        if user.is_staff:
-            return Application.objects.filter(image__project__id=pid)
-        else:
-            return Application.objects.filter(image__project__id=pid,
+
+        return Application.objects.filter(image__project__id=pid,
                 image__project__user=user)
 
     def get_object(self):

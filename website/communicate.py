@@ -3,7 +3,7 @@ import logging
 
 import requests
 
-from website.utils import (get_api_server_url)
+from website.utils import (get_api_server_url, get_url_of_monitor_iframe)
 
 logger = logging.getLogger('website')
 
@@ -330,3 +330,26 @@ class Communicator(object):
         else:
             return False
 
+    def get_container_monitor_image(self, type, namespace, pod_name):
+        """
+        Get container monitor image.
+
+        Params:
+        type: 1 is mem, 14 is cpu.
+        """
+        url = get_url_of_monitor_iframe(type, namespace, pod_name)
+        response = self.client.get(url)
+        return response
+
+    def get_public_images(self):
+        """
+        Get public images.
+        """
+        url = get_api_server_url('/api/publics/')
+        response = self.client.get(url)
+        return json.loads(response.text)
+
+    def get_public_image(self, public_id):
+        url = get_api_server_url('/api/publics/{}/'.format(public_id))
+        response = self.client.get(url)
+        return json.loads(response.text)

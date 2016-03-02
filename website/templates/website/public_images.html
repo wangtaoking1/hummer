@@ -1,37 +1,39 @@
-{% extends "website/base_project.html" %}
+{% extends "website/base_dashboard.html" %}
 
 {% load staticfiles %}
 
-{% block subposition %}
->> <a href="#"><i class="fa fa-user"></i>公共镜像</a>
-{% endblock %}
 
 {% block main-content %}
-<div class="image-part">
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Logo</th>
-                            <th>镜像名称</th>
-                            <th>镜像版本</th>
-                            <th>简单描述</th>
-                            <th>创建时间</th>
-                            <th>镜像状态</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><img class="common-images" src="{% static 'website/img/logo.png' %}"  width="40px" height="40px"></td>
-                            <td>MySQL</td>
-                            <td>5.5</td>
-                            <td>MySQL image...</td>
-                            <td>2016-01-09T09:28:36Z</td>
-                            <td>active</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+<!-- Image lists -->
+<h2 class="page-header">公共镜像</h2>
+<div class="table-responsive resource-lists">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Logo</th>
+                <th>镜像名称</th>
+                <th>镜像版本</th>
+                <th>镜像简介</th>
+                <th>状态</th>
+                <th>创建时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for image in publics %}
+                <tr onclick="show_public_image(this);">
+                    <input type="hidden" name="id" value="{{ image.id }}">
+                    <td>
+                        <img class="common-images" src="{% static 'website/img/default.jpg' %}"  width="40px" height="40px">
+                    </td>
+                    <td>{{ image.name }}</td>
+                    <td>{{ image.version }}</td>
+                    <td>{{ image.desc|truncatechars:20 }}</td>
+                    <td>{{ image.status }}</td>
+                    <td>{{ image.create_time }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
 

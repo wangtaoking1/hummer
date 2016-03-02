@@ -457,6 +457,10 @@ def list_publics(request, *args, **kwargs):
     context = {
         'username': kwargs.get('username')
     }
+
+    client = Communicator(cookies=request.COOKIES)
+    context['publics'] = client.get_public_images()
+
     return render(request, 'website/public_images.html', context,
         RequestContext(request))
 
@@ -549,6 +553,21 @@ def show_volume_detail(request, *args, **kwargs):
             context['volume']['app'])['name']
 
     return render(request, 'website/volume_detail.html', context,
+        RequestContext(request))
+
+
+@login_required()
+def show_public_detail(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username')
+    }
+    public_id = kwargs['puid']
+
+    client = Communicator(cookies=request.COOKIES)
+    context['projects'] = client.project_lists()
+    context['image'] = client.get_public_image(public_id=public_id)
+
+    return render(request, 'website/public_image_details.html', context,
         RequestContext(request))
 
 

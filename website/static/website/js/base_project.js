@@ -40,7 +40,8 @@ function show_volumes() {
 }
 
 function show_publics() {
-    var pid = window.location.href.split("//")[1].split("/")[2];
-    window.location.href = "/projects/" + pid + "/publics/";
+    var urls = window.location.href.split('/', 3);
+    var new_url = urls.join('/') + "/publics/";
+    window.location.href = new_url;
     $('.public-image').addClass('active');
 }

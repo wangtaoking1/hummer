@@ -43,6 +43,14 @@ logs_pod = ApplicationViewSet.as_view({
     'get': 'logs_pod'
 })
 
+list_public_images = ImageViewSet.as_view({
+    'get': 'list_public_images'
+})
+
+get_public_image = ImageViewSet.as_view({
+    'get': 'get_public_image'
+})
+
 urlpatterns = [
     # Examples:
     # url(r'^$', 'hummer.views.home', name='home'),
@@ -77,6 +85,11 @@ urlpatterns = [
         upload_volume, name='volume-upload'),
     url(r'projects/(?P<pid>[0-9]+)/volumes/(?P<pk>[0-9]+)/clear/$',
         clear_volume, name='volume-clear'),
+
+    # public images
+    url(r'publics/$', list_public_images, name='public-images'),
+    url(r'publics/(?P<puid>[0-9]+)/$', get_public_image,
+        name='get-public-image'),
 
     # auth
     url(r'auth/', include('rest_framework.urls',

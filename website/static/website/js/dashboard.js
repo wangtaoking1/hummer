@@ -5,17 +5,17 @@ $(document).ready(function(){
         $(this).parent().submit();
     });
 
-  	$('.action a').click(function(){
-		var createPart = $('.create-project');
-	    if($(createPart).hasClass('notshow'))
-			$(createPart).removeClass('notshow');
-	  	else
-			$(createPart).addClass('notshow');
-  	});
+    $('.action a').click(function(){
+        var createPart = $('.create-project');
+        if($(createPart).hasClass('notshow'))
+            $(createPart).removeClass('notshow');
+        else
+            $(createPart).addClass('notshow');
+    });
 
-  	$('.form-group btn').click(function(){
-		$('.create-project form').submit();
-  	});
+    $('.form-group btn').click(function(){
+        $('.create-project form').submit();
+    });
 });
 
 function show_project(element) {
