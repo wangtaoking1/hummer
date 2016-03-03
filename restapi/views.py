@@ -25,7 +25,7 @@ from backend.models import (MyUser, Project, Image, Application, Port,
 from restapi.utils import (save_upload_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol,
     get_upload_volume_filename, get_volume_direction_on_nfs,
     big_file_iterator)
-from backend.image import (ImageBuilder, ImageDestroyer)
+from backend.image import (ImageBuilder, ImageDestroyer, ImageCloner)
 from backend.application import (ApplicationBuilder, ApplicationDestroyer)
 from backend.volume import (VolumeBuilder, VolumeDestroyer)
 from backend.kubernetes.k8sclient import KubeClient
@@ -92,9 +92,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         """
         user = self.request.user
 
-        # AdminUser
-        if user.is_staff:
-            return Project.objects.all()
+        # # AdminUser
+        # if user.is_staff:
+        #     return Project.objects.all()
 
         return Project.objects.filter(user=user)
 
@@ -282,7 +282,7 @@ class ImageViewSet(viewsets.ModelViewSet):
             'desc': public_image.desc,
             'is_public': False,
         }
-        print(data)
+        # print(data)
 
         # create image metadata
         serializer = self.get_serializer(data=data)
@@ -301,7 +301,10 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         image = serializer.data
 
-        #TODO: clone public image into project
+        # clone public image into project
+        cloner = ImageCloner(puid, image['id'])
+        cloner.clone_image()
+
         return response
 
 
@@ -473,11 +476,7 @@ class PortViewSet(viewsets.ModelViewSet):
         pid = self.kwargs['pid']
         aid = self.kwargs['aid']
 
-        if user.is_staff:
-            return Port.objects.filter(app__image__project__id=pid,
-                app__id=aid)
-        else:
-            return Port.objects.filter(app__image__project__id=pid,
+        return Port.objects.filter(app__image__project__id=pid,
                 app__id=aid, app__image__project__user=user)
 
     def get_object(self):
@@ -543,10 +542,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
         assert 'pid' in self.kwargs
         pid = self.kwargs['pid']
 
-        if user.is_staff:
-            return Volume.objects.filter(project__id=pid)
-        else:
-            return Volume.objects.filter(project__id=pid, project__user=user)
+        return Volume.objects.filter(project__id=pid, project__user=user)
 
     def get_object(self):
         """

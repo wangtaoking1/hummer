@@ -267,7 +267,7 @@ class ImageBuilder(object):
         try:
             digest = fetch_digest_from_response(response[-1])
         except Exception:
-            logger.error('Parse the response error.')
+            logger.error('Parse the digest response error.')
             return None
 
         return digest
@@ -291,12 +291,6 @@ class ImageBuilder(object):
         """
         Docker tag old_image_name:old_image_version image_name:image_version.
         """
-        old_image_token = self._get_image_token_on_docker_host(base_url,
-            old_image_name, old_image_version)
-
-        if not old_image_token:
-            return None
-
         client = Client(base_url=base_url)
         old_image = "{}:{}".format(old_image_name, old_image_version)
         try:
@@ -310,10 +304,13 @@ class ImageBuilder(object):
                 image_name, image_version))
             return None
 
+        image_token = self._get_image_token_on_docker_host(base_url,
+            image_name, image_version)
+
         self._delete_image_on_docker_host(base_url, old_image_name,
             old_image_version)
 
-        return old_image_token
+        return image_token
 
     def _get_image_token_on_docker_host(self, base_url, image_name,
         image_version):
@@ -323,19 +320,25 @@ class ImageBuilder(object):
         """
         image_complete_name = '%s:%s' %(image_name, image_version)
 
+        logger.debug(image_complete_name)
+
         client = Client(base_url=base_url)
         try:
-            images = client.images(name=image_complete_name)
+            images = client.images()
         except Exception as e:
             logger.debug(e)
             logger.debug("Communicate with docker host {} failed.".format(
                 base_url))
             return None
-        if not images:
+
+        tokens = [image['Id'] for image in images
+            if image_complete_name in image['RepoTags']]
+
+        if not tokens:
             logger.info("The docker host {} has no image {}:{}".format(base_url,
                 image_name, image_version))
             return None
-        return images[0].get('Id', None)
+        return tokens[0]
 
     def _build_image_on_docker_host(self, base_url, build_file, dockerfile,
             image_name, image_version):
@@ -419,3 +422,211 @@ class ImageDestroyer(object):
 
     def _delete_image_metadata(self):
         self.image.delete()
+
+
+class ImageCloner(object):
+    """
+    ImageCloner is to clone a public image into private project.
+    """
+    public_image = None
+    private_image = None
+
+    def __init__(self, puid, prid):
+        self.public_image = Image.objects.get(id=puid)
+        self.private_image = Image.objects.get(id=prid)
+
+    def clone_image(self):
+        """
+        Clone public image into private project on docker host, and then repush
+        to registry.
+        """
+        clone_thread = Thread(target=self._clone_public_image())
+        clone_thread.start()
+
+    def _clone_public_image(self):
+        public_image_name = self._get_image_name(self.public_image)
+        private_image_name = self._get_image_name(self.private_image)
+
+        logger.debug("public image: {}:{}".format(public_image_name,
+            self.public_image.version))
+        logger.debug("private image: {}:{}".format(private_image_name,
+            self.private_image.version))
+
+        base_url = self._get_docker_host_base_url()
+        if not base_url:
+            logger.error("Clone public image {}:{} to {}:{} failed.".format(
+                public_image_name, self.public_image.version,
+                private_image_name, self.private_image.version))
+            return None
+
+        self._delete_image_on_docker_host(base_url, public_image_name,
+            self.public_image.version)
+        self._delete_image_on_docker_host(base_url, private_image_name,
+            self.private_image.version)
+
+        try:
+            self._pull_image_to_docker_host(base_url, public_image_name,
+                self.public_image.version)
+        except Exception:
+            logger.error("Pull image {}:{} from registry failed.".format(
+                public_image_name, self.public_image.version))
+
+        token = self._tag_image_with_new_name(base_url,
+            public_image_name, self.public_image.version,
+            private_image_name, self.private_image.version)
+        if not token:
+            logger.error("Clone public image {}:{} to {}:{} failed.".format(
+                public_image_name, self.public_image.version,
+                private_image_name, self.private_image.version))
+            self._update_image_status(status="failed")
+            return None
+
+        digest = self._push_image_to_registry(base_url,
+            private_image_name, self.private_image.version, token)
+        if not digest:
+            logger.error("Clone public image {}:{} to {}:{} failed.".format(
+                public_image_name, self.public_image.version,
+                private_image_name, self.private_image.version))
+            self._update_image_status(status="failed")
+            return None
+
+        logger.info("Clone public image {}:{} to {}:{} successfully.".format(
+                public_image_name, self.public_image.version,
+                private_image_name, self.private_image.version))
+
+        self._update_image_status(status="active", digest=digest, token=token)
+
+    def _get_image_name(self, image):
+        """
+        Returns the complete name of the image in registry.
+        """
+        return '{}/{}/{}-{}'.format(settings.IMAGE_REGISTRY,
+            image.project.user.username,
+            image.project.name, image.name)
+
+    def _get_docker_host_base_url(self):
+        """
+        Returns the optimal base url of docker host.
+        """
+        docker_host = get_optimal_docker_host()
+        if not docker_host:
+            logger.error("there is no available active docker host.")
+            self._update_image_status(status="failed")
+            return None
+        return 'tcp://%s:%s' % (docker_host, str(settings.DOCKER_PORT))
+
+    def _update_image_status(self, status, digest=None, token=None):
+        """
+        Update image metadata after clone the image.
+        """
+        self.private_image.status = status
+        if digest:
+            self.private_image.digest = digest
+        if token:
+            self.private_image.token = token
+        self.private_image.save()
+
+    def _delete_image_on_docker_host(self, base_url, image_name, image_version):
+        """
+        Delete image from docker host if exists image called
+        image_name:image_version.
+        """
+        image_complete_name = '%s:%s' %(image_name, image_version)
+        client = Client(base_url=base_url)
+        try:
+            client.remove_image(image=image_complete_name, force=True)
+        except Exception:
+            logger.info('There is no image called %s on docker host %s' %
+                (image_complete_name, base_url))
+            return None
+
+        logger.info('Image %s on docker host %s has been deleted.' %
+                (image_complete_name, base_url))
+
+    def _pull_image_to_docker_host(self, base_url, image_name, image_version):
+        """
+        Pull image from private registry to docker host.
+        """
+        client = Client(base_url=base_url)
+        response = [line for line in client.pull(repository=image_name,
+                tag=image_version, stream=True)]
+
+    def _tag_image_with_new_name(self, base_url, old_image_name,
+            old_image_version, image_name, image_version):
+        """
+        Docker tag old_image_name:old_image_version image_name:image_version.
+        """
+        client = Client(base_url=base_url)
+        old_image = "{}:{}".format(old_image_name, old_image_version)
+        try:
+            response = client.tag(image=old_image, repository=image_name,
+                tag=image_version)
+        except Exception as e:
+            logger.debug(e)
+            response = False
+        if not response:
+            logger.info("Tag image {} to {}:{} failed.".format(old_image,
+                image_name, image_version))
+            return None
+
+        image_token = self._get_image_token_on_docker_host(base_url,
+            image_name, image_version)
+
+        self._delete_image_on_docker_host(base_url, old_image_name,
+            old_image_version)
+
+        return image_token
+
+    def _push_image_to_registry(self, base_url, image_name, image_version,
+        image_token):
+        """
+        Push image from docker host to private registry.
+
+        Returns the sha256 digest of the image.
+        """
+        image_complete_name = '%s:%s' %(image_name, image_version)
+
+        client = Client(base_url=base_url)
+        try:
+            response = [res for res in client.push(image_complete_name,
+                stream=True)]
+        except Exception:
+            logger.error('Push image %s to registry failed.' %
+                image_complete_name)
+            return None
+
+        try:
+            digest = fetch_digest_from_response(response[-1])
+        except Exception:
+            logger.error('Parse the digest response error.')
+            return None
+
+        return digest
+
+    def _get_image_token_on_docker_host(self, base_url, image_name,
+        image_version):
+        """
+        Given the image name and version, return the token of the image on the
+        docker host.
+        """
+        image_complete_name = '%s:%s' %(image_name, image_version)
+
+        logger.debug(image_complete_name)
+
+        client = Client(base_url=base_url)
+        try:
+            images = client.images()
+        except Exception as e:
+            logger.debug(e)
+            logger.debug("Communicate with docker host {} failed.".format(
+                base_url))
+            return None
+
+        tokens = [image['Id'] for image in images
+            if image_complete_name in image['RepoTags']]
+
+        if not tokens:
+            logger.info("The docker host {} has no image {}:{}".format(base_url,
+                image_name, image_version))
+            return None
+        return tokens[0]

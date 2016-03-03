@@ -353,3 +353,19 @@ class Communicator(object):
         url = get_api_server_url('/api/publics/{}/'.format(public_id))
         response = self.client.get(url)
         return json.loads(response.text)
+
+    def clone_public_image(self, public_id, data):
+        """
+        Clone public image into private registry.
+        """
+        url = get_api_server_url('/api/publics/{}/clone/'.format(public_id))
+
+        headers = {
+            'X-CSRFToken': self.client.cookies['csrftoken'],
+        }
+        response = self.client.post(url, data=data, headers=headers)
+        # print(response.status_code)
+        # print(response.text)
+        if response.status_code == 201:
+            return True
+        return False

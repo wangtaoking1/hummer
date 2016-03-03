@@ -11,6 +11,7 @@ def fetch_digest_from_response(response):
     Fetch the image digest from response when push image from docker host to
     private registry.
     """
+    # logger.debug(response)
     res = json.loads(response.decode())
     items = res.get('status').split(' ')
     res = [item for item in items if item.startswith('sha256:')]

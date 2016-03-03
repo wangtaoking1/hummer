@@ -67,3 +67,9 @@ class VolumeForm(forms.Form):
     desc = forms.CharField(max_length=256)
     capacity = forms.IntegerField()
     capacity_unit = forms.CharField()
+
+
+class PublicForm(forms.Form):
+    project = forms.IntegerField()
+    name = forms.CharField(max_length=32)
+    version = forms.CharField(max_length=32)

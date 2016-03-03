@@ -22,7 +22,7 @@ from website.utils import (get_api_server_url, save_buildfile_to_disk,
 from website.communicate import Communicator
 from website.auth import is_authenticated
 from website.forms import (LoginForm, RegistryForm, ProjectForm, SourceForm,
-    ImageForm, SnapshotForm, ApplicationForm, VolumeForm)
+    ImageForm, SnapshotForm, ApplicationForm, VolumeForm, PublicForm)
 
 logger = logging.getLogger("website")
 
@@ -569,6 +569,29 @@ def show_public_detail(request, *args, **kwargs):
 
     return render(request, 'website/public_image_details.html', context,
         RequestContext(request))
+
+
+@login_required()
+@csrf_exempt
+@require_POST
+def clone_public_image(request, *args, **kwargs):
+    puid = kwargs['puid']
+
+    form = PublicForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse({"error": "data invalid"})
+
+    data = {
+        'pid': form.cleaned_data['project'],
+        'name': form.cleaned_data['name'],
+        'version': form.cleaned_data['version']
+    }
+    client = Communicator(cookies=request.COOKIES)
+    ok = client.clone_public_image(public_id=puid, data=data)
+    if ok:
+        return JsonResponse({"success": "success"})
+    else:
+        return JsonResponse({"error": "failed"})
 
 
 @login_required()

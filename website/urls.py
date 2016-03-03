@@ -65,7 +65,8 @@ urlpatterns = [
     url(r'^publics/$', views.list_publics, name='list-publics'),
     url(r'^publics/(?P<puid>[0-9]+)/$', views.show_public_detail,
         name='public-detail'),
-
+    url(r'^publics/(?P<puid>[0-9]+)/clone/$', views.clone_public_image,
+        name='public-clone'),
 
     url(r'^test/$', views.test),
 ]

@@ -135,3 +135,19 @@ class CommunicatorTestCase(unittest.TestCase):
 
         res = client.get_pod_logs(1, "project0-nginx-test-n9oky", 20)
         print(res)
+
+    def test_clone_public_image(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+
+        data = {
+            'pid': 1,
+            'name': 'myubuntu',
+            'version': '14.04'
+        }
+        res = client.clone_public_image(12, data)
+        print(res)
