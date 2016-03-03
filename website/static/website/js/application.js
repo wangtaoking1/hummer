@@ -40,6 +40,11 @@ $(document).ready(function() {
         reload_iframe_to_new_pod($('#monitor .mem-show'), pod_name);
         reload_iframe_to_new_pod($('#monitor .cpu-show'), pod_name);
     });
+
+    $('#monitor .refresh').click(function() {
+        reload_iframe($('#monitor .mem-show'));
+        reload_iframe($('#monitor .cpu-show'));
+    })
 });
 
 

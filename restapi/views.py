@@ -181,8 +181,8 @@ class ImageViewSet(viewsets.ModelViewSet):
         images = Image.objects.filter(project__id=pid, name=data['name'],
             version=data['version'])
         if images:
-            raise ValidationError(detail="Already has an image called {}."
-                .format(data['name']))
+            raise ValidationError(detail="Already has an image called {}:{}."
+                .format(name, version))
 
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -268,7 +268,41 @@ class ImageViewSet(viewsets.ModelViewSet):
         """
         Add one public image into a project of user.
         """
-        pass
+        puid = kwargs['puid']
+        public_image = Image.objects.get(id=puid)
+
+        pid = request.POST['pid']
+        name = request.POST['name']
+        version = request.POST['version']
+
+        data = {
+            'project': pid,
+            'name': name,
+            'version': version,
+            'desc': public_image.desc,
+            'is_public': False,
+        }
+        print(data)
+
+        # create image metadata
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        images = Image.objects.filter(project__id=pid, name=name,
+            version=version)
+        if images:
+            raise ValidationError(detail="Already has an image called {}:{}."
+                .format(name, version))
+
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        response = Response(serializer.data, status=status.HTTP_201_CREATED,
+            headers=headers)
+
+        image = serializer.data
+
+        #TODO: clone public image into project
+        return response
 
 
 class ApplicationViewSet(viewsets.ModelViewSet):

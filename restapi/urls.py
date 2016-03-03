@@ -51,6 +51,10 @@ get_public_image = ImageViewSet.as_view({
     'get': 'get_public_image'
 })
 
+add_public_image_to_project = ImageViewSet.as_view({
+    'post': 'add_public_image_to_project'
+})
+
 urlpatterns = [
     # Examples:
     # url(r'^$', 'hummer.views.home', name='home'),
@@ -90,6 +94,8 @@ urlpatterns = [
     url(r'publics/$', list_public_images, name='public-images'),
     url(r'publics/(?P<puid>[0-9]+)/$', get_public_image,
         name='get-public-image'),
+    url(r'publics/(?P<puid>[0-9]+)/clone/$', add_public_image_to_project,
+        name='clone-public-image'),
 
     # auth
     url(r'auth/', include('rest_framework.urls',
