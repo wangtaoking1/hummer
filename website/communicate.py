@@ -370,3 +370,44 @@ class Communicator(object):
         if response.status_code == 201:
             return True
         return False
+
+    def list_users(self):
+        """
+        Get user lists only for admin user.
+        """
+        url = get_api_server_url('/api/users/')
+        response = self.client.get(url)
+        return json.loads(response.text)
+
+    def list_resource_modules(self):
+        """
+        Return resource modules only for admin user.
+        """
+        url = get_api_server_url('/api/resourcelimits/')
+        response = self.client.get(url)
+        return json.loads(response.text)
+
+    def delete_resource_module(self, module_id):
+        url = get_api_server_url('/api/resourcelimits/{}/'.format(module_id))
+        headers = {'X-CSRFToken': self.client.cookies['csrftoken']}
+        res = self.client.delete(url, headers=headers)
+        # print(res.status_code)
+        if res.status_code == 204:
+            return True
+        return False
+
+    def create_resource_module(self, data):
+        """
+        Create an resource module.
+        """
+        url = get_api_server_url('/api/resourcelimits/')
+
+        headers = {
+            'X-CSRFToken': self.client.cookies['csrftoken'],
+        }
+        response = self.client.post(url, data=data, headers=headers)
+        # print(response.status_code)
+        # print(response.text)
+        if response.status_code == 201:
+            return True
+        return False

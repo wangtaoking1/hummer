@@ -2,7 +2,7 @@ $(document).ready(function(){
     $('.volume-space').addClass('active');
 
     $('.volume-create .submit').click(function() {
-        $('.volume-create .submit').val("上传中...");
+        $('.volume-create .submit').val("创建中...");
         var form = $(this).parents("form");
         var url = window.location.href.split("#")[0];
         var create_url = url.replace("volumes", "create-volume");

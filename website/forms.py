@@ -73,3 +73,11 @@ class PublicForm(forms.Form):
     project = forms.IntegerField()
     name = forms.CharField(max_length=32)
     version = forms.CharField(max_length=32)
+
+
+class ResourceModuleForm(forms.Form):
+    name = forms.CharField(max_length=32)
+    cpu = forms.IntegerField()
+    cpu_unit = forms.CharField()
+    memory = forms.IntegerField()
+    memory_unit = forms.CharField()

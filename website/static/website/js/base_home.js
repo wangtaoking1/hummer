@@ -45,3 +45,31 @@ function show_publics() {
     window.location.href = new_url;
     $('.public-image').addClass('active');
 }
+
+function show_users() {
+    var urls = window.location.href.split('/', 3);
+    var new_url = urls.join('/') + "/user-management/";
+    window.location.href = new_url;
+    $('.user-management').addClass('active');
+}
+
+function show_resource_modules() {
+    var urls = window.location.href.split('/', 3);
+    var new_url = urls.join('/') + "/resource-module/";
+    window.location.href = new_url;
+    $('.resource-module').addClass('active');
+}
+
+function show_app_monitor() {
+    var urls = window.location.href.split('/', 3);
+    var new_url = urls.join('/') + "/app-monitor/";
+    window.location.href = new_url;
+    $('.app-monitor').addClass('active');
+}
+
+function show_host_monitor() {
+    var urls = window.location.href.split('/', 3);
+    var new_url = urls.join('/') + "/host-monitor/";
+    window.location.href = new_url;
+    $('.host-monitor').addClass('active');
+}

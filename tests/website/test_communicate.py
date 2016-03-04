@@ -151,3 +151,14 @@ class CommunicatorTestCase(unittest.TestCase):
         }
         res = client.clone_public_image(12, data)
         print(res)
+
+    def test_delete_resource_module(self):
+        client = Communicator()
+        data = {
+            'username': 'admin',
+            'password': 'admin123'
+        }
+        client.login(data)
+
+        res = client.delete_resource_module(2)
+        print(res)

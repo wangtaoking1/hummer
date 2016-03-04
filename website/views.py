@@ -22,7 +22,8 @@ from website.utils import (get_api_server_url, save_buildfile_to_disk,
 from website.communicate import Communicator
 from website.auth import is_authenticated
 from website.forms import (LoginForm, RegistryForm, ProjectForm, SourceForm,
-    ImageForm, SnapshotForm, ApplicationForm, VolumeForm, PublicForm)
+    ImageForm, SnapshotForm, ApplicationForm, VolumeForm, PublicForm,
+    ResourceModuleForm)
 
 logger = logging.getLogger("website")
 
@@ -99,7 +100,8 @@ def logout(request):
 @login_required()
 def dashboard(request, *args, **kwargs):
     context = {
-        'username': kwargs.get('username')
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
     }
 
     client = Communicator(cookies=request.COOKIES)
@@ -146,7 +148,8 @@ def delete_project(request, *args, **kwargs):
 @login_required()
 def project_intro(request, *args, **kwargs):
     context = {
-        'username': kwargs.get('username')
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
     }
     project_id = kwargs['pid']
     client = Communicator(cookies=request.COOKIES)
@@ -246,7 +249,8 @@ def create_image(request, *args, **kwargs):
 @login_required()
 def list_applications(request, *args, **kwargs):
     context = {
-        'username': kwargs.get('username')
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
     }
     project_id = kwargs['pid']
     client = Communicator(cookies=request.COOKIES)
@@ -343,7 +347,8 @@ def delete_application(request, *args, **kwargs):
 @login_required()
 def list_volumes(request, *args, **kwargs):
     context = {
-        'username': kwargs.get('username')
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
     }
     project_id = kwargs['pid']
     client = Communicator(cookies=request.COOKIES)
@@ -456,7 +461,8 @@ def clear_volume(request, *args, **kwargs):
 @login_required()
 def list_publics(request, *args, **kwargs):
     context = {
-        'username': kwargs.get('username')
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
     }
 
     client = Communicator(cookies=request.COOKIES)
@@ -469,7 +475,8 @@ def list_publics(request, *args, **kwargs):
 @login_required()
 def show_image_detail(request, *args, **kwargs):
     context = {
-        'username': kwargs.get('username')
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
     }
     project_id = kwargs['pid']
     image_id = kwargs['iid']
@@ -496,7 +503,8 @@ def show_image_detail(request, *args, **kwargs):
 @login_required()
 def show_application_detail(request, *args, **kwargs):
     context = {
-        'username': kwargs.get('username')
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
     }
     project_id = kwargs['pid']
     application_id = kwargs['aid']
@@ -540,7 +548,8 @@ def get_logs_of_pod(request, *args, **kwargs):
 @login_required()
 def show_volume_detail(request, *args, **kwargs):
     context = {
-        'username': kwargs.get('username')
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
     }
 
     project_id = kwargs['pid']
@@ -560,7 +569,8 @@ def show_volume_detail(request, *args, **kwargs):
 @login_required()
 def show_public_detail(request, *args, **kwargs):
     context = {
-        'username': kwargs.get('username')
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
     }
     public_id = kwargs['puid']
 
@@ -593,6 +603,112 @@ def clone_public_image(request, *args, **kwargs):
         return JsonResponse({"success": "success"})
     else:
         return JsonResponse({"error": "failed"})
+
+
+@login_required()
+def user_management(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
+    }
+
+    if not context['is_staff']:
+        return HttpResponseRedirect(reverse('dashboard'))
+
+    client = Communicator(cookies=request.COOKIES)
+    context['users'] = client.list_users()
+
+    return render(request, 'website/user_management.html', context,
+        RequestContext(request))
+
+
+@login_required()
+def resource_module(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
+    }
+
+    if not context['is_staff']:
+        return HttpResponseRedirect(reverse('dashboard'))
+
+    client = Communicator(cookies=request.COOKIES)
+    context['modules'] = client.list_resource_modules()
+
+    return render(request, 'website/resource_module.html', context,
+        RequestContext(request))
+
+
+@login_required()
+def delete_resource_module(request, *args, **kwargs):
+    module_id = kwargs['mid']
+
+    if not kwargs['is_staff']:
+        return HttpResponseRedirect(reverse('dashboard'))
+
+    client = Communicator(cookies=request.COOKIES)
+    ok = client.delete_resource_module(module_id=module_id)
+    if ok:
+        return HttpResponseRedirect(reverse('resource-module'))
+    return HttpResponseRedirect(reverse('resource-module'))
+
+
+@login_required()
+@csrf_exempt
+@require_POST
+def create_resource_module(request, *args, **kwargs):
+    if not kwargs['is_staff']:
+        return JsonResponse({"error": "no permission"})
+
+    # Check validation
+    form = ResourceModuleForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse({"error": "data invalid"})
+
+    data = {
+        'name': form.cleaned_data['name'],
+        'cpu': form.cleaned_data['cpu'],
+        'cpu_unit': form.cleaned_data['cpu_unit'],
+        'memory': form.cleaned_data['memory'],
+        'memory_unit': form.cleaned_data['memory_unit']
+    }
+
+    logger.debug(data)
+
+    client = Communicator(cookies=request.COOKIES)
+    ok = client.create_resource_module(data)
+    if ok:
+        return JsonResponse({"success": "success"})
+    else:
+        return JsonResponse({"error": "failed"})
+
+
+@login_required()
+def app_monitor(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
+    }
+
+    if not context['is_staff']:
+        return HttpResponseRedirect(reverse('dashboard'))
+
+    return render(request, 'website/app_monitor.html', context,
+        RequestContext(request))
+
+
+@login_required()
+def host_monitor(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
+    }
+
+    if not context['is_staff']:
+        return HttpResponseRedirect(reverse('dashboard'))
+
+    return render(request, 'website/host_monitor.html', context,
+        RequestContext(request))
 
 
 @login_required()

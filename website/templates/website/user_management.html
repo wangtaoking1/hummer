@@ -1,0 +1,60 @@
+{% extends "website/base_dashboard.html" %}
+
+{% load staticfiles %}
+
+
+{% block main-content %}
+<div class="page">
+    <!-- User list-->
+    <h2>用户列表</h2>
+    <hr>
+    <div class="table-responsive resource-lists">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>头像</th>
+                    <th>用户名</th>
+                    <th>邮箱</th>
+                    <th>用户类型</th>
+                    <th>状态</th>
+                    <th>删除</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <input type="hidden" name="id" value="{{ user.id }}">
+                        <td>
+                            <img class="common-images" src="{% static 'website/img/user.png' %}"  width="40px" height="40px">
+                        </td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                        {% if user.is_staff %}
+                        管理员
+                        {% else %}
+                        普通用户
+                        {% endif %}
+                        </td>
+                        <td>
+                        {% if user.is_active %}
+                        已激活
+                        {% else %}
+                        未激活
+                        {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-xs btn-danger">删除</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'website/js/user_management.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "website/base_dashboard.html" %}
+
+{% load staticfiles %}
+
+
+{% block main-content %}
+<!-- Resource module list-->
+<h2>资源模板</h2>
+<hr>
+<div class="table-responsive resource-lists">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>模板名</th>
+                <th>CPU</th>
+                <th>内存</th>
+                <th>删除</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for module in modules %}
+                <tr>
+                    <input type="hidden" name="id" value="{{ module.id }}">
+                    <td>{{ module.name }}</td>
+                    <td>{{ module.cpu }}{{ module.cpu_unit }}</td>
+                    <td>{{ module.memory }}{{ module.memory_unit }}</td>
+                    <td>
+                        <form action="{% url 'delete-module' mid=module.id %}" method="get">
+                            <button class="btn btn-xs btn-danger">删除</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<hr>
+
+<!-- create resource module -->
+<h2 class="page-header">创建模板</h2>
+<div class="module-create">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="modulename" class="col-sm-2 control-label">模板名</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="modulename" name="name" maxlength="32" placeholder="模板名">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="cpu" class="col-sm-2 control-label">CPU</label>
+            <table class="col-sm-3">
+                <tr>
+                    <td class="col-sm-2">
+                        <input type="text" class="form-control" id="cpu" name="cpu" placeholder="CPU大小" onkeyup="value=value.replace(/[^\d]/g,'')">
+                    </td>
+                    <td class="col-sm-1">
+                        <select class="form-control" id="cpu_unit" name="cpu_unit">
+                            <option value="m">m</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="form-group">
+            <label for="memory" class="col-sm-2 control-label">内存</label>
+            <table class="col-sm-3">
+                <tr>
+                    <td class="col-sm-2">
+                        <input type="text" class="form-control" id="memory" name="memory" placeholder="内存大小" onkeyup="value=value.replace(/[^\d]/g,'')">
+                    </td>
+                    <td class="col-sm-1">
+                        <select class="form-control" id="memory_unit" name="memory_unit">
+                            <option value="Ki">Ki</option>
+                            <option value="Mi" selected="selected">Mi</option>
+                            <option value="Gi">Gi</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-4 col-sm-offset-2">
+                <input type="button" class="btn btn-success submit" value="  创　建 ">
+                <p class="submit-notice"></p>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'website/js/resource_module.js' %}"></script>
+{% endblock %}

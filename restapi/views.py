@@ -39,6 +39,8 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class = UserSerializer
 
+    permission_classes = (IsAdminUser,)
+
     def create(self, request, *args, **kwargs):
         """
         Create an user instance.

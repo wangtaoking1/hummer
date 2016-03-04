@@ -68,5 +68,19 @@ urlpatterns = [
     url(r'^publics/(?P<puid>[0-9]+)/clone/$', views.clone_public_image,
         name='public-clone'),
 
+    # user management
+    url(r'^user-management/$', views.user_management, name='user-management'),
+
+    # resource module
+    url(r'^resource-module/$', views.resource_module, name='resource-module'),
+    url(r'^delete-module/(?P<mid>[0-9]+)/$', views.delete_resource_module,
+        name='delete-module'),
+    url(r'^create-module/$', views.create_resource_module,
+        name='create-module'),
+
+    # monitor
+    url(r'^app-monitor/$', views.app_monitor, name='app-monitor'),
+    url(r'^host-monitor/$', views.host_monitor, name='host-monitor'),
+
     url(r'^test/$', views.test),
 ]
