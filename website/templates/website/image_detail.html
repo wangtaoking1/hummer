@@ -16,14 +16,23 @@
             <td> <b>镜像版本：</b> {{ image.version }}</td>
         </tr>
         <tr>
+            <td> <b>镜像类型：</b>
+            {% if not image.is_public %}
+            私有镜像
+            {% else %}
+            公共镜像
+            {% endif %}
+            </td>
             <td> <b>镜像状态：</b> {{ image.status }}</td>
-            <td> <b>创建时间：</b> {{ image.create_time }}</td>
         </tr>
         <tr>
             <td colspan="2"> <b>Token：</b> {{ image.token }}</td>
         </tr>
         <tr>
             <td colspan="2"> <b>Digest：</b> {{ image.digest }}</td>
+        </tr>
+        <tr>
+            <td colspan="2"> <b>创建时间：</b> {{ image.create_time }}</td>
         </tr>
         <tr>
             <td colspan="2"> <b>镜像说明：</b> {{ image.desc }}</td>

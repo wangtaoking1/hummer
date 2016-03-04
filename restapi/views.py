@@ -677,8 +677,8 @@ def is_authenticated(request):
     status HTTP_401_UNAUTHORIZED.
     """
     if request.user and request.user.is_authenticated():
-        return Response(data=request.user.username,
-            status=status.HTTP_200_OK)
+        data = [request.user.username, request.user.is_staff]
+        return Response(data=data, status=status.HTTP_200_OK)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 

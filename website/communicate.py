@@ -41,9 +41,10 @@ class Communicator(object):
         response = self.client.get(url)
 
         if response.status_code == 200:
-            return True, json.loads(response.text)
+            data = json.loads(response.text)
+            return True, data[0], data[1]
         else:
-            return False, None
+            return False, None, None
 
     def registry(self, data):
         """

@@ -16,7 +16,7 @@
                 <th>Logo</th>
                 <th>镜像名称</th>
                 <th>镜像版本</th>
-                <th>镜像简介</th>
+                <th>简单说明</th>
                 <th>状态</th>
                 <th>创建时间</th>
                 <th>删除</th>
@@ -62,7 +62,6 @@
         <div id="source" class="tab-pane fade in active">
             <form class="form-horizontal">
                 <input type="hidden" name="build_type" value="0">
-                <input type="hidden" name="image_type" value="0">
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label">源码包</label>
@@ -96,15 +95,19 @@
                     </div>
                 </div>
 
-                <!-- <div class="form-group">
+                {% if is_staff %}
+                <div class="form-group">
                     <label for="image_type" class="col-sm-2 control-label">镜像类型</label>
                     <div class="col-sm-6">
                         <select class="form-control" id="image_type" name="image_type">
-                            <option value="0">私有</option>
-                            <option value="1">公有</option>
+                            <option value="0">私有镜像</option>
+                            <option value="1">公共镜像</option>
                         </select>
                     </div>
-                </div> -->
+                </div>
+                {% else %}
+                <input type="hidden" name="image_type" value="0">
+                {% endif %}
 
                 <div class="form-group">
                     <label for="dockerfile" class="col-sm-2 control-label">Dockerfile</label>
@@ -126,7 +129,6 @@
         <div id="image" class="tab-pane fade">
             <form class="form-horizontal">
                 <input type="hidden" name="build_type" value="1">
-                <input type="hidden" name="image_type" value="0">
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label">镜像文件</label>
@@ -160,15 +162,19 @@
                     </div>
                 </div>
 
-                <!-- <div class="form-group">
+                {% if is_staff %}
+                <div class="form-group">
                     <label for="image_type" class="col-sm-2 control-label">镜像类型</label>
                     <div class="col-sm-6">
                         <select class="form-control" id="image_type" name="image_type">
-                            <option value="0">私有</option>
-                            <option value="1">公有</option>
+                            <option value="0">私有镜像</option>
+                            <option value="1">公共镜像</option>
                         </select>
                     </div>
-                </div> -->
+                </div>
+                {% else %}
+                <input type="hidden" name="image_type" value="0">
+                {% endif %}
 
                 <div class="form-group">
                     <label for="oldimagename" class="col-sm-2 control-label">原镜像名称</label>
@@ -230,15 +236,19 @@
                     </div>
                 </div>
 
-                <!-- <div class="form-group">
+                {% if is_staff %}
+                <div class="form-group">
                     <label for="image_type" class="col-sm-2 control-label">镜像类型</label>
                     <div class="col-sm-6">
                         <select class="form-control" id="image_type" name="image_type">
-                            <option value="0">私有</option>
-                            <option value="1">公有</option>
+                            <option value="0">私有镜像</option>
+                            <option value="1">公共镜像</option>
                         </select>
                     </div>
-                </div> -->
+                </div>
+                {% else %}
+                <input type="hidden" name="image_type" value="0">
+                {% endif %}
 
                 <div class="form-group">
                     <div class="col-sm-4 col-sm-offset-2">

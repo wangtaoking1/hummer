@@ -16,8 +16,8 @@ def is_authenticated(request):
     """
     cookies = {'sessionid': request.COOKIES.get('sessionid', None)}
     client = Communicator(cookies=cookies)
-    ok, username = client.is_authenticated()
-    return ok, username
+    ok, username, is_staff= client.is_authenticated()
+    return ok, username, is_staff
 
 
 def login_required(login_url=None):
@@ -28,9 +28,10 @@ def login_required(login_url=None):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
-            is_login, username = is_authenticated(request)
+            is_login, username, is_staff = is_authenticated(request)
             if is_login:
                 kwargs['username'] = username
+                kwargs['is_staff'] = is_staff
                 return view_func(request, *args, **kwargs)
 
             resolved_login_url = (login_url or settings.LOGIN_URL)

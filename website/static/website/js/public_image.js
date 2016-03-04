@@ -17,7 +17,8 @@ $(document).ready(function(){
             success: function(data) {
                 if (data.hasOwnProperty("success")) {
                     form[0].reset();
-                    window.location.href = url;
+                    $('.clone-public .submit').val(" 克　隆 ");
+                    $('.clone-public .submit-notice').html("克隆成功！");
                 }
                 else {
                     $('.clone-public .submit').val(" 克　隆 ");

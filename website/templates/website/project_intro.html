@@ -8,8 +8,20 @@
 {% endblock %}
 
 {% block main-content %}
-<p class="project-intro"><strong>project_01</strong>针对个人用户和中小型企业的的项目开发者，为他们提供开发，测试和部署的环境。
-</p>
+<h2 class="page-header">项目基本信息</h2>
+<table class="table w50">
+    <tbody>
+        <tr>
+            <td> <b>项目名：</b> {{ project.name }}</td>
+        </tr>
+        <tr>
+            <td> <b>创建时间：</b> {{ project.create_time }}</td>
+        </tr>
+        <tr>
+            <td> <b>项目说明：</b> {{ project.desc }}</td>
+        </tr>
+    </tbody>
+</table>
 {% endblock %}
 
 

@@ -159,7 +159,8 @@ def project_intro(request, *args, **kwargs):
 @login_required()
 def list_images(request, *args, **kwargs):
     context = {
-        'username': kwargs.get('username')
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
     }
 
     project_id = kwargs.get('pid')
