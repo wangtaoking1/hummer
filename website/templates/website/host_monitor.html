@@ -4,7 +4,40 @@
 
 
 {% block main-content %}
+<h2>主机监控信息</h2>
+<hr>
 
+<div id="host-monitor">
+    <div class="monitor-option">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <select class="form-control host-name" name="host_name">
+                        {% for host in hosts %}
+                            <option value="{{ host }}">{{ host }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select class="form-control monitor-type" name="monitor_type">
+                        <option value="cpu">CPU</option>
+                        <option value="memory">Memory</option>
+                        <option value="disk">Disk</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <a class="btn btn-success refresh">
+                        <i class="fa fa-refresh"></i>
+                        <span>刷新</span>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="form-group monitor-show">
+        <iframe class="col-sm-12" src="#"></iframe>
+    </div>
+</div>
 {% endblock %}
 
 

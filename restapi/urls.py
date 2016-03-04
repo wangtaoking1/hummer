@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from rest_framework import routers
 from restapi.views import (UserViewSet, ProjectViewSet, ImageViewSet,
     ApplicationViewSet, PortViewSet, ResourceLimitViewSet, VolumeViewSet,
-    is_authenticated, create_image, upload_volume)
+    is_authenticated, create_image, upload_volume, list_hosts)
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -96,6 +96,9 @@ urlpatterns = [
         name='get-public-image'),
     url(r'publics/(?P<puid>[0-9]+)/clone/$', add_public_image_to_project,
         name='clone-public-image'),
+
+    # hosts
+    url(r'hosts/$', list_hosts, name='list-hosts'),
 
     # auth
     url(r'auth/', include('rest_framework.urls',

@@ -212,13 +212,12 @@ body {
     font-size: 1.2em;
     padding-top: 10px;
 }
-.monitor-show {
+#monitor .monitor-show {
     height: 250px;
 }
-.monitor-show iframe {
+#monitor .monitor-show iframe {
     height: 250px;
 }
-
 
 
 /*
@@ -254,6 +253,18 @@ body {
 }
 .volume-upload .progress {
     display: none;
+}
+
+
+/*
+ * monitor
+ */
+#host-monitor .monitor-show {
+    height: 400px;
+}
+
+#host-monitor iframe {
+    height: 400px;
 }
 
 /*

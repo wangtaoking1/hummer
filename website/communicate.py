@@ -411,3 +411,11 @@ class Communicator(object):
         if response.status_code == 201:
             return True
         return False
+
+    def list_hosts(self):
+        """
+        List all hosts.
+        """
+        url = get_api_server_url('/api/hosts/')
+        response = self.client.get(url)
+        return json.loads(response.text)

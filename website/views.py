@@ -707,6 +707,10 @@ def host_monitor(request, *args, **kwargs):
     if not context['is_staff']:
         return HttpResponseRedirect(reverse('dashboard'))
 
+    client = Communicator(cookies=request.COOKIES)
+    context['hosts'] = ['All Hosts']
+    context['hosts'] += client.list_hosts()
+
     return render(request, 'website/host_monitor.html', context,
         RequestContext(request))
 

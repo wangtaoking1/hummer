@@ -8,7 +8,7 @@ from django.conf import settings
 from django.http import StreamingHttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import (require_POST)
+from django.views.decorators.http import (require_POST, require_GET)
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -31,6 +31,7 @@ from backend.volume import (VolumeBuilder, VolumeDestroyer)
 from backend.kubernetes.k8sclient import KubeClient
 from backend.nfs import NFSLocalClient
 from backend.utils import (remove_file_from_disk, get_application_instance_name)
+from backend.schedule import DockerSchedulerFactory
 
 logger = logging.getLogger("hummer")
 
@@ -784,3 +785,14 @@ def upload_volume(request, *args, **kwargs):
     remove_file_from_disk(filename)
 
     return JsonResponse({"detail": "success"})
+
+
+@require_GET
+def list_hosts(request, *args, **kwargs):
+    if not (request.user and request.user.is_staff):
+        raise PermissionDenied()
+
+    scheduler = DockerSchedulerFactory.get_scheduler()
+    hosts = scheduler.get_docker_hosts()
+
+    return JsonResponse(hosts, safe=False)
