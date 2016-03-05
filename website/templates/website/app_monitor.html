@@ -24,16 +24,15 @@
                     <label class="control-label">项目</label>
                     <select class="form-control" id="project-option">
                         <option value="0">-------------</option>
-                        <option value="1">-adsfasdf</option>
                     </select>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <label class="control-label">应用</label>
                     <select class="form-control" id="app-option">
                         <option value="0">-------------</option>
                     </select>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-4">
                     <label class="control-label">容器</label>
                     <select class="form-control" id="container-option">
                         <option value="0">-------------</option>
@@ -43,6 +42,7 @@
         </form>
     </div>
     <div class="form-group monitor-show">
+        <input type="hidden" id="base_url" value="{{ monitor_base_url }}">
         <iframe class="col-sm-6 mem-show"></iframe>
         <iframe class="col-sm-6 cpu-show"></iframe>
     </div>

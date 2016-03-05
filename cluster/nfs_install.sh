@@ -7,12 +7,30 @@
 
 set -o xtrace
 
+# update time for every 30 minutes
+function set_ntp() {
+    crontab -l > /tmp/crontab.bak
+    echo '30/* * * * * root /usr/sbin/ntpdate ntp.api.bz' >> /tmp/crontab.bak
+    crontab /tmp/crontab.bak
+}
+
+
 if [[ $UID -ne 0 ]]; then
     echo "Not root user. Please run as root."
     exit 0
 fi
 
 bash ./update_source.sh
+
+# set ntp
+set_ntp
+
+# Install ntp
+ntpdate -v
+if [[ $? -ne 0 ]]; then
+    echo "Install ntp..."
+    bash ./ntp_install.sh
+fi
 
 apt-get install -y nfs-kernel-server nfs-common
 

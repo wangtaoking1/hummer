@@ -695,6 +695,8 @@ def app_monitor(request, *args, **kwargs):
 
     client = Communicator(cookies=request.COOKIES)
     context['users'] = client.list_users()
+    context['monitor_base_url'] =  "http://{}/dashboard-solo/db/containers\
+?fullscreen".format(settings.GRAFANA_SERVER)
 
     return render(request, 'website/app_monitor.html', context,
         RequestContext(request))

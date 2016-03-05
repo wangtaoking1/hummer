@@ -27,6 +27,13 @@ function install_key() {
     return 0
 }
 
+# update time for every 30 minutes
+function set_ntp() {
+    crontab -l > /tmp/crontab.bak
+    echo '30/* * * * * root /usr/sbin/ntpdate ntp.api.bz' >> /tmp/crontab.bak
+    crontab /tmp/crontab.bak
+}
+
 
 if [[ $UID -ne 0 ]]; then
     echo "Not root user. Please run as root."
@@ -47,6 +54,10 @@ apt-get update -y
 apt-get install -y lxc-docker
 
 docker -v
+
+# configure ntp
+set_ntp
+
 
 # Set Docker private registry address
 read -p "Input private registry address(192.168.0.1:5000): " registry_address
