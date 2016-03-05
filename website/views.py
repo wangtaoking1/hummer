@@ -693,6 +693,9 @@ def app_monitor(request, *args, **kwargs):
     if not context['is_staff']:
         return HttpResponseRedirect(reverse('dashboard'))
 
+    client = Communicator(cookies=request.COOKIES)
+    context['users'] = client.list_users()
+
     return render(request, 'website/app_monitor.html', context,
         RequestContext(request))
 
@@ -715,6 +718,37 @@ def host_monitor(request, *args, **kwargs):
 
     return render(request, 'website/host_monitor.html', context,
         RequestContext(request))
+
+
+@login_required()
+def list_projects(request, *args, **kwargs):
+    user_id = request.GET['user']
+
+    client = Communicator(cookies=request.COOKIES)
+    projects = client.list_projects_for_user(user_id=user_id)
+    data = [{'id': project['id'], 'name': project['name']}
+        for project in projects]
+    return JsonResponse(data, safe=False)
+
+
+@login_required()
+def list_apps(request, *args, **kwargs):
+    project_id = request.GET['project']
+
+    client = Communicator(cookies=request.COOKIES)
+    apps = client.list_apps_for_project(project_id=project_id)
+    data = [{'id': app['id'], 'name': app['name']}
+        for app in apps]
+    return JsonResponse(data, safe=False)
+
+
+@login_required()
+def list_pods(request, *args, **kwargs):
+    app_id = request.GET['app']
+
+    client = Communicator(cookies=request.COOKIES)
+    pods = client.list_pods_for_app(app_id=app_id)
+    return JsonResponse(pods, safe=False)
 
 
 @login_required()

@@ -267,6 +267,14 @@ body {
     height: 400px;
 }
 
+#app-monitor .monitor-show {
+    height: 250px;
+    display: none;
+}
+#app-monitor .monitor-show iframe {
+    height: 250px;
+}
+
 /*
  * footer
  * ----------------------------------------

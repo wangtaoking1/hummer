@@ -419,3 +419,33 @@ class Communicator(object):
         url = get_api_server_url('/api/hosts/')
         response = self.client.get(url)
         return json.loads(response.text)
+
+    def list_projects_for_user(self, user_id):
+        """
+        List all projects for user with user_id.
+        """
+        url = get_api_server_url('/api/list-projects')
+        params = {'user': user_id}
+
+        response = self.client.get(url, params=params)
+        return json.loads(response.text)
+
+    def list_apps_for_project(self, project_id):
+        """
+        List all apps for project with project_id.
+        """
+        url = get_api_server_url('/api/list-apps')
+        params = {'project': project_id}
+
+        response = self.client.get(url, params=params)
+        return json.loads(response.text)
+
+    def list_pods_for_app(self, app_id):
+        """
+        List all pods for app with app_id.
+        """
+        url = get_api_server_url('/api/list-pods')
+        params = {'app': app_id}
+
+        response = self.client.get(url, params=params)
+        return json.loads(response.text)

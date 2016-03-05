@@ -55,6 +55,18 @@ add_public_image_to_project = ImageViewSet.as_view({
     'post': 'add_public_image_to_project'
 })
 
+list_projects = ProjectViewSet.as_view({
+    'get': 'list_projects'
+})
+
+list_applications = ApplicationViewSet.as_view({
+    'get': 'list_applications'
+})
+
+list_pods = ApplicationViewSet.as_view({
+    'get': 'list_pods'
+})
+
 urlpatterns = [
     # Examples:
     # url(r'^$', 'hummer.views.home', name='home'),
@@ -99,6 +111,15 @@ urlpatterns = [
 
     # hosts
     url(r'hosts/$', list_hosts, name='list-hosts'),
+
+    # projects
+    url(r'list-projects/$', list_projects, name='list-projects'),
+
+    # applications
+    url(r'list-apps/$', list_applications, name='list-apps'),
+
+    # pods
+    url(r'list-pods/$', list_pods, name='list-pods'),
 
     # auth
     url(r'auth/', include('rest_framework.urls',

@@ -81,6 +81,9 @@ urlpatterns = [
     # monitor
     url(r'^app-monitor/$', views.app_monitor, name='app-monitor'),
     url(r'^host-monitor/$', views.host_monitor, name='host-monitor'),
+    url(r'^list-projects/$', views.list_projects, name='list-projects'),
+    url(r'^list-apps/$', views.list_apps, name='list-apps'),
+    url(r'^list-pods/$', views.list_pods, name='list-pods'),
 
     url(r'^test/$', views.test),
 ]

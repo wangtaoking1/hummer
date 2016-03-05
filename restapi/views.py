@@ -122,6 +122,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         return response
 
+    def list_projects(self, request, *args, **kwargs):
+        """
+        AdminUser search projects with user id.
+        """
+        user = self.request.user
+        if not user.is_staff:
+            raise PermissionDenied()
+
+        user_id = request.GET.get('user', 0)
+        projects = Project.objects.filter(user__id=user_id)
+        data = [self.get_serializer(project).data for project in projects]
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
 class ImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
 
@@ -319,7 +334,9 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
 
-        assert 'pid' in self.kwargs
+        if 'pid' not in self.kwargs:
+            return Application.objects.all()
+
         pid = self.kwargs['pid']
 
         return Application.objects.filter(image__project__id=pid,
@@ -464,6 +481,43 @@ application {}.".format(volume.name, volume.app.name))
         # print(logs)
 
         return Response(data=logs, status=status.HTTP_200_OK)
+
+    def list_applications(self, request, *args, **kwargs):
+        """
+        AdminUser search applications with project id.
+        """
+        user = self.request.user
+        if not user.is_staff:
+            raise PermissionDenied()
+
+        project_id = request.GET.get('project', 0)
+        apps = Application.objects.filter(image__project__id=project_id)
+        data = [self.get_serializer(app).data for app in apps]
+
+        return Response(data, status=status.HTTP_200_OK)
+
+    def list_pods(self, request, *args, **kwargs):
+        """
+        AdminUser search pods for application id.
+        """
+        user = self.request.user
+        if not user.is_staff:
+            raise PermissionDenied()
+
+        app_id = request.GET.get('app', 0)
+        try:
+            application = Application.objects.get(id=app_id)
+        except Exception:
+            return Response(status=status.HTTP_200_OK)
+
+        kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+            settings.K8S_PORT, settings.K8S_API_PATH))
+        pods = kubeclient.list_pods(
+            namespace=application.image.project.user.username,
+            label="app={}".format(get_application_instance_name(application)))
+        logger.debug(pods)
+
+        return Response(pods, status=status.HTTP_200_OK)
 
 
 class PortViewSet(viewsets.ModelViewSet):
