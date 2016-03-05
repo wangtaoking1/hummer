@@ -18,7 +18,7 @@ from website.auth import login_required
 from website.utils import (get_api_server_url, save_buildfile_to_disk,
     get_filename_of_buildfile, get_envs, get_ports, get_volumes,
     save_volume_data_to_disk, get_filename_of_volume_data,
-    get_url_of_monitor_iframe)
+    get_url_of_monitor_iframe, get_url_of_host_monitor)
 from website.communicate import Communicator
 from website.auth import is_authenticated
 from website.forms import (LoginForm, RegistryForm, ProjectForm, SourceForm,
@@ -524,9 +524,9 @@ def show_application_detail(request, *args, **kwargs):
         application_id=application_id)
     context['logs'] = '\n'.join(client.get_pod_logs(project_id=project_id,
         pod_name=context['pods'][0]))
-    context['mem_url'] = get_url_of_monitor_iframe(1, context['username'],
+    context['mem_url'] = get_url_of_monitor_iframe('memory', context['username'],
         context['pods'][0])
-    context['cpu_url'] = get_url_of_monitor_iframe(14, context['username'],
+    context['cpu_url'] = get_url_of_monitor_iframe('cpu', context['username'],
         context['pods'][0])
 
     return render(request, 'website/application_detail.html', context,
@@ -710,6 +710,8 @@ def host_monitor(request, *args, **kwargs):
     client = Communicator(cookies=request.COOKIES)
     context['hosts'] = ['All Hosts']
     context['hosts'] += client.list_hosts()
+
+    context['monitor_url'] = get_url_of_host_monitor("cpu", "All Hosts")
 
     return render(request, 'website/host_monitor.html', context,
         RequestContext(request))

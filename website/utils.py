@@ -80,10 +80,46 @@ def get_url_of_monitor_iframe(type, namespace, pod_name):
     """
     Get the url of monitor iframe in user dashboard.
     """
+    if type == "memory":
+        type_id = 1
+    elif type == "cpu":
+        type_id = 14
+
     items = pod_name.split('-')
     container = '-'.join(items[0:-1])
     url = 'http://{}/dashboard-solo/db/containers?panelId={}&fullscreen&\
 var-namespace={}&var-pod={}&var-container={}'.format(settings.GRAFANA_SERVER,
-    type, namespace, pod_name, container)
+    type_id, namespace, pod_name, container)
 
     return url
+
+
+def get_url_of_host_monitor(type, host):
+    """
+    Get the url of host monitor in admin dashboard.
+    """
+    panel_ids = {
+        "all": {
+            "memory": 15,
+            "cpu": 11,
+            "disk": 19
+        },
+        "node": {
+            "memory": 7,
+            "disk": 10,
+            "cpu": 16
+        }
+    }
+
+    if host == "All Hosts":
+        type_id = panel_ids['all'][type]
+    else:
+        type_id = panel_ids['node'][type]
+
+    url = 'http://{}/dashboard-solo/db/kubernetes-cluster?panelId={}&\
+fullscreen'.format(settings.GRAFANA_SERVER, type_id)
+    if host != "All Hosts":
+        url += '&var-node={}'.format(host)
+    return url
+
+

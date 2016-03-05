@@ -12,7 +12,7 @@
         <form class="form-horizontal">
             <div class="form-group">
                 <div class="col-sm-4">
-                    <select class="form-control host-name" name="host_name">
+                    <select class="form-control host-name" name="host">
                         {% for host in hosts %}
                             <option value="{{ host }}">{{ host }}</option>
                         {% endfor %}
@@ -35,7 +35,7 @@
         </form>
     </div>
     <div class="form-group monitor-show">
-        <iframe class="col-sm-12" src="#"></iframe>
+        <iframe class="col-sm-12" src="{{ monitor_url }}"></iframe>
     </div>
 </div>
 {% endblock %}
