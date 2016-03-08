@@ -24,5 +24,6 @@ mkdir -p /hummer-monitoring /hummer-monitoring/data /hummer-monitoring/var
 # start influxdb instance
 docker run -d --restart=always -p 8083:8083 -p 8086:8086 -v /hummer-monitoring/data:/data --name heapster_influxdb kubernetes/heapster_influxdb:v0.6
 
+INFLUXDB_SERVICE_IP="192.168.0.15"
 # start grafana instance
-docker run -d --restart=always -p 3000:3000 -v /hummer-monitoring/var:/var -e "INFLUXDB_SERVICE_URL=http://192.168.0.15:8086" --name heapster_grafana kubernetes/heapster_grafana:v2.5.0
+docker run -d --restart=always -p 3000:3000 -v /hummer-monitoring/var:/var -e "INFLUXDB_SERVICE_URL=http://${INFLUXDB_SERVICE_IP}:8086" --name heapster_grafana kubernetes/heapster_grafana:v2.5.0

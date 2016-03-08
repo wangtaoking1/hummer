@@ -6,6 +6,7 @@ from backend.kubernetes.namespace import Namespace
 from backend.kubernetes.replicationcontroller import Controller
 from backend.kubernetes.service import Service
 from backend.kubernetes.volume import PersistentVolume, PersistentVolumeClaim
+from backend.kubernetes.autoscaler import AutoScaler
 
 logger = logging.getLogger('hummer')
 
@@ -254,3 +255,24 @@ class KubeClient(object):
         query = "tailLines=" + str(tail_line)
         response = self._send_request('GET', path, query=query)
         return response.split('\n')
+
+    def create_autoscaler(self, namespace, name, minReplicas=-1, maxReplicas=-1,
+        cpu_target=-1):
+        """
+        Create an autoscaler name in namespace namespace.
+        """
+        scaler = AutoScaler(name, minReplicas, maxReplicas, cpu_target)
+        path = 'namespaces/{}/horizontalpodautoscalers'.format(namespace)
+
+        logger.debug(scaler.body)
+        response = self._send_request('POST', path, body=scaler.body)
+        return self._is_creating_deleting_successful(response)
+
+    def delete_autoscaler(self, namespace, name):
+        """
+        Delete the autoscaler name.
+        """
+        path = 'namespaces/{}/horizontalpodautoscalers/{}'.format(namespace,
+            name)
+        response = self._send_request('DELETE', path)
+        return self._is_creating_deleting_successful(response)

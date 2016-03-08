@@ -174,6 +174,7 @@ ETCD_PORT = 4001
 K8S_PORT = 8080
 DOCKER_PORT = 2357
 K8S_API_PATH = '/api/v1/'
+K8S_V1BETA1_API_PATH = '/apis/extensions/v1beta1/'
 
 # NFS server information
 NFS_IP = '192.168.0.15'

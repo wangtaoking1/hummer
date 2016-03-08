@@ -130,3 +130,13 @@ class KubeClientTestCase(unittest.TestCase):
         res = self.client.get_logs_of_pod('user', 'project0-nginx-test-3uhej', 20)
         lines = res.split('\n')
         print(lines)
+
+    def test_create_autoscaler(self):
+        beta_client = KubeClient("http://192.168.0.10:8080/apis/extensions/v1beta1/")
+        res = beta_client.create_autoscaler('user', 'project0-nginx-test', 1, 5, 50)
+        print(res)
+
+    def test_delete_autoscaler(self):
+        beta_client = KubeClient("http://192.168.0.10:8080/apis/extensions/v1beta1/")
+        res = beta_client.delete_autoscaler('user', 'project0-nginx-test')
+        print(res)

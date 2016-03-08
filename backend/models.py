@@ -148,6 +148,19 @@ class Application(models.Model):
     external_ip = models.CharField(max_length=16, blank=True, null=True)
     create_time = models.DateTimeField(auto_now=True)
 
+    is_autoscaler = models.BooleanField(default=False)
+
+
+class AutoScaler(models.Model):
+    """
+    AutoScaler is to auto scale the application.
+    """
+    application = models.ForeignKey(Application, on_delete=models.CASCADE)
+    name = models.CharField(max_length=32, default='')
+    min_replicas = models.IntegerField()
+    max_replicas = models.IntegerField()
+    cpu_target = models.IntegerField()
+
 
 class Port(models.Model):
     """

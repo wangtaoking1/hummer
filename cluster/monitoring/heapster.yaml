@@ -2,17 +2,17 @@ apiVersion: v1
 kind: ReplicationController
 metadata:
   labels:
-    app: heapster
+    k8s-app: heapster
   name: heapster
   namespace: kube-system
 spec:
   replicas: 1
   selector:
-    app: heapster
+    k8s-app: heapster
   template:
     metadata:
       labels:
-        app: heapster
+        k8s-app: heapster
     spec:
       containers:
       - name: heapster
@@ -21,3 +21,4 @@ spec:
         - /heapster
         - --source=kubernetes:http://192.168.0.10:8080
         - --sink=influxdb:http://192.168.0.15:8086
+
