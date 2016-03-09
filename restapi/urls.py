@@ -2,7 +2,8 @@ from django.conf.urls import include, url
 from rest_framework import routers
 from restapi.views import (UserViewSet, ProjectViewSet, ImageViewSet,
     ApplicationViewSet, PortViewSet, ResourceLimitViewSet, VolumeViewSet,
-    is_authenticated, create_image, upload_volume, list_hosts)
+    is_authenticated, create_image, upload_volume, list_hosts,
+    AutoScalerViewSet)
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -67,6 +68,13 @@ list_pods = ApplicationViewSet.as_view({
     'get': 'list_pods'
 })
 
+list_autoscalers = AutoScalerViewSet.as_view({
+    'get': 'list'
+})
+get_autoscaler_detail = AutoScalerViewSet.as_view({
+    'get': 'retrieve'
+})
+
 urlpatterns = [
     # Examples:
     # url(r'^$', 'hummer.views.home', name='home'),
@@ -91,8 +99,12 @@ urlpatterns = [
     # port
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/ports/$',
         port_list, name='port-list'),
-    url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/ports/\
-(?P<pk>[0-9]+)/$', port_detail, name='port-detail'),
+    url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/ports/(?P<pk>[0-9]+)/$', port_detail, name='port-detail'),
+
+    # autoscaler
+    url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/scalers/$',
+        list_autoscalers, name='list-autoscalers'),
+    url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/scalers/(?P<pk>[0-9]+)/$', get_autoscaler_detail, name='autoscaler-detail'),
 
     # volume
     url(r'projects/(?P<pid>[0-9]+)/volumes/(?P<pk>[0-9]+)/download/$',

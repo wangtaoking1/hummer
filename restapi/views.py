@@ -19,9 +19,9 @@ from rest_framework.settings import api_settings
 
 from restapi.serializers import (UserSerializer, ProjectSerializer,
     ImageSerializer, ApplicationSerializer, PortSerializer,
-    ResourceLimitSerializer, VolumeSerializer)
+    ResourceLimitSerializer, VolumeSerializer, AutoScalerSerializer)
 from backend.models import (MyUser, Project, Image, Application, Port,
-    ResourceLimit, Volume)
+    ResourceLimit, Volume, AutoScaler)
 from restapi.utils import (save_upload_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol,
     get_upload_volume_filename, get_volume_direction_on_nfs,
     big_file_iterator)
@@ -553,7 +553,49 @@ class PortViewSet(viewsets.ModelViewSet):
             id=id)
 
         # Check user permission
-        if not user.is_staff and user != obj.app.image.project.user:
+        if user != obj.app.image.project.user:
+            raise PermissionDenied()
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+
+        return obj
+
+
+class AutoScalerViewSet(viewsets.ModelViewSet):
+    serializer_class = AutoScalerSerializer
+
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+
+        assert 'pid' in self.kwargs
+        assert 'aid' in self.kwargs
+        pid = self.kwargs['pid']
+        aid = self.kwargs['aid']
+
+        return AutoScaler.objects.filter(app__image__project__id=pid,
+                app__id=aid, app__image__project__user=user)
+
+    def get_object(self):
+        """
+        Returns the object the view is displaying.
+        """
+        user = self.request.user
+
+        assert 'pid' in self.kwargs
+        assert 'aid' in self.kwargs
+        pid = self.kwargs['pid']
+        aid = self.kwargs['aid']
+
+        assert 'pk' in self.kwargs
+        id = self.kwargs['pk']
+        obj = AutoScaler.objects.get(app__image__project__id=pid, app__id=aid,
+            id=id)
+
+        # Check user permission
+        if user != obj.app.image.project.user:
             raise PermissionDenied()
 
         # May raise a permission denied

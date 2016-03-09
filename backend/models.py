@@ -155,8 +155,7 @@ class AutoScaler(models.Model):
     """
     AutoScaler is to auto scale the application.
     """
-    application = models.ForeignKey(Application, on_delete=models.CASCADE)
-    name = models.CharField(max_length=32, default='')
+    app = models.ForeignKey(Application, on_delete=models.CASCADE)
     min_replicas = models.IntegerField()
     max_replicas = models.IntegerField()
     cpu_target = models.IntegerField()

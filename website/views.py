@@ -529,6 +529,8 @@ def show_application_detail(request, *args, **kwargs):
     context['cpu_url'] = get_url_of_monitor_iframe('cpu', context['username'],
         context['pods'][0])
 
+    # logger.debug(context)
+
     return render(request, 'website/application_detail.html', context,
         RequestContext(request))
 

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from backend.models import (MyUser, Project, Image, Application, Port,
-    ResourceLimit, Volume)
+from backend.models import (MyUser, Project, Image, Application, AutoScaler,
+    Port, ResourceLimit, Volume)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,8 +27,14 @@ class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
         fields = ('id', 'image', 'name', 'replicas', 'resource_limit',
-            'session_affinity', 'internal_ip', 'external_ip', 'create_time',
-            'status')
+            'session_affinity', 'internal_ip', 'external_ip', 'is_autoscaler',
+            'create_time','status')
+
+
+class AutoScalerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AutoScaler
+        fields = ('id', 'app', 'min_replicas', 'max_replicas', 'cpu_target')
 
 
 class PortSerializer(serializers.ModelSerializer):

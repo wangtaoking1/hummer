@@ -3,7 +3,7 @@ from threading import Thread
 
 from django.conf import settings
 
-from backend.models import Application, Port, Volume
+from backend.models import Application, Port, Volume, AutoScaler
 from backend.kubernetes.k8sclient import KubeClient
 from backend.schedule import DockerSchedulerFactory
 from backend.utils import (get_optimal_docker_host,
@@ -299,3 +299,88 @@ class ApplicationDestroyer(object):
             volume.app = None
             volume.mount_path = None
             volume.save()
+
+
+class AutoScalerBuilder(object):
+    """
+    AutoScalerBuilder is a builder to create an autoscaler for application. You
+    should offer many necessary arguments.
+
+    Parameters:
+    min_replicas, max_replicas, cpu_target: integer parameters, -1 represents
+    infinite big value.
+    """
+    def __init__(self, application, min_replicas=-1, max_replicas=-1,
+        cpu_target=-1):
+        self.application = application
+        self.application_name = get_application_instance_name(self.application)
+        self.namespace = self.application.image.project.user.username
+        self.min_replicas = min_replicas
+        self.max_replicas = max_replicas
+        self.cpu_target = cpu_target
+
+        self.kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+            settings.K8S_PORT, settings.K8S_V1BETA1_API_PATH))
+
+    def create_autoscaler(self):
+        """
+        Create autoscaler instance for application by multiple threading.
+        """
+        creating_thread = Thread(target=self._create_autoscaler_instance)
+        creating_thread.start()
+
+    def _create_autoscaler_instance(self):
+        ok = self.kubeclient.create_autoscaler(
+            namespace=self.namespace,
+            name=self.application_name,
+            minReplicas=self.min_replicas,
+            maxReplicas=self.max_replicas,
+            cpu_target=self.cpu_target)
+        if not ok:
+            logger.error("Create autoscaler {} failed.".format(
+                self.application_name))
+            return None
+        logger.debug("Create autoscaler {} successfully.".format(
+            self.application_name))
+
+        scaler = AutoScaler(app=self.application,
+            min_replicas=self.min_replicas,
+            max_replicas=self.max_replicas,
+            cpu_target=self.cpu_target)
+        scaler.save()
+
+
+class AutoScalerDestroyer(object):
+    """
+    AutoScalerDestroyer is to destroy autoscaler instance when deleting
+    application.
+    """
+    def __init__(self, application):
+        self.application = application
+        self.application_name = get_application_instance_name(self.application)
+        self.namespace = self.application.image.project.user.username
+
+        self.kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+            settings.K8S_PORT, settings.K8S_V1BETA1_API_PATH))
+
+    def delete_autoscaler(self):
+        """
+        Destroy autoscaler for application instance by multiple threading.
+        """
+        deleting_thread = Thread(target=self._delete_autoscaler_instance)
+        deleting_thread.start()
+
+    def _delete_autoscaler_instance(self):
+        scalers = AutoScaler.objects.filter(app=self.application)
+        for scaler in scalers:
+            scaler.delete()
+
+        ok = self.kubeclient.delete_autoscaler(namespace=self.namespace,
+            name=self.application_name)
+        if not ok:
+            logger.error("Delete autoscaler {} failed.".format(
+                self.application_name))
+        else:
+            logger.debug("Delete autoscaler {} successfully.".format(
+                self.application_name))
+
