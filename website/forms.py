@@ -60,6 +60,7 @@ class ApplicationForm(forms.Form):
     env_number = forms.IntegerField()
     port_number = forms.IntegerField()
     volume_number = forms.IntegerField()
+    autoscaler = forms.CharField()
 
 
 class VolumeForm(forms.Form):

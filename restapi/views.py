@@ -428,7 +428,10 @@ application {}.".format(volume.name, volume.app.name))
             args=request.data.get('args', None),
             envs=request.data.get('envs', None),
             is_public=request.data.get('is_public', False),
-            volumes=request.data.get('volumes', None)
+            volumes=request.data.get('volumes', None),
+            min_replicas=request.data.get('min_replicas', -1),
+            max_replicas=request.data.get('max_replicas', -1),
+            cpu_target=request.data.get('cpu_target', -1),
         )
         builder.create_application()
 

@@ -11,6 +11,7 @@
 <div class="application-details">
     <ul class="nav nav-tabs">
         <li class="active"><a data-id="info">基本信息</a></li>
+        <li><a data-id="scale">运行情况</a></li>
         <li><a data-id="port">端口映射</a></li>
         <li><a data-id="volume">存储卷</a></li>
         <li><a data-id="logs">日志管理</a></li>
@@ -34,7 +35,14 @@
                         <td> <b>Mem：</b> {{ resource_limit.memory }}{{ resource_limit.memory_unit }}</td>
                     </tr>
                     <tr>
-                        <td> <b>副本数：</b> {{ application.replicas }}</td>
+                        <td> <b>自动扩容：</b>
+                        {% if application.is_autoscaler %}
+                        是
+                        {% else %}
+                        否
+                        {% endif %}
+                        </td>
+
                         <td> <b>Session关联：</b>
                         {% if application.session_affinity %}
                         是
@@ -54,6 +62,33 @@
                     <tr>
                         <td> <b>外部地址：</b>{{ application.external_ip }}</td>
                         <td> <b>外部域名：</b>{{ application.external_name }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 扩容缩容 -->
+        <div id="scale" class="tab-pane fade">
+            <table class="table w50">
+                <tbody>
+                    <tr>
+                        <td colspan="3"> <b>自动扩容：</b>
+                        {% if application.is_autoscaler %}
+                        是
+                        {% else %}
+                        否
+                        {% endif %}
+                        </td>
+                    </tr>
+                    {% if application.is_autoscaler %}
+                    <tr>
+                        <td> <b>最小容器数限制：</b> {{ autoscaler.min_replicas }}</td>
+                        <td> <b>最大容器数限制：</b> {{ autoscaler.max_replicas }}</td>
+                        <td> <b>CPU阈值：</b> {{ autoscaler.cpu_target }}%</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td colspan="3"> <b>当前容器副本数：</b> {{ application.replicas }}</td>
                     </tr>
                 </tbody>
             </table>

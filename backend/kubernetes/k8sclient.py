@@ -161,7 +161,7 @@ class KubeClient(object):
             tcp_ports, udp_ports, commands, args, envs, volumes)
         path = 'namespaces/{}/replicationcontrollers'.format(namespace)
 
-        logger.debug(controller.body)
+        # logger.debug(controller.body)
         response = self._send_request('POST', path, body=controller.body)
         return self._is_creating_deleting_successful(response)
 
@@ -216,7 +216,7 @@ class KubeClient(object):
             session_affinity)
         path = 'namespaces/{}/services'.format(namespace)
 
-        logger.debug(service.body)
+        # logger.debug(service.body)
         response = self._send_request('POST', path, body=service.body)
         return self._is_creating_deleting_successful(response)
 
@@ -264,7 +264,7 @@ class KubeClient(object):
         scaler = AutoScaler(name, minReplicas, maxReplicas, cpu_target)
         path = 'namespaces/{}/horizontalpodautoscalers'.format(namespace)
 
-        logger.debug(scaler.body)
+        # logger.debug(scaler.body)
         response = self._send_request('POST', path, body=scaler.body)
         return self._is_creating_deleting_successful(response)
 

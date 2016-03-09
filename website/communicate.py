@@ -449,3 +449,15 @@ class Communicator(object):
 
         response = self.client.get(url, params=params)
         return json.loads(response.text)
+
+    def get_autoscaler(self, project_id, application_id):
+        """
+        Get autoscaler of application with id application_id.
+        """
+        url = get_api_server_url('/api/projects/{}/applications/{}/scalers/'
+            .format(project_id, application_id))
+        response = self.client.get(url)
+        scalers = json.loads(response.text)
+        if scalers:
+            return scalers[0]
+        return {}

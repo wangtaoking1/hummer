@@ -277,6 +277,8 @@ def create_application(request, *args, **kwargs):
         else True)
     session_affinity = (False if form.cleaned_data['session_affinity'] ==
         'false' else True)
+    autoscaler = (False if form.cleaned_data['autoscaler'] == 'false'
+        else True )
     # logger.debug(service_type)
     # logger.debug(session_affinity)
 
@@ -286,7 +288,8 @@ def create_application(request, *args, **kwargs):
         'replicas': form.cleaned_data['replicas'],
         'resource_limit': form.cleaned_data['resource_limit'],
         'is_public': service_type,
-        'session_affinity': session_affinity
+        'session_affinity': session_affinity,
+        'is_autoscaler': autoscaler
     }
 
     # envs
@@ -303,6 +306,12 @@ def create_application(request, *args, **kwargs):
     volumes = get_volumes(form.cleaned_data['volume_number'], request.POST)
     if volumes:
         data['volumes'] = volumes
+
+    # autoscale
+    if autoscaler:
+        data['min_replicas'] = request.POST.get('min_replicas', -1)
+        data['max_replicas'] = request.POST.get('max_replicas', -1)
+        data['cpu_target'] = request.POST.get('cpu_target', -1)
 
     logger.debug(data)
 
@@ -516,6 +525,11 @@ def show_application_detail(request, *args, **kwargs):
         image_id=context['application']['image'])
     context['resource_limit'] = client.get_resourcelimit(
         context['application']['resource_limit'])
+
+    if context['application']['is_autoscaler']:
+        context['autoscaler'] = client.get_autoscaler(project_id=project_id,
+        application_id=application_id)
+
     context['ports'] = client.get_ports(project_id=project_id,
         application_id=application_id)
     context['volumes'] = client.get_volume_of_application(project_id=project_id,

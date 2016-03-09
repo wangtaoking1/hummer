@@ -140,6 +140,16 @@ $(document).ready(function(){
         $('#volume_' + number).remove();
         $('#volume-number').val(number);
     });
+
+    $('#scale #autoscaler').change(function() {
+        var val = $('#scale #autoscaler').val();
+        if (val == 'false') {
+            $('#scale .config').remove();
+        }
+        else {
+            $('#scale').append(get_scale_config());
+        }
+    });
 });
 
 function show_image(element) {
@@ -201,7 +211,22 @@ function get_volume_row(number) {
                     </select>\
                 </td>\
                 <td  class="col-sm-1">\
-                    <input type="text" class="form-control" name="' + path + '" placeholder="挂载目录">\
+                    <input type="text" class="form-control" name="' + path + '"\ placeholder="挂载目录">\
                 </td>\
                 </tr>';
+}
+
+function get_scale_config() {
+    return '<div class="config form-group">\
+            <label class="col-sm-2 control-label">扩容配置</label>\
+            <div  class="col-sm-2">\
+                <input type="text" class="form-control" name="min_replicas"\ placeholder="最小副本数">\
+            </div>\
+            <div class="col-sm-3">\
+                <input type="text" class="form-control" name="max_replicas"\ placeholder="最大副本数(-1为无限制)">\
+            </div>\
+            <div class="col-sm-3">\
+                <input type="text" class="form-control" name="cpu_target"\ placeholder="CPU阈值百分数(1~100)">\
+            </div>\
+        </div>';
 }

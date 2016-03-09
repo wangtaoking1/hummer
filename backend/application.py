@@ -39,7 +39,7 @@ class ApplicationBuilder(object):
 
     def __init__(self, namespace, application, image_name, tcp_ports=None,
         udp_ports=None, commands=None, args=None, envs=None, is_public=False,
-        volumes=None):
+        volumes=None, min_replicas=None, max_replicas=None, cpu_target=None):
         self.kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
             settings.K8S_PORT, settings.K8S_API_PATH))
 
@@ -59,6 +59,14 @@ class ApplicationBuilder(object):
         resource_limit = self.application.resource_limit
         self.cpu = str(resource_limit.cpu) + resource_limit.cpu_unit
         self.memory = str(resource_limit.memory) + resource_limit.memory_unit
+
+        # autoscaler
+        if self.application.is_autoscaler:
+            self.min_replicas = int(min_replicas)
+            self.max_replicas = int(max_replicas)
+            self.cpu_target = int(cpu_target)
+            logger.debug(str(self.min_replicas) + " " + str(self.max_replicas)
+                + " " + str(self.cpu_target))
 
     def create_application(self):
         """
@@ -110,6 +118,16 @@ class ApplicationBuilder(object):
 
         # create port metadata
         self._create_ports_metadata(ports)
+
+        # create autoscaler
+        if self.application.is_autoscaler:
+            scaler_builder = AutoScalerBuilder(
+                application=self.application,
+                min_replicas=self.min_replicas,
+                max_replicas=self.max_replicas,
+                cpu_target=self.cpu_target
+            )
+            scaler_builder.create_autoscaler()
 
     def _create_controller(self):
         """
@@ -249,6 +267,12 @@ class ApplicationDestroyer(object):
 
         self._update_application_status(status='deleted')
         self._umount_volume()
+
+        # delete autoscaler
+        if self.application.is_autoscaler:
+            autoscaler_destroyer = AutoScalerDestroyer(self.application)
+            autoscaler_destroyer.delete_autoscaler()
+
         self._delete_application_metadata()
         self._delete_port_metadata()
 
