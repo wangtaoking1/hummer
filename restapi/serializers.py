@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from backend.models import (MyUser, Project, Image, Application, AutoScaler,
-    Port, ResourceLimit, Volume)
+    Environment, Port, ResourceLimit, Volume)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -42,6 +42,12 @@ class PortSerializer(serializers.ModelSerializer):
         model = Port
         fields = ('id', 'app', 'name', 'protocol', 'internal_port',
             'external_port')
+
+
+class EnvironmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Environment
+        fields = ('id', 'app', 'name', 'value')
 
 
 class ResourceLimitSerializer(serializers.ModelSerializer):

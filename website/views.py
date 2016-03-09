@@ -530,6 +530,8 @@ def show_application_detail(request, *args, **kwargs):
         context['autoscaler'] = client.get_autoscaler(project_id=project_id,
         application_id=application_id)
 
+    context['environments'] = client.get_environments(project_id=project_id,
+        application_id=application_id)
     context['ports'] = client.get_ports(project_id=project_id,
         application_id=application_id)
     context['volumes'] = client.get_volume_of_application(project_id=project_id,

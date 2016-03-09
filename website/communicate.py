@@ -461,3 +461,13 @@ class Communicator(object):
         if scalers:
             return scalers[0]
         return {}
+
+    def get_environments(self, project_id, application_id):
+        """
+        Get environments of application with id application_id.
+        """
+        url = get_api_server_url('/api/projects/{}/applications/{}/envs/'
+            .format(project_id, application_id))
+        response = self.client.get(url)
+        return json.loads(response.text)
+

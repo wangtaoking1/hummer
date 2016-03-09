@@ -12,6 +12,7 @@
     <ul class="nav nav-tabs">
         <li class="active"><a data-id="info">基本信息</a></li>
         <li><a data-id="scale">运行情况</a></li>
+        <li><a data-id="env">环境变量</a></li>
         <li><a data-id="port">端口映射</a></li>
         <li><a data-id="volume">存储卷</a></li>
         <li><a data-id="logs">日志管理</a></li>
@@ -92,6 +93,28 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- 端口映射 -->
+        <div id="env" class="tab-pane fade">
+            <div class="table-responsive resource-lists">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>变量名</th>
+                            <th>值</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for env in environments %}
+                        <tr>
+                            <td>{{ env.name }}</td>
+                            <td>{{ env.value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- 端口映射 -->

@@ -179,6 +179,15 @@ class Port(models.Model):
     internal_port = models.IntegerField()
 
 
+class Environment(models.Model):
+    """
+    Environment variable for application.
+    """
+    app = models.ForeignKey(Application, on_delete=models.CASCADE)
+    name = models.CharField(max_length=32)
+    value = models.CharField(max_length=32)
+
+
 class Volume(models.Model):
     """
     Volume is for persistent storage. It can be mounted on to application and

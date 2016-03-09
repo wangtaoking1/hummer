@@ -3,7 +3,7 @@ from rest_framework import routers
 from restapi.views import (UserViewSet, ProjectViewSet, ImageViewSet,
     ApplicationViewSet, PortViewSet, ResourceLimitViewSet, VolumeViewSet,
     is_authenticated, create_image, upload_volume, list_hosts,
-    AutoScalerViewSet)
+    AutoScalerViewSet, EnvironmentViewSet)
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -75,6 +75,13 @@ get_autoscaler_detail = AutoScalerViewSet.as_view({
     'get': 'retrieve'
 })
 
+list_environments = EnvironmentViewSet.as_view({
+    'get': 'list'
+})
+get_environment_detail = EnvironmentViewSet.as_view({
+    'get': 'retrieve'
+})
+
 urlpatterns = [
     # Examples:
     # url(r'^$', 'hummer.views.home', name='home'),
@@ -100,6 +107,11 @@ urlpatterns = [
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/ports/$',
         port_list, name='port-list'),
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/ports/(?P<pk>[0-9]+)/$', port_detail, name='port-detail'),
+
+    # environment
+    url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/envs/$',
+        list_environments, name='envs-list'),
+    url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/envs/(?P<pk>[0-9]+)/$', get_environment_detail, name='env-detail'),
 
     # autoscaler
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<aid>[0-9]+)/scalers/$',

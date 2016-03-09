@@ -3,7 +3,7 @@ from threading import Thread
 
 from django.conf import settings
 
-from backend.models import Application, Port, Volume, AutoScaler
+from backend.models import Application, Port, Volume, AutoScaler, Environment
 from backend.kubernetes.k8sclient import KubeClient
 from backend.schedule import DockerSchedulerFactory
 from backend.utils import (get_optimal_docker_host,
@@ -119,6 +119,9 @@ class ApplicationBuilder(object):
         # create port metadata
         self._create_ports_metadata(ports)
 
+        # create environment metadata
+        self._create_environments_metadata()
+
         # create autoscaler
         if self.application.is_autoscaler:
             scaler_builder = AutoScalerBuilder(
@@ -194,6 +197,15 @@ class ApplicationBuilder(object):
                 internal_port=port_dict['port']
             )
             port.save()
+
+    def _create_environments_metadata(self):
+        """
+        Create environment metadata for application.
+        """
+        for name, value in self.envs.items():
+            env = Environment(app=self.application,
+                name=name, value=value)
+            env.save()
 
     def _mount_volume_onto_application(self):
         """
@@ -275,6 +287,7 @@ class ApplicationDestroyer(object):
 
         self._delete_application_metadata()
         self._delete_port_metadata()
+        self._delete_environments()
 
     def _destroy_service_instance(self):
         return self.kubeclient.delete_service(namespace=self.namespace,
@@ -311,6 +324,11 @@ class ApplicationDestroyer(object):
         for port in ports:
             logger.debug("delete port {} metadata.".format(port.name))
             port.delete()
+
+    def _delete_environments(self):
+        envs = Environment.objects.filter(app=self.application)
+        for env in envs:
+            env.delete()
 
     def _umount_volume(self):
         """
