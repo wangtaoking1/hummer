@@ -65,6 +65,9 @@ def get_ports_by_protocol(protocol, ports):
     Get tcp or udp ports from the list of POST data.
     """
     result_ports = {}
+    if not ports:
+        return result_ports
+
     for port in ports:
         if port['protocol'] == protocol:
             result_ports[port['name']] = port['port']

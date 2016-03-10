@@ -30,11 +30,6 @@ class Controller(object):
         "name": None,
         "image": None,
         "resources": _resource_limit,
-        "ports": [],
-        "command": [],
-        "args": [],
-        "env": [],
-        "volumeMounts": []
     }
 
     _body = {
@@ -53,7 +48,6 @@ class Controller(object):
                 },
                 "spec": {
                     "containers": [_container],
-                    "volumes": []
                 }
             }
         }
@@ -71,21 +65,24 @@ class Controller(object):
         self._body['spec']['replicas'] = replicas
         self._container['name'] = name
         self._container['image'] = image_name
-        self._container['command'] = commands
-        self._container['args'] = args
+        if commands:
+            self._container['command'] = commands
+        if args:
+            self._container['args'] = args
+
         self._container['ports'] = []
         if tcp_ports:
             self.set_ports("TCP", tcp_ports)
         if udp_ports:
             self.set_ports("UDP", udp_ports)
 
-        self._container['env'] = []
         if envs:
+            self._container['env'] = []
             self.set_envs(envs)
 
-        self._container['volumeMounts'] = []
-        self._body['spec']['template']['spec']['volumes'] = []
         if volumes:
+            self._container['volumeMounts'] = []
+            self._body['spec']['template']['spec']['volumes'] = []
             self.set_volumes(volumes)
 
     def set_ports(self, protocol, ports):
@@ -96,6 +93,7 @@ class Controller(object):
         ports: the dict of open ports.
         """
         assert(protocol in ['TCP', 'UDP'])
+
         for name, port in ports.items():
             self._container['ports'].append({
                 'name': name,

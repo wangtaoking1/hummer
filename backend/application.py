@@ -94,17 +94,21 @@ class ApplicationBuilder(object):
             self._update_application_metadata(status='error')
             return None
 
-        if not self._create_service():
-            logger.debug('Create service {} failed.'.format(
-                self.application_name))
-            logger.info('Create an application {} in namespace {} failed.'
-            .format(self.application_name, self.namespace, self.image_name))
+        if self.tcp_ports or self.udp_ports:
+            if not self._create_service():
+                logger.debug('Create service {} failed.'.format(
+                    self.application_name))
+                logger.info('Create an application {} in namespace {} failed.'
+                .format(self.application_name, self.namespace, self.image_name))
 
-            self._update_application_metadata(status='error')
-            return None
+                self._update_application_metadata(status='error')
+                return None
+            internal_ip, ports = self._get_service_ip_and_ports()
+        else:
+            internal_ip = None
+            ports = None
 
         # update metadata
-        internal_ip, ports = self._get_service_ip_and_ports()
         if self.is_public:
             external_ip = get_optimal_docker_host()
             self._update_application_metadata(status='active',
@@ -189,6 +193,9 @@ class ApplicationBuilder(object):
         """
         Create ports metadata for application.
         """
+        if not ports:
+            return None
+
         for port_dict in ports:
             port = Port(app=self.application,
                 name=port_dict['name'],
@@ -202,6 +209,9 @@ class ApplicationBuilder(object):
         """
         Create environment metadata for application.
         """
+        if not self.envs:
+            return None
+
         for name, value in self.envs.items():
             env = Environment(app=self.application,
                 name=name, value=value)

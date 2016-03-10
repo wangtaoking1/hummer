@@ -8,6 +8,7 @@ from docker.errors import APIError
 from backend.models import Image
 from backend.utils import (fetch_digest_from_response, get_optimal_docker_host,
     remove_file_from_disk)
+from backend.schedule import DockerSchedulerFactory
 
 logger = logging.getLogger('hummer')
 
@@ -413,7 +414,7 @@ class ImageDestroyer(object):
 
         # TODO: delete the image instance
 
-        self._update_image_status(status='deleted')
+        self._delete_image_instance_on_all_hosts()
         self._delete_image_metadata()
 
     def _update_image_status(self, status):
@@ -422,6 +423,50 @@ class ImageDestroyer(object):
 
     def _delete_image_metadata(self):
         self.image.delete()
+
+    def _delete_image_instance_on_all_hosts(self):
+        """
+        Delete image instance on all hosts.
+        """
+        image_name = self._get_image_name()
+        image_version = self.image.version
+        scheduler = DockerSchedulerFactory.get_scheduler()
+        hosts = scheduler.get_docker_hosts()
+        for host in hosts:
+            base_url = self._get_docker_host_base_url(host)
+            self._delete_image_on_docker_host(base_url, image_name,
+                image_version)
+
+    def _get_image_name(self):
+        """
+        Returns the complete name of the image.
+        """
+        return '{}/{}/{}-{}'.format(settings.IMAGE_REGISTRY,
+            self.image.project.user.username,
+            self.image.project.name, self.image.name)
+
+    def _delete_image_on_docker_host(self, base_url, image_name, image_version):
+        """
+        Delete image from docker host if exists image called
+        image_name:image_version.
+        """
+        image_complete_name = '%s:%s' %(image_name, image_version)
+        client = Client(base_url=base_url)
+        try:
+            client.remove_image(image=image_complete_name, force=True)
+        except Exception:
+            logger.info('There is no image called %s on docker host %s' %
+                (image_complete_name, base_url))
+            return None
+
+        logger.info('Image %s on docker host %s has been deleted.' %
+                (image_complete_name, base_url))
+
+    def _get_docker_host_base_url(self, host):
+        """
+        Returns the base url of docker host.
+        """
+        return 'tcp://%s:%s' % (host, str(settings.DOCKER_PORT))
 
 
 class ImageCloner(object):
