@@ -28,6 +28,14 @@ def get_filename_of_buildfile(project_id):
         project_id + ".tar")
 
 
+def remove_buildfile_from_disk(filename):
+    """
+    Delete the file from disk.
+    """
+    if os.path.exists(filename):
+        os.remove(filename)
+
+
 # Get params from request.POST
 def get_envs(number, data):
     envs = {}

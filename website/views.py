@@ -18,7 +18,8 @@ from website.auth import login_required
 from website.utils import (get_api_server_url, save_buildfile_to_disk,
     get_filename_of_buildfile, get_envs, get_ports, get_volumes,
     save_volume_data_to_disk, get_filename_of_volume_data,
-    get_url_of_monitor_iframe, get_url_of_host_monitor)
+    get_url_of_monitor_iframe, get_url_of_host_monitor,
+    remove_buildfile_from_disk)
 from website.communicate import Communicator
 from website.auth import is_authenticated
 from website.forms import (LoginForm, RegistryForm, ProjectForm, SourceForm,
@@ -240,6 +241,9 @@ def create_image(request, *args, **kwargs):
 
     client = Communicator(cookies=request.COOKIES)
     ok = client.create_image(project_id, data, buildfile)
+
+    remove_buildfile_from_disk(buildfile)
+
     if ok:
         return JsonResponse({"success": "success"})
     else:
