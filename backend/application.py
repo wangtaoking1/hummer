@@ -5,8 +5,7 @@ from django.conf import settings
 
 from backend.models import Application, Port, Volume, AutoScaler, Environment
 from backend.kubernetes.k8sclient import KubeClient
-from backend.schedule import DockerSchedulerFactory
-from backend.utils import (get_optimal_docker_host,
+from backend.utils import (get_optimal_docker_host, get_optimal_external_ip,
     get_application_instance_name)
 
 logger = logging.getLogger('hummer')
@@ -110,7 +109,8 @@ class ApplicationBuilder(object):
 
         # update metadata
         if self.is_public:
-            external_ip = get_optimal_docker_host()
+            external_ip = get_optimal_external_ip(namespace=self.namespace,
+                app_name=self.application_name)
             self._update_application_metadata(status='active',
                 internal_ip=internal_ip,
                 external_ip=external_ip

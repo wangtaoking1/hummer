@@ -17,6 +17,8 @@ spec:
       containers:
       - name: heapster
         image: kubernetes/heapster:canary
+        ports: 
+        - containerPort: 80
         command:
         - /heapster
         - --source=kubernetes:http://192.168.0.10:8080

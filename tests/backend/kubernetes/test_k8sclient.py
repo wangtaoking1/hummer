@@ -140,3 +140,7 @@ class KubeClientTestCase(unittest.TestCase):
         beta_client = KubeClient("http://192.168.0.10:8080/apis/extensions/v1beta1/")
         res = beta_client.delete_autoscaler('user', 'project0-nginx-test')
         print(res)
+
+    def test_list_host_ips(self):
+        hosts = self.client.list_host_ips('user', "app=project0-2048")
+        print(hosts)

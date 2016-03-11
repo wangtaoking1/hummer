@@ -188,6 +188,21 @@ class KubeClient(object):
             pods.append(item['metadata']['name'])
         return pods
 
+    def list_host_ips(self, namespace, label=None):
+        """
+        List all host ips for a controller.
+
+        Parameters:
+        label: str, "app=name"
+        """
+        path = 'namespaces/{}/pods/'.format(namespace)
+        response = self._send_request('GET', path, label=label)
+        # logger.debug(response)
+        hosts = set()
+        for pod in response.get('items', []):
+            hosts.add(pod['spec']['nodeName'])
+        return list(hosts)
+
     def delete_pod(self, namespace, name):
         """
         Delete a pod.

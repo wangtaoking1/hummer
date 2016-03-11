@@ -1,4 +1,5 @@
-import logging, random
+import logging
+import random
 
 import etcd
 from django.conf import settings

@@ -1,6 +1,11 @@
-import os, json
+import os
+import json
 import logging
+import random
 
+from django.conf import settings
+
+from backend.kubernetes.k8sclient import KubeClient
 from backend.schedule import DockerSchedulerFactory
 
 logger = logging.getLogger('hummer')
@@ -49,3 +54,16 @@ def get_application_instance_name(application):
     Return the name of the application instance.
     """
     return "{}-{}".format(application.image.project.name, application.name)
+
+
+def get_optimal_external_ip(namespace, app_name):
+    """
+    Return the optimal external ip from all host ips of the application.
+    """
+    kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+            settings.K8S_PORT, settings.K8S_API_PATH))
+    label = "app=" + app_name
+    hosts = kubeclient.list_host_ips(namespace=namespace, label=label)
+    # logger.debug(hosts)
+    index = random.randint(0, len(hosts) - 1)
+    return hosts[index]
