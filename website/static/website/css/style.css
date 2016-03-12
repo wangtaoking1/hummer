@@ -205,11 +205,14 @@ body {
 /*
  * application page
  */
-.logs-show {
+#logs .logs-div {
+    height: 400px;
+}
+#logs .logs-show {
     background: black;
     color: green;
     height: 400px;
-    font-size: 1.2em;
+    font-size: 1em;
     padding-top: 10px;
 }
 #monitor .monitor-show {
