@@ -515,6 +515,8 @@ class ImageCloner(object):
         except Exception:
             logger.error("Pull image {}:{} from registry failed.".format(
                 public_image_name, self.public_image.version))
+            self._update_image_status(status="failed")
+            return None
 
         token = self._tag_image_with_new_name(base_url,
             public_image_name, self.public_image.version,

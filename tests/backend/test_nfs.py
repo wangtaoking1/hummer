@@ -1,12 +1,12 @@
 import unittest
 import os
 
-from backend.nfs import NFSClient, NFSLocalClient
+from backend.nfs import NFSRemoteClient, NFSLocalClient
 
 class NFSClientTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.client = NFSClient('192.168.0.15', 22, 'wangtao', 'admin123')
+        self.client = NFSRemoteClient('192.168.0.15', 22, 'wangtao', 'admin123')
 
     def tearDown(self):
         self.client.close()

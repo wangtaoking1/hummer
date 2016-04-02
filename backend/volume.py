@@ -6,7 +6,7 @@ from django.conf import settings
 from backend.models import Volume
 from backend.kubernetes.k8sclient import KubeClient
 from backend.utils import get_volume_nfs_dir
-from backend.nfs import NFSClient, NFSLocalClient
+from backend.nfs import NFSRemoteClient, NFSLocalClient
 
 logger = logging.getLogger('hummer')
 

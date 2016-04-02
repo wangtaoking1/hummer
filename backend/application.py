@@ -82,8 +82,6 @@ class ApplicationBuilder(object):
         logger.info('Create an application {} in namespace {} by image {}.'
             .format(self.application_name, self.namespace, self.image_name))
 
-        self._mount_volume_onto_application()
-
         if not self._create_controller():
             logger.debug('Create controller {} failed.'.format(
                 self.application_name))
@@ -119,6 +117,9 @@ class ApplicationBuilder(object):
             self._update_application_metadata(status='active',
                 internal_ip=internal_ip
             )
+
+        # mount volume
+        self._mount_volume_onto_application()
 
         # create port metadata
         self._create_ports_metadata(ports)

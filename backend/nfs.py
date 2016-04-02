@@ -7,7 +7,7 @@ import paramiko
 logger = logging.getLogger('hummer')
 
 
-class NFSClient(object):
+class NFSRemoteClient(object):
     """
     NFSClient is a connector of the nfs server, and can make some operators.
     """
