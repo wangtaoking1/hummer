@@ -20,6 +20,8 @@ urlpatterns = [
     # project introduction
     url(r'^projects/(?P<pid>[0-9]+)/introduction/$', views.project_intro,
         name='introduce-project'),
+    url(r'^projects/(?P<pid>[0-9]+)/permission/$', views.user_permission,
+        name='user-permission'),
 
     # image
     url(r'^projects/(?P<pid>[0-9]+)/images/$', views.list_images,

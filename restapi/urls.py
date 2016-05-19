@@ -56,6 +56,18 @@ add_public_image_to_project = ImageViewSet.as_view({
     'post': 'add_public_image_to_project'
 })
 
+add_users = ProjectViewSet.as_view({
+    'post': 'add_users'
+})
+
+remove_users = ProjectViewSet.as_view({
+    'post': 'remove_users'
+})
+
+list_members = ProjectViewSet.as_view({
+    'get': 'list_members'
+})
+
 list_projects = ProjectViewSet.as_view({
     'get': 'list_projects'
 })
@@ -138,6 +150,10 @@ urlpatterns = [
 
     # projects
     url(r'list-projects/$', list_projects, name='list-projects'),
+    url(r'projects/(?P<pk>[0-9]+)/add_users/$', add_users, name='add-users'),
+    url(r'projects/(?P<pk>[0-9]+)/remove_users/$', remove_users,
+        name='remove-users'),
+    url(r'projects/(?P<pk>[0-9]+)/members/$', list_members, name='members'),
 
     # applications
     url(r'list-apps/$', list_applications, name='list-apps'),

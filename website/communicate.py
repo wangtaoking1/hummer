@@ -379,6 +379,24 @@ class Communicator(object):
         response = self.client.get(url)
         return json.loads(response.text)
 
+    def list_members(self, project_id):
+        """
+        List all members of project with id project_id.
+        """
+        url = get_api_server_url('/api/projects/{}/members/'.format(
+            project_id))
+        response = self.client.get(url)
+        users = json.loads(response.text)
+        members = []
+        for user in users:
+            member = {}
+            member['id'] = user['pk']
+            member['username'] = user['fields']['username']
+            member['email'] = user['fields']['email']
+            member['is_staff'] = user['fields']['is_staff']
+            members.append(member)
+        return members
+
     def list_resource_modules(self):
         """
         Return resource modules only for admin user.

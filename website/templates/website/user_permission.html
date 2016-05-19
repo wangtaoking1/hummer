@@ -1,0 +1,42 @@
+{% extends "website/base_project.html" %}
+
+{% load staticfiles %}
+
+
+{% block subposition %}
+>> <i class="fa fa-user"></i> 用户权限
+{% endblock %}
+
+{% block main-content %}
+<div class="user-permission">
+    <div class="all col-sm-4">
+        <form class="form-horizontal">
+            {% for user in left_users %}
+            <div class="form-group">
+                <label><input name="all" type="checkbox" value="{{ user.id }}" />{{user.username}}</label>
+            </div>
+            {% endfor %}
+        </form>
+    </div>
+    <div class="add col-sm-1">
+        <button class="btn btn-success">添加</button>
+    </div>
+    <div class="selected col-sm-4">
+        <form class="form-horizontal">
+            {% for user in selected_users %}
+            <div class="form-group">
+                <label><input name="selected" type="checkbox" value="{{ user.id }}" />{{user.username}}</label>
+            </div>
+            {% endfor %}
+        </form>
+    </div>
+    <div class="remove col-sm-1">
+        <button class="btn btn-success">删除</button>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'website/js/user_permission.js' %}"></script>
+{% endblock %}

@@ -161,6 +161,37 @@ def project_intro(request, *args, **kwargs):
 
 
 @login_required()
+def user_permission(request, *args, **kwargs):
+    context = {
+        'username': kwargs.get('username'),
+        'is_staff': kwargs.get('is_staff')
+    }
+
+    project_id = kwargs['pid']
+    client = Communicator(cookies=request.COOKIES)
+    context['project'] = client.get_project(project_id=project_id)
+
+    all_users = client.list_users()
+    selected_users = client.list_members(project_id=project_id)
+
+    left_users = []
+    for user in all_users:
+        user_id = user['id']
+        flag = False
+        for item in selected_users:
+            if item['id'] == user_id:
+                flag = True
+                break
+        if not flag:
+            left_users.append(user)
+    context['left_users'] = left_users
+    context['selected_users'] = selected_users
+
+    return render(request, 'website/user_permission.html', context,
+        RequestContext(request))
+
+
+@login_required()
 def list_images(request, *args, **kwargs):
     context = {
         'username': kwargs.get('username'),

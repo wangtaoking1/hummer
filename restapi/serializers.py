@@ -13,20 +13,20 @@ class UserSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ('url', 'id', 'user', 'name', 'desc', 'create_time')
+        fields = ('url', 'id', 'name', 'desc', 'create_time', 'members')
 
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = ('id', 'project', 'name', 'desc', 'version', 'digest',
+        fields = ('id', 'user', 'project', 'name', 'desc', 'version', 'digest',
             'token', 'is_public', 'create_time', 'status')
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
-        fields = ('id', 'image', 'name', 'replicas', 'resource_limit',
+        fields = ('id', 'user', 'image', 'name', 'replicas', 'resource_limit',
             'session_affinity', 'internal_ip', 'external_ip', 'is_autoscaler',
             'create_time','status')
 
@@ -59,5 +59,5 @@ class ResourceLimitSerializer(serializers.ModelSerializer):
 class VolumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Volume
-        fields = ('id', 'project', 'app', 'mount_path', 'name', 'desc',
+        fields = ('id', 'user', 'project', 'app', 'mount_path', 'name', 'desc',
             'capacity', 'capacity_unit', 'status', 'create_time')

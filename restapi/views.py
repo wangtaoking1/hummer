@@ -43,34 +43,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
     permission_classes = (IsAdminUser,)
 
-    def create(self, request, *args, **kwargs):
-        """
-        Create an user instance.
-        """
-        try:
-            kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
-                settings.K8S_PORT, settings.K8S_API_PATH))
-            kubeclient.create_namespace(request.data.get('username'))
-        except Exception as error:
-            logger.error(error)
-        return super(UserViewSet, self).create(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        """
-        Destroy an user instance.
-        """
-        user = self.get_object()
-
-        # Delete the namespace
-        try:
-            kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
-                settings.K8S_PORT, settings.K8S_API_PATH))
-            kubeclient.delete_namespace(user.username)
-        except Exception as e:
-            logger.error(e)
-
-        return super(UserViewSet, self).destroy(request, *args, **kwargs)
-
     def set_password(self, request, *args, **kwargs):
         """
         Set password after creating a user.
@@ -87,7 +59,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
 
-    permission_classes = (IsAuthenticated,)
+    permission_classes = ()
 
     def get_queryset(self):
         """
@@ -96,46 +68,143 @@ class ProjectViewSet(viewsets.ModelViewSet):
         """
         user = self.request.user
 
-        # # AdminUser
-        # if user.is_staff:
-        #     return Project.objects.all()
+        projects = Project.objects.all()
 
-        return Project.objects.filter(user=user)
+        # AdminUser
+        if user.is_staff:
+            return projects
 
-    def create(self, request, *args, **kwargs):
+        return [project for project in projects if user in
+             project.members.all()]
+
+    def get_object(self):
+        """
+        Returns the object the view is displaying.
+        """
         user = self.request.user
 
-        project = Project.objects.filter(user=user,
-            name=request.data.get('name', None))
+        assert 'pk' in self.kwargs
+        id = self.kwargs['pk']
+        obj = Project.objects.get(id=id)
+
+        if (not user.is_staff) and (user not in obj.members.all()):
+            raise PermissionDenied()
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+
+        return obj
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create project by only admin users.
+        """
+        self.check_admin_permission()
+
+        project = Project.objects.filter(name=request.data.get('name', None))
         if project:
             raise ValidationError(detail="Already has an project called {}."
                 .format(request.data['name']))
 
-        data = request.data.copy()
-        data['user'] = user.id
-
-        serializer = self.get_serializer(data=data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         response = Response(serializer.data, status=status.HTTP_201_CREATED,
             headers=headers)
 
+        # Delete the namespace
+        try:
+            kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+                settings.K8S_PORT, settings.K8S_API_PATH))
+            kubeclient.create_namespace(serializer.data['name'])
+        except Exception as e:
+            logger.error(e)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
         return response
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Destroy an Project instance.
+        """
+        self.check_admin_permission()
+
+        project = self.get_object()
+
+        # Delete the namespace
+        try:
+            kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
+                settings.K8S_PORT, settings.K8S_API_PATH))
+            kubeclient.delete_namespace(project.name)
+        except Exception as e:
+            logger.error(e)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return super(ProjectViewSet, self).destroy(request, *args, **kwargs)
+
+    def list_members(self, request, *args, **kwargs):
+        """
+        List all members of this project.
+        """
+        project = self.get_object()
+        users = project.members.all()
+        data = serializers.serialize("json", users)
+
+        return Response(json.loads(data), status=status.HTTP_200_OK)
+
+    def add_users(self, request, *args, **kwargs):
+        """
+        Add users to project members.
+        """
+        self.check_admin_permission()
+
+        project = self.get_object()
+
+        users = request.data.get('users', None)
+        logger.debug("Add users {} into project {}.".format(users,
+            project.name))
+        for user_id in users:
+            user = MyUser.objects.get(id=user_id)
+            project.members.add(user)
+
+        return Response(status=status.HTTP_200_OK)
+
+    def remove_users(self, request, *args, **kwargs):
+        """
+        Remove users from project members.
+        """
+        self.check_admin_permission()
+
+        project = self.get_object()
+
+        users = request.data.get('users', None)
+        logger.debug("Remove users {} from project {}.".format(users,
+            project.name))
+        for user_id in users:
+            user = MyUser.objects.get(id=user_id)
+            project.members.remove(user)
+
+        return Response(status=status.HTTP_200_OK)
 
     def list_projects(self, request, *args, **kwargs):
         """
-        AdminUser search projects with user id.
+        AdminUser search projects list.
         """
-        user = self.request.user
-        if not user.is_staff:
-            raise PermissionDenied()
+        self.check_admin_permission()
 
-        user_id = request.GET.get('user', 0)
-        projects = Project.objects.filter(user__id=user_id)
+        projects = Project.objects.all()
         data = [self.get_serializer(project).data for project in projects]
 
         return Response(data, status=status.HTTP_200_OK)
+
+    def check_admin_permission(self):
+        """
+        Chech the user is whether or not admin.
+        """
+        user = self.request.user
+        if (not user) or (not user.is_staff):
+            raise PermissionDenied("You do not have permission to perform this action.")
 
 
 class ImageViewSet(viewsets.ModelViewSet):

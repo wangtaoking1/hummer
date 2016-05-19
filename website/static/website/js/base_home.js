@@ -21,6 +21,12 @@ function show_introduction() {
     $('.project-intro').addClass('active');
 }
 
+function show_user_permission() {
+    var pid = window.location.href.split("//")[1].split("/")[2];
+    window.location.href = "/projects/" + pid + "/permission/";
+    $('.user-permission').addClass('active');
+}
+
 function show_images() {
     var pid = window.location.href.split("//")[1].split("/")[2];
     window.location.href = "/projects/" + pid + "/images/";

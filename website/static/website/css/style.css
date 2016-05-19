@@ -152,6 +152,17 @@ body {
     border-top: 1px solid #DDDDDD;
 }
 
+/*
+ * user permission
+ */
+.user-permission > .all {
+    background-color: #eee;
+    height: 100px;
+}
+.user-permission > .selected {
+    background-color: #eee;
+    height: 100px;
+}
 
 /*
  * image page

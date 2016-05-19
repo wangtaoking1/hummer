@@ -162,3 +162,14 @@ class CommunicatorTestCase(unittest.TestCase):
 
         res = client.delete_resource_module(2)
         print(res)
+
+    def test_list_members(self):
+        client = Communicator()
+        data = {
+            'username': 'admin',
+            'password': 'admin123'
+        }
+        client.login(data)
+
+        res = client.list_members(2)
+        print(res)

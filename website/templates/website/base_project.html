@@ -21,6 +21,14 @@
                     <p>项目介绍</p>
                 </a>
             </li>
+            {% if is_staff %}
+            <li class="user-permission" onclick="show_user_permission()">
+                <a>
+                    <i class="fa fa-user fa-2x"></i>
+                    <p>用户权限</p>
+                </a>
+            </li>
+            {% endif %}
             <li class="image-space" onclick="show_images()">
                 <a>
                     <i class="fa fa-align-justify fa-2x"></i>

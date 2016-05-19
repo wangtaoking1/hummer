@@ -18,7 +18,6 @@ class MyUserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
 
-        self._create_namespace(username)
         return user
 
     def create_user(self, username, email, password, **extra_fields):
@@ -32,15 +31,6 @@ class MyUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_staff=True')
 
         return self._create_user(username, email, password, **extra_fields)
-
-    def _create_namespace(self, namespace):
-        """
-        Create namespace for each user.
-        """
-        kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
-            settings.K8S_PORT, settings.K8S_API_PATH))
-
-        kubeclient.create_namespace(namespace)
 
 
 class MyUser(AbstractBaseUser, PermissionsMixin):
@@ -71,11 +61,11 @@ class Project(models.Model):
     Each User has many projects called project, each project also contains one
     or more images.
     """
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-
     name = models.CharField(max_length=32, default='')
     desc = models.TextField(max_length=256, null=True)
     create_time = models.DateTimeField(auto_now=True)
+
+    members = models.ManyToManyField(MyUser, blank=True)
 
 
 class Image(models.Model):
@@ -91,8 +81,11 @@ class Image(models.Model):
         ('failed', 'failed')
     )
 
+    user = models.ForeignKey(MyUser,  on_delete=models.CASCADE, null=True,
+        default=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True,
         default=True)
+
     name = models.CharField(max_length=32, default='')
     desc = models.TextField(max_length=256, null=True)
     version = models.CharField(max_length=32)
@@ -137,10 +130,13 @@ class Application(models.Model):
         ('error', 'error'),
     )
 
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, null=True,
+        default=True)
     image = models.ForeignKey(Image, blank=True, null=True, on_delete=models.SET_NULL)
+    resource_limit = models.ForeignKey(ResourceLimit, on_delete=models.CASCADE)
+
     name = models.CharField(max_length=32, default='')
     replicas = models.IntegerField()
-    resource_limit = models.ForeignKey(ResourceLimit, on_delete=models.CASCADE)
     session_affinity = models.BooleanField(default=False)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES,
         default='creating')
@@ -207,6 +203,8 @@ class Volume(models.Model):
         ('error', 'error'),
     )
 
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, null=True,
+        default=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     app = models.ForeignKey(Application, blank=True, null=True, on_delete=models.SET_NULL)
     mount_path = models.CharField(max_length=256, null=True, blank=True)
