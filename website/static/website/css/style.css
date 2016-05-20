@@ -155,13 +155,17 @@ body {
 /*
  * user permission
  */
-.user-permission > .all {
+.user-permission-div > .all-div {
     background-color: #eee;
-    height: 100px;
+    height: 300px;
 }
-.user-permission > .selected {
+.user-permission-div > .selected-div {
     background-color: #eee;
-    height: 100px;
+    height: 300px;
+}
+
+.user-permission-div {
+    height: 350px;
 }
 
 /*

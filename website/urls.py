@@ -22,6 +22,10 @@ urlpatterns = [
         name='introduce-project'),
     url(r'^projects/(?P<pid>[0-9]+)/permission/$', views.user_permission,
         name='user-permission'),
+    url(r'^projects/(?P<pid>[0-9]+)/add_memebers/$', views.add_memebers,
+        name='add-members'),
+    url(r'^projects/(?P<pid>[0-9]+)/remove_memebers/$', views.remove_memebers,
+        name='remove-members'),
 
     # image
     url(r'^projects/(?P<pid>[0-9]+)/images/$', views.list_images,

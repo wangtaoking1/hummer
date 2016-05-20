@@ -25,7 +25,7 @@ from backend.models import (MyUser, Project, Image, Application, Port,
     ResourceLimit, Volume, AutoScaler, Environment)
 from restapi.utils import (save_upload_file_to_disk, is_image_or_dockerfile, get_upload_image_filename, get_ports_by_protocol,
     get_upload_volume_filename, get_volume_direction_on_nfs,
-    big_file_iterator)
+    big_file_iterator, check_member_in_project)
 from backend.image import (ImageBuilder, ImageDestroyer, ImageCloner)
 from backend.application import (ApplicationBuilder, ApplicationDestroyer)
 from backend.volume import (VolumeBuilder, VolumeDestroyer)
@@ -219,12 +219,18 @@ class ImageViewSet(viewsets.ModelViewSet):
         """
         user = self.request.user
 
-        if 'pid' not in self.kwargs:
-            return Image.objects.all()
-
+        # if 'pid' not in self.kwargs:
+        #     return Image.objects.all()
+        assert 'pid' in self.kwargs
         pid = self.kwargs['pid']
 
-        return Image.objects.filter(project__id=pid, project__user=user)
+        project = Project.objects.get(id=pid)
+
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
+
+        return Image.objects.filter(project__id=pid)
 
     def get_object(self):
         """

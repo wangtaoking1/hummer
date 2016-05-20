@@ -8,12 +8,20 @@
 {% endblock %}
 
 {% block main-content %}
-<div class="user-permission">
-    <div class="all col-sm-4">
-        <form class="form-horizontal">
+<div class="user-permission-title">
+    <div class="col-sm-5">
+        <h4>未选用户</h4>
+    </div>
+    <div class="col-sm-5">
+        <h4>已选用户</h4>
+    </div>
+</div>
+<div class="user-permission-div">
+    <div class="all-div col-sm-4">
+        <form class="all form-horizontal">
             {% for user in left_users %}
             <div class="form-group">
-                <label><input name="all" type="checkbox" value="{{ user.id }}" />{{user.username}}</label>
+                <label><input name="users" type="checkbox" value="{{ user.id }}" />{{user.username}}</label>
             </div>
             {% endfor %}
         </form>
@@ -21,11 +29,11 @@
     <div class="add col-sm-1">
         <button class="btn btn-success">添加</button>
     </div>
-    <div class="selected col-sm-4">
-        <form class="form-horizontal">
+    <div class="selected-div col-sm-4">
+        <form class="selected form-horizontal">
             {% for user in selected_users %}
             <div class="form-group">
-                <label><input name="selected" type="checkbox" value="{{ user.id }}" />{{user.username}}</label>
+                <label><input name="users" type="checkbox" value="{{ user.id }}" />{{user.username}}</label>
             </div>
             {% endfor %}
         </form>

@@ -489,3 +489,39 @@ class Communicator(object):
         response = self.client.get(url)
         return json.loads(response.text)
 
+    def add_members(self, project_id, users):
+        """
+        Add members to project with project_id.
+        """
+        url = get_api_server_url('/api/projects/{}/add_users/'
+            .format(project_id))
+        data = {
+            'users': users
+        }
+        headers = {
+            'X-CSRFToken': self.client.cookies['csrftoken'],
+        }
+        response = self.client.post(url, json=data, headers=headers)
+        if response.status_code == 200:
+            return True
+        return False
+
+    def remove_members(self, project_id, users):
+        """
+        Remove members from project with project_id.
+        """
+        url = get_api_server_url('/api/projects/{}/remove_users/'
+            .format(project_id))
+        data = {
+            'users': users
+        }
+        headers = {
+            'X-CSRFToken': self.client.cookies['csrftoken'],
+        }
+        response = self.client.post(url, json=data, headers=headers)
+        if response.status_code == 200:
+            return True
+        return False
+
+
+

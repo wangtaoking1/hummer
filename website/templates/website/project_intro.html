@@ -20,6 +20,15 @@
         <tr>
             <td> <b>项目说明：</b> {{ project.desc }}</td>
         </tr>
+        <tr>
+            <td><b>项目成员：</b>
+            <p>
+            {% for member in members %}
+                {{ member.username }}
+            {% endfor %}
+            </p>
+            </td>
+        </tr>
     </tbody>
 </table>
 {% endblock %}

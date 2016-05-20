@@ -173,3 +173,25 @@ class CommunicatorTestCase(unittest.TestCase):
 
         res = client.list_members(2)
         print(res)
+
+    def test_add_members(self):
+        client = Communicator()
+        data = {
+            'username': 'admin',
+            'password': 'admin123'
+        }
+        client.login(data)
+
+        res = client.add_members(2, [1, 2])
+        print(res)
+
+    def test_remove_members(self):
+        client = Communicator()
+        data = {
+            'username': 'admin',
+            'password': 'admin123'
+        }
+        client.login(data)
+
+        res = client.remove_members(2, [1, 2])
+        print(res)

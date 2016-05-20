@@ -86,3 +86,11 @@ def big_file_iterator(filename, chunk_size=512):
             else:
                 break
 
+def check_member_in_project(project, user):
+    """
+    Check user whether or not in project.
+    """
+    if user in project.members.all():
+        return True
+    return False
+

@@ -155,6 +155,7 @@ def project_intro(request, *args, **kwargs):
     project_id = kwargs['pid']
     client = Communicator(cookies=request.COOKIES)
     context['project'] = client.get_project(project_id=project_id)
+    context['members'] = client.list_members(project_id=project_id)
 
     return render(request, 'website/project_intro.html', context,
         RequestContext(request))
@@ -189,6 +190,39 @@ def user_permission(request, *args, **kwargs):
 
     return render(request, 'website/user_permission.html', context,
         RequestContext(request))
+
+
+@login_required()
+@csrf_exempt
+@require_POST
+def add_memebers(request, *args, **kwargs):
+    """
+    Add members to project.
+    """
+    project_id = kwargs['pid']
+    users = request.REQUEST.getlist('users')
+
+    client = Communicator(cookies=request.COOKIES)
+    client.add_members(project_id=project_id, users=users)
+
+    return JsonResponse({})
+
+
+@login_required()
+@csrf_exempt
+@require_POST
+def remove_memebers(request, *args, **kwargs):
+    """
+    Remove members from project.
+    """
+    project_id = kwargs['pid']
+    users = request.REQUEST.getlist('users')
+
+    client = Communicator(cookies=request.COOKIES)
+    client.remove_members(project_id=project_id, users=users)
+
+    return JsonResponse({})
+
 
 
 @login_required()
