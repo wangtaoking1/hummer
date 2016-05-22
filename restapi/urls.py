@@ -56,6 +56,10 @@ add_public_image_to_project = ImageViewSet.as_view({
     'post': 'add_public_image_to_project'
 })
 
+get_image_username = ImageViewSet.as_view({
+    'get': 'get_image_username'
+})
+
 add_users = ProjectViewSet.as_view({
     'post': 'add_users'
 })
@@ -108,6 +112,8 @@ urlpatterns = [
 
     # create image
     url(r'projects/(?P<pid>[0-9]+)/create_image/$', create_image),
+    url(r'projects/(?P<pid>[0-9]+)/images/(?P<pk>[0-9]+)/username/$',
+        get_image_username, name='username'),
 
     # pod
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<pk>[0-9]+)/pods/$',

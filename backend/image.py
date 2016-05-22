@@ -27,13 +27,13 @@ class ImageBuilder(object):
     image = None
     user = None
 
-    def __init__(self, build_file, is_image, dockerfile, image_id, user,
+    def __init__(self, build_file, is_image, dockerfile, image_id,
         old_image_name, old_image_version):
         self.build_file = build_file
         self.is_image = is_image
         self.dockerfile = dockerfile
         self.image = Image.objects.get(id=image_id)
-        self.user = user
+        self.user = self.image.user
         self.old_image_name = old_image_name
         self.old_image_version = old_image_version
 
@@ -442,7 +442,7 @@ class ImageDestroyer(object):
         Returns the complete name of the image.
         """
         return '{}/{}/{}-{}'.format(settings.IMAGE_REGISTRY,
-            self.image.project.user.username,
+            self.image.user.username,
             self.image.project.name, self.image.name)
 
     def _delete_image_on_docker_host(self, base_url, image_name, image_version):
@@ -548,8 +548,7 @@ class ImageCloner(object):
         Returns the complete name of the image in registry.
         """
         return '{}/{}/{}-{}'.format(settings.IMAGE_REGISTRY,
-            image.project.user.username,
-            image.project.name, image.name)
+            image.user.username, image.project.name, image.name)
 
     def _get_docker_host_base_url(self):
         """

@@ -74,16 +74,38 @@ class CommunicatorTestCase(unittest.TestCase):
         }
         client.login(data)
         params = {
-            'name': 'nginx-a',
-            'version': '1.9.9',
-            'desc': 'nginx',
+            'name': 'logtest',
+            'version': '0.1',
+            'desc': 'this is for test.',
             'is_public': 'false',
-            'is_image': '1',
-            'old_image_name': 'nginx',
-            'old_image_version': '1.9.9'
+            'is_image': '0',
+            'dockerfile': 'Dockerfile'
         }
-        buildfile = '/home/wangtao/images/nginx.tar'
-        client.create_image(1, params, buildfile)
+        buildfile = '/home/wangtao/hummer-test/buildfiles/logtest/logtest.tar'
+        ok = client.create_image(2, params, buildfile)
+        print(ok)
+
+    def test_get_image_username(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+
+        res = client.get_image_username(project_id=2, image_id=12)
+        print(res)
+
+    def test_get_image(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+
+        res = client.get_image(project_id=2, image_id=12)
+        print(res)
 
     def test_create_application(self):
         client = Communicator()

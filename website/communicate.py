@@ -101,8 +101,13 @@ class Communicator(object):
         """
         url = get_api_server_url('/api/projects/{}/images/'.format(project_id))
         response = self.client.get(url)
-        return json.loads(response.text)
-
+        images = json.loads(response.text)
+        # Get username for every image
+        for image in images:
+            username = self.get_image_username(project_id=project_id,
+                image_id=image['id'])
+            image['user'] = username
+        return images
 
     def create_image(self, project_id, data, buildfile):
         """
@@ -129,7 +134,10 @@ class Communicator(object):
         url = get_api_server_url('/api/projects/{}/images/{}/'.format(
             project_id, image_id))
         response = self.client.get(url)
-        return json.loads(response.text)
+        image = json.loads(response.text)
+        image['user'] = self.get_image_username(project_id=project_id,
+            image_id=image_id)
+        return image
 
     def delete_image(self, project_id, image_id):
         """
@@ -143,6 +151,15 @@ class Communicator(object):
         if res.status_code == 204:
             return True
         return False
+
+    def get_image_username(self, project_id, image_id):
+        """
+        Get the username of this image.
+        """
+        url = get_api_server_url('/api/projects/{}/images/{}/username/'.format(
+            project_id, image_id))
+        response = self.client.get(url)
+        return json.loads(response.text)
 
     def application_lists(self, project_id):
         """

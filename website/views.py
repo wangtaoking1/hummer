@@ -131,7 +131,7 @@ def create_project(request, *args, **kwargs):
     }
 
     ok = client.create_project(data)
-    logger.debug(ok)
+    # logger.debug(ok)
     return HttpResponseRedirect(reverse('dashboard'))
 
 
@@ -236,6 +236,7 @@ def list_images(request, *args, **kwargs):
     client = Communicator(cookies=request.COOKIES)
     context['project'] = client.get_project(project_id=project_id)
     context['images'] = client.image_lists(project_id=project_id)
+    logger.debug(context['images'])
 
     return render(request, 'website/images.html', context,
         RequestContext(request))
@@ -283,7 +284,8 @@ def create_image(request, *args, **kwargs):
         return JsonResponse({"error": "data invalid"})
 
     buildfile = get_filename_of_buildfile(project_id)
-    if form.cleaned_data['image_type'] == '0':
+    image_type = form.cleaned_data['image_type']
+    if int(image_type) == 0:
         is_public = 'false'
     else:
         is_public = 'true'

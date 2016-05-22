@@ -59,7 +59,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
 
-    permission_classes = ()
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         """
@@ -113,14 +113,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         response = Response(serializer.data, status=status.HTTP_201_CREATED,
             headers=headers)
 
-        # Delete the namespace
+        # Create the namespace
         try:
             kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
                 settings.K8S_PORT, settings.K8S_API_PATH))
             kubeclient.create_namespace(serializer.data['name'])
         except Exception as e:
             logger.error(e)
-            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        logger.info("User {} create a new project {}.".format(
+            request.user.username, serializer.data['name']))
 
         return response
 
@@ -139,7 +141,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
             kubeclient.delete_namespace(project.name)
         except Exception as e:
             logger.error(e)
-            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        logger.info("User {} delete the project {}.".format(
+            request.user.username, project.name))
 
         return super(ProjectViewSet, self).destroy(request, *args, **kwargs)
 
@@ -246,7 +250,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         obj = Image.objects.get(project__id=pid, id=id)
 
         # Check user permission
-        if not user.is_staff and not obj and user != obj.project.user:
+        if not check_member_in_project(obj.project, user):
             raise PermissionDenied()
 
         # May raise a permission denied
@@ -258,7 +262,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         """
         Create an image instance.
         """
-        logger.info("user %s will create a new image" % request.user.username)
+        logger.info("user %s will create a new image." % request.user.username)
 
         if not request.FILES.get('file'):
             raise ParseError(detail="There is no image build file.")
@@ -268,6 +272,9 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         data = request.data
         data['project'] = pid
+        data['user'] = request.user.id
+
+        logger.debug(data)
         # create image metadata
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -307,7 +314,6 @@ class ImageViewSet(viewsets.ModelViewSet):
             is_image=is_image,
             dockerfile=dockerfile,
             image_id=image['id'],
-            user=request.user,
             old_image_name=old_image_name,
             old_image_version=old_image_version
             )
@@ -323,7 +329,7 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         logger.info("user %s deletes image: %s/%s:%s" % (
             request.user.username,
-            image.project.user.username,
+            image.user.username,
             image.name,
             image.version))
 
@@ -370,6 +376,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         version = request.POST['version']
 
         data = {
+            'user': request.user.id,
             'project': pid,
             'name': name,
             'version': version,
@@ -400,6 +407,15 @@ class ImageViewSet(viewsets.ModelViewSet):
         cloner.clone_image()
 
         return response
+
+    def get_image_username(self, request, *args, **kwargs):
+        """
+        Get the username of this image.
+        """
+        image = self.get_object()
+        username = image.user.username
+
+        return Response(username, status=status.HTTP_200_OK)
 
 
 class ApplicationViewSet(viewsets.ModelViewSet):
@@ -906,8 +922,6 @@ def is_authenticated(request):
 @csrf_exempt
 @require_POST
 def create_image(request, *args, **kwargs):
-    """
-    """
     if not (request.user and request.user.is_authenticated()):
         raise PermissionDenied()
 
@@ -919,6 +933,7 @@ def create_image(request, *args, **kwargs):
 
     data = request.POST
     data['project'] = pid
+    data['user'] = request.user.id
 
     # create image metadata
     serializer = ImageSerializer(data=data)
@@ -953,7 +968,6 @@ def create_image(request, *args, **kwargs):
         is_image=is_image,
         dockerfile=dockerfile,
         image_id=image['id'],
-        user=request.user,
         old_image_name=old_image_name,
         old_image_version=old_image_version
         )
