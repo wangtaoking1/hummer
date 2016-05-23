@@ -34,11 +34,11 @@ def get_optimal_docker_host():
     return docker_host
 
 
-def get_volume_nfs_dir(base_dir, namespace, project, volume):
+def get_volume_nfs_dir(base_dir, namespace, volume):
     """
     Create the volume dir in nfs server.
     """
-    return os.path.join(base_dir, namespace, project, volume)
+    return os.path.join(base_dir, namespace, volume)
 
 
 def remove_file_from_disk(filename):

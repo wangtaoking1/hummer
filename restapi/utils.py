@@ -52,12 +52,12 @@ def get_upload_volume_filename(volume, user):
         volume.project.name, filename)
 
 
-def get_volume_direction_on_nfs(volume, user):
+def get_volume_direction_on_nfs(volume):
     """
     Return the direction of the uploaded volume file on nfs.
     """
-    return os.path.join(settings.NFS_BASE_DIR, user.username,
-        volume.project.name, volume.name)
+    return os.path.join(settings.NFS_BASE_DIR, volume.project.name,
+        volume.name)
 
 
 def get_ports_by_protocol(protocol, ports):

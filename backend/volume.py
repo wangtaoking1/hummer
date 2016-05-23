@@ -23,12 +23,12 @@ class VolumeBuilder(object):
             settings.K8S_PORT, settings.K8S_API_PATH))
 
         self.volume = volume
-        self.namespace = self.volume.project.user.username
+        self.namespace = self.volume.project.name
         self.project_name = self.volume.project.name
         self.volume_name = self.project_name + '-' + self.volume.name
         self.capacity = str(self.volume.capacity) + self.volume.capacity_unit
         self.nfs_path = get_volume_nfs_dir(settings.NFS_BASE_DIR,
-            self.namespace, self.project_name, self.volume.name)
+            self.namespace, self.volume.name)
         self.nfs_server = settings.NFS_IP
 
     def create_volume(self):
@@ -43,7 +43,7 @@ class VolumeBuilder(object):
         First create a persistentvolume, then create a persistentvolumeclaim.
         """
         logger.info('User {} create a volume {} in project {}.'.format(
-            self.namespace, self.volume.name, self.project_name))
+            self.volume.user.username, self.volume.name, self.project_name))
 
         # create volume dir on nfs server
         if self._create_volume_dir_on_nfs():
@@ -119,12 +119,12 @@ class VolumeDestroyer(object):
             settings.K8S_PORT, settings.K8S_API_PATH))
 
         self.volume = volume
-        self.namespace = self.volume.project.user.username
+        self.namespace = self.volume.project.name
         self.project_name = self.volume.project.name
         self.volume_name = self.project_name + '-' + self.volume.name
         self.capacity = str(self.volume.capacity) + self.volume.capacity_unit
         self.nfs_path = get_volume_nfs_dir(settings.NFS_BASE_DIR,
-            self.namespace, self.project_name, self.volume.name)
+            self.namespace, self.volume.name)
         self.nfs_server = settings.NFS_IP
 
     def destroy_volume(self):
@@ -136,7 +136,7 @@ class VolumeDestroyer(object):
 
     def _destroy_volume_instance(self):
         logger.info('User {} delete volume {} in project {}.'.format(
-            self.namespace, self.volume.name, self.project_name))
+            self.volume.user.username, self.volume.name, self.project_name))
 
         self._update_volume_status(status='deleting')
 

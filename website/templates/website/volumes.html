@@ -14,7 +14,7 @@
         <thead>
             <tr>
                 <th>卷名称</th>
-                <th>简介</th>
+                <th>创建用户</th>
                 <th>容量</th>
                 <th>状态</th>
                 <th>使用状态</th>
@@ -27,7 +27,7 @@
             <tr onclick="show_volume(this);">
                 <input type="hidden" name="id" value="{{ volume.id }}">
                 <td>{{ volume.name }}</td>
-                <td>{{ volume.desc|truncatechars:20 }}</td>
+                <td>{{ volume.user }}</td>
                 <td>{{ volume.capacity }}{{ volume.capacity_unit }}</td>
                 <td>{{ volume.status }}</td>
                 {% if volume.app %}

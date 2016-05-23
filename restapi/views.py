@@ -779,7 +779,13 @@ class VolumeViewSet(viewsets.ModelViewSet):
         assert 'pid' in self.kwargs
         pid = self.kwargs['pid']
 
-        return Volume.objects.filter(project__id=pid, project__user=user)
+        project = Project.objects.get(id=pid)
+
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
+
+        return Volume.objects.filter(project__id=pid)
 
     def get_object(self):
         """
@@ -794,9 +800,9 @@ class VolumeViewSet(viewsets.ModelViewSet):
         id = self.kwargs['pk']
         obj = Volume.objects.get(project__id=pid, id=id)
 
-        # Check user permission
-        if not user.is_staff and user != obj.project.user:
-            raise PermissionDenied()
+        if not check_member_in_project(obj.project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, obj.project.name))
 
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)
@@ -817,8 +823,9 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
         # Check whether project is corresponding to the user
         project = Project.objects.get(id=pid)
-        if not project or project.user != user:
-            raise PermissionDenied()
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
 
         # Check whether or not exists the same name volume in the project
         volumes = Volume.objects.filter(project__id=pid,
@@ -832,8 +839,11 @@ class VolumeViewSet(viewsets.ModelViewSet):
         if app:
             raise ValidationError(detail="Shouldn't contain app attribute.")
 
+        data = request.data.copy()
+        data['user'] = user.id
+
         # create volume metadata
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -855,6 +865,12 @@ class VolumeViewSet(viewsets.ModelViewSet):
         """
         volume = self.get_object()
 
+        # Check whether project is corresponding to the user
+        user = request.user
+        if not check_member_in_project(volume.project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, volume.project.name))
+
         if volume.app:
             raise ValidationError(detail="The volume is being used by \
 application {}, delete the application first.".format(volume.app.name))
@@ -871,11 +887,17 @@ application {}, delete the application first.".format(volume.app.name))
         """
         volume = self.get_object()
 
+        # Check whether project is corresponding to the user
+        user = request.user
+        if not check_member_in_project(volume.project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, volume.project.name))
+
         logger.info("User {} download the data of volume {}-{}.".format(
             request.user.username, volume.project.name, volume.name))
 
         # Copy file to local first
-        volume_dir = get_volume_direction_on_nfs(volume, request.user)
+        volume_dir = get_volume_direction_on_nfs(volume)
         filename = get_upload_volume_filename(volume, request.user)
         client = NFSLocalClient()
         client.tar_and_copy_to_local(volume_dir, filename)
@@ -891,19 +913,40 @@ application {}, delete the application first.".format(volume.app.name))
         """
         Clear volume.
         """
-        user = request.user
         volume = self.get_object()
+
+        # Check whether project is corresponding to the user
+        user = request.user
+        if not check_member_in_project(volume.project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, volume.project.name))
 
         logger.info("User {} clear volume {}-{}.".format(user.username,
             volume.project.name, volume.name))
 
         client = NFSLocalClient()
-        volume_dir = get_volume_direction_on_nfs(volume, user)
+        volume_dir = get_volume_direction_on_nfs(volume)
         # Clear the dir
         client.removedir(volume_dir)
         client.makedir(volume_dir)
 
         return Response(status=status.HTTP_200_OK)
+
+    def get_volume_username(self, request, *args, **kwargs):
+        """
+        Get the username of this volume.
+        """
+        volume = self.get_object()
+
+        # Check whether project is corresponding to the user
+        user = request.user
+        if not check_member_in_project(volume.project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, volume.project.name))
+
+        username = volume.user.username
+
+        return Response(username, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -994,9 +1037,10 @@ def upload_volume(request, *args, **kwargs):
     id = kwargs['pk']
     volume = Volume.objects.get(project__id=pid, id=id)
 
-    # Check user permission
-    if not user.is_staff and user != volume.project.user:
-        raise PermissionDenied()
+    # Check whether the user is the member of this project
+    if not check_member_in_project(volume.project, user):
+        raise PermissionDenied(detail="User {} is not in project {}."
+            .format(user.username, volume.project.name))
 
     if not request.FILES.get('file'):
         raise ParseError(detail="There is no upload file.")
@@ -1008,7 +1052,7 @@ def upload_volume(request, *args, **kwargs):
     save_upload_file_to_disk(request.FILES['file'], filename)
 
     client = NFSLocalClient()
-    volume_dir = get_volume_direction_on_nfs(volume, user)
+    volume_dir = get_volume_direction_on_nfs(volume)
     # Clear the dir first
     client.removedir(volume_dir)
     client.makedir(volume_dir)

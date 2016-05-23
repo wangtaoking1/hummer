@@ -207,13 +207,28 @@ class Communicator(object):
             return True
         return False
 
+    def get_volume_username(self, project_id, volume_id):
+        """
+        Get the username of the volume.
+        """
+        url = get_api_server_url('/api/projects/{}/volumes/{}/username/'.format(
+            project_id, volume_id))
+        response = self.client.get(url)
+        return json.loads(response.text)
+
     def volume_lists(self, project_id):
         """
         Return the volume lists of the project.
         """
         url = get_api_server_url('/api/projects/{}/volumes/'.format(project_id))
         response = self.client.get(url)
-        return json.loads(response.text)
+        volumes = json.loads(response.text)
+        # Get username for every volume
+        for volume in volumes:
+            username = self.get_volume_username(project_id=project_id,
+                volume_id=volume['id'])
+            volume['user'] = username
+        return volumes
 
     def get_volume_of_application(self, project_id, app_id):
         """
@@ -250,7 +265,10 @@ class Communicator(object):
         url = get_api_server_url('/api/projects/{}/volumes/{}/'.format(
             project_id, volume_id))
         response = self.client.get(url)
-        return json.loads(response.text)
+        volume = json.loads(response.text)
+        volume['user'] = self.get_volume_username(project_id=project_id,
+            volume_id=volume_id)
+        return volume
 
     def delete_volume(self, project_id, volume_id):
         """

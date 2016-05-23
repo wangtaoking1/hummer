@@ -12,7 +12,10 @@
 <table class="table w50">
     <tbody>
         <tr>
-            <td> <b>卷名：</b> {{ volume.name }}</td>
+            <td colspan="2"> <b>卷名：</b> {{ volume.name }}</td>
+        </tr>
+        <tr>
+            <td> <b>创建用户：</b> {{ volume.user }}</td>
             <td> <b>容量：</b> {{ volume.capacity }}{{ volume.capacity_unit }}</td>
         </tr>
         <tr>

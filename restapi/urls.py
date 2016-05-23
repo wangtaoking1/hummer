@@ -36,6 +36,10 @@ clear_volume = VolumeViewSet.as_view({
     'get': 'clear_volume'
 })
 
+get_volume_username = VolumeViewSet.as_view({
+    'get': 'get_volume_username'
+})
+
 pod_list = ApplicationViewSet.as_view({
     'get': 'pod_lists'
 })
@@ -113,7 +117,7 @@ urlpatterns = [
     # create image
     url(r'projects/(?P<pid>[0-9]+)/create_image/$', create_image),
     url(r'projects/(?P<pid>[0-9]+)/images/(?P<pk>[0-9]+)/username/$',
-        get_image_username, name='username'),
+        get_image_username, name='image-username'),
 
     # pod
     url(r'projects/(?P<pid>[0-9]+)/applications/(?P<pk>[0-9]+)/pods/$',
@@ -143,6 +147,8 @@ urlpatterns = [
         upload_volume, name='volume-upload'),
     url(r'projects/(?P<pid>[0-9]+)/volumes/(?P<pk>[0-9]+)/clear/$',
         clear_volume, name='volume-clear'),
+    url(r'projects/(?P<pid>[0-9]+)/volumes/(?P<pk>[0-9]+)/username/$',
+        get_volume_username, name='volume-username'),
 
     # public images
     url(r'publics/$', list_public_images, name='public-images'),
