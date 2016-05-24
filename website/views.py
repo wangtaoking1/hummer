@@ -611,10 +611,10 @@ def show_application_detail(request, *args, **kwargs):
         application_id=application_id)
     context['logs'] = '\n'.join(client.get_pod_logs(project_id=project_id,
         pod_name=context['pods'][0]))
-    context['mem_url'] = get_url_of_monitor_iframe('memory', context['username'],
-        context['pods'][0])
-    context['cpu_url'] = get_url_of_monitor_iframe('cpu', context['username'],
-        context['pods'][0])
+    context['mem_url'] = get_url_of_monitor_iframe('memory',
+        context['project']['name'], context['pods'][0])
+    context['cpu_url'] = get_url_of_monitor_iframe('cpu',
+        context['project']['name'], context['pods'][0])
 
     # logger.debug(context)
 
@@ -783,7 +783,7 @@ def app_monitor(request, *args, **kwargs):
         return HttpResponseRedirect(reverse('dashboard'))
 
     client = Communicator(cookies=request.COOKIES)
-    context['users'] = client.list_users()
+    context['projects'] = client.list_projects()
     context['monitor_base_url'] =  "http://{}/dashboard-solo/db/containers\
 ?fullscreen".format(settings.GRAFANA_SERVER)
 

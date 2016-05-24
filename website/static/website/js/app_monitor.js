@@ -101,12 +101,12 @@ $(document).ready(function(){
         hide_monitor_show();
 
         if ($(this).val() != "0") {
-            var user = $('#user-option').find("option:selected").text();
+            var namespace = $('#project-option').find("option:selected").text();
             var pod = $('#container-option').val();
             var type_ids = {'mem': 1, 'cpu': 14};
 
-            var mem_url = get_monitor_url(type_ids['mem'], user, pod);
-            var cpu_url = get_monitor_url(type_ids['cpu'], user, pod);
+            var mem_url = get_monitor_url(type_ids['mem'], namespace, pod);
+            var cpu_url = get_monitor_url(type_ids['cpu'], namespace, pod);
 
             $('.monitor-show .mem-show').attr('src', mem_url);
             $('.monitor-show .cpu-show').attr('src', cpu_url);

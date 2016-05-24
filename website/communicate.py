@@ -500,6 +500,14 @@ class Communicator(object):
         response = self.client.get(url, params=params)
         return json.loads(response.text)
 
+    def list_projects(self):
+        """
+        List all projects for admin user.
+        """
+        url = get_api_server_url('/api/projects/')
+        response = self.client.get(url)
+        return json.loads(response.text)
+
     def list_apps_for_project(self, project_id):
         """
         List all apps for project with project_id.

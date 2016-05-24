@@ -12,18 +12,12 @@
         <form class="form-horizontal">
             <div class="form-group">
                 <div class="col-sm-2">
-                    <label class="control-label">用户</label>
-                    <select class="form-control" id="user-option">
-                        <option value="0">-------------</option>
-                        {% for user in users %}
-                        <option value="{{ user.id }}">{{ user.username }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-sm-2">
                     <label class="control-label">项目</label>
                     <select class="form-control" id="project-option">
                         <option value="0">-------------</option>
+                        {% for project in projects %}
+                        <option value="{{ project.id }}">{{ project.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-sm-3">
