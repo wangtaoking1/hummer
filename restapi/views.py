@@ -430,9 +430,13 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             return Application.objects.all()
 
         pid = self.kwargs['pid']
+        project = Project.objects.get(id=pid)
 
-        return Application.objects.filter(image__project__id=pid,
-                image__project__user=user)
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
+
+        return Application.objects.filter(image__project__id=pid)
 
     def get_object(self):
         """
@@ -447,9 +451,11 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         id = self.kwargs['pk']
         obj = Application.objects.get(image__project__id=pid, id=id)
 
+        project = obj.image.project
         # Check user permission
-        if not user.is_staff and user != obj.image.project.user:
-            raise PermissionDenied()
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
 
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)
@@ -477,8 +483,10 @@ class ApplicationViewSet(viewsets.ModelViewSet):
 
         # Check whether project is corresponding to the user
         project = Project.objects.get(id=pid)
-        if not project or project.user != user:
-            raise PermissionDenied()
+
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
 
         applications = Application.objects.filter(image__project=project,
             name=request.data.get('name'))
@@ -493,8 +501,10 @@ class ApplicationViewSet(viewsets.ModelViewSet):
                 raise ValidationError(detail="Volume {} is being used by \
 application {}.".format(volume.name, volume.app.name))
 
+        data = request.data.copy()
+        data['user'] = user.id
         # create application metadata
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -505,14 +515,13 @@ application {}.".format(volume.name, volume.app.name))
         logger.debug(application)
 
         image_name = "{}/{}/{}-{}:{}".format(settings.IMAGE_REGISTRY,
-            request.user.username, image.project.name, image.name, image.version)
+            image.user.username, image.project.name, image.name, image.version)
         logger.debug(image_name)
         ports = request.data.get('ports', None)
 
         # create a true application instance
 
         builder = ApplicationBuilder(
-            namespace=request.user.username,
             application=application,
             image_name=image_name,
             tcp_ports=get_ports_by_protocol('TCP', ports),

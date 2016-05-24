@@ -36,14 +36,14 @@ class ApplicationBuilder(object):
     is_public = False
     volumes = None
 
-    def __init__(self, namespace, application, image_name, tcp_ports=None,
+    def __init__(self, application, image_name, tcp_ports=None,
         udp_ports=None, commands=None, args=None, envs=None, is_public=False,
         volumes=None, min_replicas=None, max_replicas=None, cpu_target=None):
         self.kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
             settings.K8S_PORT, settings.K8S_API_PATH))
 
-        self.namespace = namespace
         self.application = application
+        self.namespace = self.application.image.project.name
         self.application_name = get_application_instance_name(self.application)
         self.image_name = image_name
         self.tcp_ports = tcp_ports
@@ -175,7 +175,6 @@ class ApplicationBuilder(object):
             self.application_name)
         return (response['spec']['clusterIP'], response['spec']['ports'])
 
-
     def _update_application_metadata(self, status=None, internal_ip=None,
         external_ip=None):
         """
@@ -231,7 +230,6 @@ class ApplicationBuilder(object):
             volume.app = self.application
             volume.mount_path = volume_item['mount_path']
             volume.save()
-
 
     def _get_volume_names_and_path(self):
         """
@@ -367,7 +365,7 @@ class AutoScalerBuilder(object):
         cpu_target=-1):
         self.application = application
         self.application_name = get_application_instance_name(self.application)
-        self.namespace = self.application.user.username
+        self.namespace = self.application.image.project.username
         self.min_replicas = min_replicas
         self.max_replicas = max_replicas
         self.cpu_target = cpu_target
@@ -411,7 +409,7 @@ class AutoScalerDestroyer(object):
     def __init__(self, application):
         self.application = application
         self.application_name = get_application_instance_name(self.application)
-        self.namespace = self.application.user.username
+        self.namespace = self.application.image.project.name
 
         self.kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
             settings.K8S_PORT, settings.K8S_V1BETA1_API_PATH))
