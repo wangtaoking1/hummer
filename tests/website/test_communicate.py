@@ -126,6 +126,17 @@ class CommunicatorTestCase(unittest.TestCase):
         }
         client.create_application(1, data)
 
+    def test_get_application_username(self):
+        client = Communicator()
+        data = {
+            'username': 'user',
+            'password': 'user123'
+        }
+        client.login(data)
+
+        res = client.get_application_username(project_id=2, application_id=5)
+        print(res)
+
     def test_upload_to_volume(self):
         client = Communicator()
         data = {

@@ -564,7 +564,7 @@ application {}.".format(volume.name, volume.app.name))
 
         kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
             settings.K8S_PORT, settings.K8S_API_PATH))
-        pods = kubeclient.list_pods(namespace=request.user.username,
+        pods = kubeclient.list_pods(namespace=application.image.project.name,
             label="app={}".format(get_application_instance_name(application)))
         logger.debug(pods)
 
@@ -576,13 +576,21 @@ application {}.".format(volume.name, volume.app.name))
         """
         user = request.user
 
+        assert 'pid' in self.kwargs
+        pid = self.kwargs['pid']
+        project = Project.objects.get(id=pid)
+
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
+
         assert 'pod' in self.kwargs
         pod = self.kwargs['pod']
         tailLine = int(request.query_params['tail'])
 
         kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
             settings.K8S_PORT, settings.K8S_API_PATH))
-        logs = kubeclient.get_logs_of_pod(user.username, pod, tailLine)
+        logs = kubeclient.get_logs_of_pod(project.name, pod, tailLine)
         # print(logs)
 
         return Response(data=logs, status=status.HTTP_200_OK)
@@ -618,11 +626,20 @@ application {}.".format(volume.name, volume.app.name))
         kubeclient = KubeClient("http://{}:{}{}".format(settings.MASTER_IP,
             settings.K8S_PORT, settings.K8S_API_PATH))
         pods = kubeclient.list_pods(
-            namespace=application.image.project.user.username,
+            namespace=application.image.project.name,
             label="app={}".format(get_application_instance_name(application)))
         logger.debug(pods)
 
         return Response(pods, status=status.HTTP_200_OK)
+
+    def get_application_username(self, request, *args, **kwargs):
+        """
+        Get the username of this application.
+        """
+        application = self.get_object()
+        username = application.user.username
+
+        return Response(username, status=status.HTTP_200_OK)
 
 
 class PortViewSet(viewsets.ModelViewSet):
@@ -638,8 +655,14 @@ class PortViewSet(viewsets.ModelViewSet):
         pid = self.kwargs['pid']
         aid = self.kwargs['aid']
 
-        return Port.objects.filter(app__image__project__id=pid,
-                app__id=aid, app__image__project__user=user)
+        project = Project.objects.get(id=pid)
+
+        # Check user permission
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
+
+        return Port.objects.filter(app__image__project__id=pid, app__id=aid)
 
     def get_object(self):
         """
@@ -657,9 +680,11 @@ class PortViewSet(viewsets.ModelViewSet):
         obj = Port.objects.get(app__image__project__id=pid, app__id=aid,
             id=id)
 
+        project = Project.objects.get(id=pid)
         # Check user permission
-        if user != obj.app.image.project.user:
-            raise PermissionDenied()
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
 
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)
@@ -680,8 +705,15 @@ class EnvironmentViewSet(viewsets.ModelViewSet):
         pid = self.kwargs['pid']
         aid = self.kwargs['aid']
 
+        project = Project.objects.get(id=pid)
+
+        # Check user permission
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
+
         return Environment.objects.filter(app__image__project__id=pid,
-                app__id=aid, app__image__project__user=user)
+                app__id=aid)
 
     def get_object(self):
         """
@@ -699,9 +731,11 @@ class EnvironmentViewSet(viewsets.ModelViewSet):
         obj = Environment.objects.get(app__image__project__id=pid, app__id=aid,
             id=id)
 
+        project = Project.objects.get(id=pid)
         # Check user permission
-        if user != obj.app.image.project.user:
-            raise PermissionDenied()
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
 
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)
@@ -722,8 +756,15 @@ class AutoScalerViewSet(viewsets.ModelViewSet):
         pid = self.kwargs['pid']
         aid = self.kwargs['aid']
 
+        project = Project.objects.get(id=pid)
+
+        # Check user permission
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
+
         return AutoScaler.objects.filter(app__image__project__id=pid,
-                app__id=aid, app__image__project__user=user)
+                app__id=aid)
 
     def get_object(self):
         """
@@ -741,9 +782,11 @@ class AutoScalerViewSet(viewsets.ModelViewSet):
         obj = AutoScaler.objects.get(app__image__project__id=pid, app__id=aid,
             id=id)
 
+        project = Project.objects.get(id=pid)
         # Check user permission
-        if user != obj.app.image.project.user:
-            raise PermissionDenied()
+        if not check_member_in_project(project, user):
+            raise PermissionDenied(detail="User {} is not in project {}."
+                .format(user.username, project.name))
 
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)

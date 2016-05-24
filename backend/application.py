@@ -258,7 +258,7 @@ class ApplicationDestroyer(object):
     def __init__(self, application):
         self.application = application
         self.application_name = get_application_instance_name(self.application)
-        self.namespace = self.application.user.username
+        self.namespace = self.application.image.project.name
         self.service_name = self.application_name
         self.controller_name = self.application_name
 
@@ -365,7 +365,7 @@ class AutoScalerBuilder(object):
         cpu_target=-1):
         self.application = application
         self.application_name = get_application_instance_name(self.application)
-        self.namespace = self.application.image.project.username
+        self.namespace = self.application.image.project.name
         self.min_replicas = min_replicas
         self.max_replicas = max_replicas
         self.cpu_target = cpu_target

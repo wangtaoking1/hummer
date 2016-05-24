@@ -80,6 +80,10 @@ list_projects = ProjectViewSet.as_view({
     'get': 'list_projects'
 })
 
+get_application_username = ApplicationViewSet.as_view({
+    'get': 'get_application_username'
+})
+
 list_applications = ApplicationViewSet.as_view({
     'get': 'list_applications'
 })
@@ -169,6 +173,8 @@ urlpatterns = [
 
     # applications
     url(r'list-apps/$', list_applications, name='list-apps'),
+    url(r'projects/(?P<pid>[0-9]+)/applications/(?P<pk>[0-9]+)/username/$',
+        get_application_username, name='application-username'),
 
     # pods
     url(r'list-pods/$', list_pods, name='list-pods'),

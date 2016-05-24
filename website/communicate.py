@@ -167,7 +167,12 @@ class Communicator(object):
         """
         url = get_api_server_url('/api/projects/{}/applications/'.format(project_id))
         response = self.client.get(url)
-        return json.loads(response.text)
+        applications = json.loads(response.text)
+        for application in applications:
+            username = self.get_application_username(project_id=project_id,
+                application_id=application['id'])
+            application['user'] = username
+        return applications
 
     def create_application(self, project_id, json_data):
         """
@@ -190,6 +195,18 @@ class Communicator(object):
         Get the detail info of the application.
         """
         url = get_api_server_url('/api/projects/{}/applications/{}/'.format(
+            project_id, application_id))
+        response = self.client.get(url)
+        application = json.loads(response.text)
+        application['user'] = self.get_application_username(
+            project_id=project_id, application_id=application['id'])
+        return application
+
+    def get_application_username(self, project_id, application_id):
+        """
+        Get the username of the application.
+        """
+        url = get_api_server_url('/api/projects/{}/applications/{}/username/'.format(
             project_id, application_id))
         response = self.client.get(url)
         return json.loads(response.text)

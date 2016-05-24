@@ -26,10 +26,10 @@
                 <tbody>
                     <tr>
                         <td colspan="2"> <b>应用名称：</b> {{ application.name }}</td>
-
                     </tr>
                     <tr>
-                        <td colspan="2"> <b>镜像：</b> <a href="{% url 'show-image-detail' pid=project.id iid=image.id %}">{{ image.name }}</a></td>
+                        <td> <b>创建用户：</b>{{ application.user }}</td>
+                        <td> <b>镜像：</b> <a href="{% url 'show-image-detail' pid=project.id iid=image.id %}">{{ image.name }}</a></td>
                     </tr>
                     <tr>
                         <td> <b>CPU：</b> {{ resource_limit.cpu }}{{ resource_limit.cpu_unit }}</td>
