@@ -34,6 +34,11 @@ function set_ntp() {
     crontab /tmp/crontab.bak
 }
 
+# install bridge-utils
+function install_brctl() {
+    apt-get install bridge-utils
+}
+
 
 if [[ $UID -ne 0 ]]; then
     echo "Not root user. Please run as root."
@@ -58,6 +63,8 @@ docker -v
 # configure ntp
 set_ntp
 
+# install brctl
+install_brctl
 
 # Set Docker private registry address
 read -p "Input private registry address(192.168.0.1:5000): " registry_address
