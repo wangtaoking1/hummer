@@ -52,6 +52,7 @@ class Communicator(object):
         """
         url = get_api_server_url('/api/users/')
         response = self.client.post(url, data)
+        logger.debug(response.text)
         user_url = json.loads(response.text)['url']
         password_url = user_url + 'set_password/'
         self.client.post(password_url, data)

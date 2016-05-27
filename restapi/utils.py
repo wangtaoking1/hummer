@@ -90,6 +90,9 @@ def check_member_in_project(project, user):
     """
     Check user whether or not in project.
     """
+    if user.is_staff:
+        return True
+
     if user in project.members.all():
         return True
     return False

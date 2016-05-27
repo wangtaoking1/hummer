@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    name: k8s-grafana
+  name: k8s-grafana
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    name: k8s-grafana
+  template:
+    metadata:
+      labels:
+        name: k8s-grafana
+    spec:
+      containers:
+      - name: grafana
+        image: kubernetes/heapster_grafana:v2.5.0
+        env:
+          - name: INFLUXDB_SERVICE_URL
+            value: http://{monitoring-influxdb}:8086
+          - name: GF_AUTH_BASIC_ENABLED
+            value: "false"
+          - name: GF_AUTH_ANONYMOUS_ENABLED
+            value: "true"
+          - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+            value: Admin
+          - name: GF_SERVER_ROOT_URL
+            value: /api/v1/proxy/namespaces/kube-system/services/k8s-grafana/
+        volumeMounts:
+        - mountPath: /var
+          name: grafana-storage
+      volumes:
+      - name: grafana-storage
+        emptyDir: {}
