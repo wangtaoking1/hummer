@@ -56,6 +56,24 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_202_ACCEPTED)
 
 
+@require_POST
+def registry(request, *args, **kwargs):
+    if not (request.user and request.user.is_staff):
+        raise PermissionDenied()
+
+    data = {
+        'username': request.POST.get('username', None),
+        'email': request.POST.get('email', None),
+        'password': request.POST.get('password', None)
+    }
+    logger.debug(data)
+    user = MyUser.objects.create_user(username=data['username'],
+        email=data['email'], password=data['password'])
+    user.save()
+
+    return JsonResponse(safe=False)
+
+
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
 

@@ -54,15 +54,10 @@ def registry(request):
             'is_staff': False,
             'is_active': True
         }
-        client = Communicator()
-        cookies = client.registry(data)
+        client = Communicator(cookies=request.COOKIES)
+        client.registry(data)
 
-        if 'sessionid' in cookies:
-            response = HttpResponseRedirect(reverse('dashboard'))
-            response.set_cookie('sessionid', cookies['sessionid'])
-            return response
-
-    return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(reverse('user-management'))
 
 
 @require_POST

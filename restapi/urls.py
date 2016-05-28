@@ -3,7 +3,7 @@ from rest_framework import routers
 from restapi.views import (UserViewSet, ProjectViewSet, ImageViewSet,
     ApplicationViewSet, PortViewSet, ResourceLimitViewSet, VolumeViewSet,
     is_authenticated, create_image, upload_volume, list_hosts,
-    AutoScalerViewSet, EnvironmentViewSet)
+    AutoScalerViewSet, EnvironmentViewSet, registry)
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -114,6 +114,7 @@ urlpatterns = [
     url(r'', include(router.urls)),
 
     # user
+    url(r'registry/$', registry, name='registry'),
     url(r'users/(?P<pk>[0-9]+)/set_password/$', set_password,
         name='set-password'),
     url(r'auth/is_authenticated/$', is_authenticated, name='is_authenticated'),
