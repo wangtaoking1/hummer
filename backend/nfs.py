@@ -116,12 +116,14 @@ class NFSLocalClient(object):
         """
         Copy localfile to remote nfs server, like scp command.
         """
+        self.makedir(os.path.dirname(remotefile))
         os.system("cp {} {}".format(localfile, remotefile))
 
     def copy_file_to_local(self, remotefile, localfile):
         """
         Copy remote file to local filesystem, like scp command.
         """
+        self.makedir(os.path.dirname(localfile))
         os.system("cp {} {}".format(remotefile, localfile))
 
     def tar_and_copy_to_local(self, remotedir, localfile):
@@ -130,6 +132,7 @@ class NFSLocalClient(object):
         """
         tar_name = os.path.basename(localfile)
         os.system("cd {} && tar -cf {} *".format(remotedir, tar_name))
+        self.makedir(os.path.dirname(localfile))
         remotefile = os.path.join(remotedir, tar_name)
         os.system("mv {} {}".format(remotefile, localfile))
 
