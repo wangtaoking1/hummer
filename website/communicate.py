@@ -268,8 +268,13 @@ class Communicator(object):
         volumes = json.loads(response.text)
         # Get username for every volume
         for volume in volumes:
-            username = self.get_volume_username(project_id=project_id,
-                volume_id=volume['id'])
+            try:
+                username = self.get_volume_username(project_id=project_id,
+                    volume_id=volume['id'])
+            except Exception as e:
+                logger.error(e)
+                volume['user'] = None
+                continue
             volume['user'] = username
         return volumes
 
@@ -309,8 +314,12 @@ class Communicator(object):
             project_id, volume_id))
         response = self.client.get(url)
         volume = json.loads(response.text)
-        volume['user'] = self.get_volume_username(project_id=project_id,
-            volume_id=volume_id)
+        try:
+            volume['user'] = self.get_volume_username(project_id=project_id,
+                volume_id=volume_id)
+        except Exception as e:
+            logger.error(e)
+            volume['user'] = None
         return volume
 
     def delete_volume(self, project_id, volume_id):
