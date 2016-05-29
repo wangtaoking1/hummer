@@ -30,7 +30,7 @@ NFS Server用来做数据持久化的，可以作为镜像存储后端以及存�
 	# mkdir /hummer
 	# showmount -e nfs_server_ip
 	# mount -t nfs nfs_server_ip:/hummer /hummer
-	# echo "nfs_server_ip:/hummer /hummer nfs 0 0" >>/etc/fstab
+	# echo "nfs_server_ip:/hummer /hummer nfs defaults 0 0" >>/etc/fstab
 
 #**K8S集群**
 ---
