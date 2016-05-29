@@ -56,6 +56,16 @@ class Communicator(object):
         }
         response = self.client.post(url, data=data, headers=headers)
 
+    def delete_user(self, user_id):
+        """
+        Admin user delete user with user_id.
+        """
+        url = get_api_server_url('/api/users/{}/'.format(user_id))
+        headers = {
+            'X-CSRFToken': self.client.cookies['csrftoken'],
+        }
+        self.client.delete(url, headers=headers)
+
     def project_lists(self):
         """
         Return the project lists of the user.

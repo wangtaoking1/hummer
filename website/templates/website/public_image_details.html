@@ -37,8 +37,8 @@
     </tbody>
 </table>
 
+{% if not is_staff %}
 <hr>
-
 <h2 class="page-header">克隆镜像</h2>
 <div class="clone-public">
     <form class="form-horizontal">
@@ -75,6 +75,7 @@
         </div>
     </form>
 </div>
+{% endif %}
 {% endblock %}
 
 

@@ -44,7 +44,11 @@
                         {% endif %}
                         </td>
                         <td>
-                            <button class="btn btn-xs btn-danger">删除</button>
+                            {% if not user.is_staff %}
+                            <form action="{% url 'delete-user' uid=user.id %}" method="get">
+                                <button class="btn btn-xs btn-danger">删除</button>
+                            </form>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

@@ -94,6 +94,17 @@ def logout(request):
 
 
 @login_required()
+def delete_user(request, *args, **kwargs):
+    """
+    Delete user only for admin user.
+    """
+    uid = kwargs['uid']
+    client = Communicator(cookies=request.COOKIES)
+    client.delete_user(user_id=uid)
+    return HttpResponseRedirect(reverse('user-management'))
+
+
+@login_required()
 def dashboard(request, *args, **kwargs):
     context = {
         'username': kwargs.get('username'),

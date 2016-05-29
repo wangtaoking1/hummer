@@ -32,12 +32,12 @@
  * Login and registry box
  * ----------------------------------
  */
-.notshow{
+/*.notshow{
     display: none;
-}
+}*/
 .center-box {
-    position: absolute;
-    top: 150px;
+    /*position: absolute;*/
+    /*top: 150px;*/
     width: 100%;
 }
 .box-body {
@@ -65,7 +65,8 @@
     background-color: white;
 }
 .set-width {
-    width: 30%;
+    width: 350px;
+    margin-top: 5%;
     margin-left: 35%;
 }
 .go {

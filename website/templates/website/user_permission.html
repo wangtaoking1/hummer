@@ -20,9 +20,11 @@
     <div class="all-div col-sm-4">
         <form class="all form-horizontal">
             {% for user in left_users %}
+            {% if not user.is_staff %}
             <div class="form-group">
                 <label><input name="users" type="checkbox" value="{{ user.id }}" />{{user.username}}</label>
             </div>
+            {% endif %}
             {% endfor %}
         </form>
     </div>
@@ -32,9 +34,11 @@
     <div class="selected-div col-sm-4">
         <form class="selected form-horizontal">
             {% for user in selected_users %}
+            {% if not user.is_staff %}
             <div class="form-group">
                 <label><input name="users" type="checkbox" value="{{ user.id }}" />{{user.username}}</label>
             </div>
+            {% endif %}
             {% endfor %}
         </form>
     </div>

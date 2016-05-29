@@ -8,10 +8,16 @@ urlpatterns = [
     # url(r'^$', 'hummer.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
+    # user
     url(r'^$', views.index, name='index'),
     url(r'^login/$', views.login, name='login'),
     url(r'^registry/$', views.registry, name='registry'),
     url(r'^logout/$', views.logout, name='logout'),
+    url(r'^users/(?P<uid>[0-9]+)/delete/$', views.delete_user,
+        name='delete-user'),
+    url(r'^user-management/$', views.user_management, name='user-management'),
+
+    # project
     url(r'^dashboard/$', views.dashboard, name='dashboard'),
     url(r'^create_project/$', views.create_project, name='create-project'),
     url(r'^projects/(?P<pid>[0-9]+)/delete_project/$', views.delete_project,
@@ -73,9 +79,6 @@ urlpatterns = [
         name='public-detail'),
     url(r'^publics/(?P<puid>[0-9]+)/clone/$', views.clone_public_image,
         name='public-clone'),
-
-    # user management
-    url(r'^user-management/$', views.user_management, name='user-management'),
 
     # resource module
     url(r'^resource-module/$', views.resource_module, name='resource-module'),

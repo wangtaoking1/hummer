@@ -3,29 +3,29 @@ $(document).ready(function() {
         $('.row-offcanvas').toggleClass('active');
     });
 
-    $('.nav-login').click(function(){
-        $('.center-box').addClass('notshow');
-        $('.login-area').removeClass('notshow');
-        return false;
-    });
+    // $('.nav-login').click(function(){
+    //     $('.center-box').addClass('notshow');
+    //     $('.login-area').removeClass('notshow');
+    //     return false;
+    // });
 
-    $('.nav-register').click(function() {
-        $('.center-box').addClass('notshow');
-        $('.register-area').removeClass('notshow');
-        return false;
-    });
+    // $('.nav-register').click(function() {
+    //     $('.center-box').addClass('notshow');
+    //     $('.register-area').removeClass('notshow');
+    //     return false;
+    // });
 
-    $('.go-login').click(function(){
-        $('.center-box').addClass('notshow');
-        $('.login-area').removeClass('notshow');
-        return false;
-    });
+    // $('.go-login').click(function(){
+    //     $('.center-box').addClass('notshow');
+    //     $('.login-area').removeClass('notshow');
+    //     return false;
+    // });
 
-    $('.go-register').click(function(){
-        $('.center-box').addClass('notshow');
-        $('.register-area').removeClass('notshow');
-        return false;
-    });
+    // $('.go-register').click(function(){
+    //     $('.center-box').addClass('notshow');
+    //     $('.register-area').removeClass('notshow');
+    //     return false;
+    // });
 
     $('.login-body button').click(function(){
         $('.login-body form').submit();
