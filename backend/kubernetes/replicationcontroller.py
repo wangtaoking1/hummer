@@ -81,8 +81,8 @@ class Controller(object):
             self.set_envs(envs)
 
         self._container['volumeMounts'] = []
+        self._body['spec']['template']['spec']['volumes'] = []
         if volumes:
-            self._body['spec']['template']['spec']['volumes'] = []
             self.set_volumes(volumes)
 
     def set_ports(self, protocol, ports):
