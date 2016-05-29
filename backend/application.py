@@ -241,8 +241,7 @@ class ApplicationBuilder(object):
         volume_name_path = {}
         for volume_item in self.volumes:
             volume = Volume.objects.get(id=int(volume_item['volume']))
-            volume_name = "{}-{}-{}".format(self.namespace,
-                volume.project.name, volume.name)
+            volume_name = "{}-{}".format(self.namespace, volume.name)
             volume_name_path[volume_name] = volume_item['mount_path']
         logger.debug(volume_name_path)
         return volume_name_path

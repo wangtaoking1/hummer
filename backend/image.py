@@ -395,7 +395,6 @@ class ImageBuilder(object):
             return None
         return token
 
-
 class ImageDestroyer(object):
     """
     ImageDestroyer is to destroy image instance by multiple threading.

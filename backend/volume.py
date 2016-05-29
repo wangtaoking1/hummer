@@ -25,7 +25,7 @@ class VolumeBuilder(object):
         self.volume = volume
         self.namespace = self.volume.project.name
         self.project_name = self.volume.project.name
-        self.volume_name = self.project_name + '-' + self.volume.name
+        self.volume_name = self.volume.name
         self.capacity = str(self.volume.capacity) + self.volume.capacity_unit
         self.nfs_path = get_volume_nfs_dir(settings.NFS_BASE_DIR,
             self.namespace, self.volume.name)
@@ -121,7 +121,7 @@ class VolumeDestroyer(object):
         self.volume = volume
         self.namespace = self.volume.project.name
         self.project_name = self.volume.project.name
-        self.volume_name = self.project_name + '-' + self.volume.name
+        self.volume_name = self.volume.name
         self.capacity = str(self.volume.capacity) + self.volume.capacity_unit
         self.nfs_path = get_volume_nfs_dir(settings.NFS_BASE_DIR,
             self.namespace, self.volume.name)
