@@ -112,8 +112,13 @@ class Communicator(object):
         images = json.loads(response.text)
         # Get username for every image
         for image in images:
-            username = self.get_image_username(project_id=project_id,
-                image_id=image['id'])
+            try:
+                username = self.get_image_username(project_id=project_id,
+                    image_id=image['id'])
+            except Exception as e:
+                logger.error(e)
+                image['user'] = None
+                continue
             image['user'] = username
         return images
 
@@ -143,8 +148,13 @@ class Communicator(object):
             project_id, image_id))
         response = self.client.get(url)
         image = json.loads(response.text)
-        image['user'] = self.get_image_username(project_id=project_id,
-            image_id=image_id)
+        try:
+            image['user'] = self.get_image_username(project_id=project_id,
+                image_id=image_id)
+        except Exception as e:
+            logger.error(e)
+            image['user'] = None
+            continue
         return image
 
     def delete_image(self, project_id, image_id):
@@ -177,8 +187,13 @@ class Communicator(object):
         response = self.client.get(url)
         applications = json.loads(response.text)
         for application in applications:
-            username = self.get_application_username(project_id=project_id,
-                application_id=application['id'])
+            try:
+                username = self.get_application_username(project_id=project_id,
+                    application_id=application['id'])
+            except Exception as e:
+                logger.error(e)
+                application['user'] = None
+                continue
             application['user'] = username
         return applications
 
@@ -206,8 +221,13 @@ class Communicator(object):
             project_id, application_id))
         response = self.client.get(url)
         application = json.loads(response.text)
-        application['user'] = self.get_application_username(
-            project_id=project_id, application_id=application['id'])
+        try:
+            application['user'] = self.get_application_username(
+                project_id=project_id, application_id=application['id'])
+        except Exception as e:
+            logger.error(e)
+            application['user'] = None
+            continue
         return application
 
     def get_application_username(self, project_id, application_id):
