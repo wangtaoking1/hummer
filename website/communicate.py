@@ -154,7 +154,6 @@ class Communicator(object):
         except Exception as e:
             logger.error(e)
             image['user'] = None
-            continue
         return image
 
     def delete_image(self, project_id, image_id):
@@ -227,7 +226,6 @@ class Communicator(object):
         except Exception as e:
             logger.error(e)
             application['user'] = None
-            continue
         return application
 
     def get_application_username(self, project_id, application_id):
