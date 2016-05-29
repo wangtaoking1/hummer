@@ -76,12 +76,12 @@ class Controller(object):
         if udp_ports:
             self.set_ports("UDP", udp_ports)
 
+        self._container['env'] = []
         if envs:
-            self._container['env'] = []
             self.set_envs(envs)
 
+        self._container['volumeMounts'] = []
         if volumes:
-            self._container['volumeMounts'] = []
             self._body['spec']['template']['spec']['volumes'] = []
             self.set_volumes(volumes)
 
