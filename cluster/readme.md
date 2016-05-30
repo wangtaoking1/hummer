@@ -5,7 +5,7 @@
 |------|:---------:|
 | Master节点 | 容器集群的管理节点 |
 | 若干Node节点 | 容器集群的计算节点，容器运行在其上 |
-| registry | 镜像仓库节点，用于存放平台上所有应用的镜像 |
+| Registry | 镜像仓库节点，用于存放平台上所有应用的镜像 |
 | NFS | 用作应用持久化存储的后端 |
 | 监控节点 | 包括InfluxDB和Grafana，实现监控系统 |
 | 管理平台 | 包括MySQL数据库（存储元数据）和web服务器 |
@@ -117,7 +117,7 @@ K8S是基于Docker的开源平台，所以我们首先需要在集群的每一�
 
 ###**管理平台**
 管理平台基于Python3开发，需要安装Python3的一些软件包，在项目主目录的requirements.txt文档列出。
-######**虚拟环境**
+
 首先安装虚拟环境python-virtualenv。
 
 	$ sudo apt-get install python-virtualenv
