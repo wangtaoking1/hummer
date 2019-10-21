@@ -15,7 +15,7 @@ requests==2.9.0
 
 dnspython3==1.12.0
 
-ecdsa==0.13
+ecdsa==0.13.3
 
 pycrypto==2.6.1
 
