@@ -1,4 +1,4 @@
-django==1.8.0
+django==2.2.24
 
 djangorestframework==3.3.0
 
