@@ -19,7 +19,7 @@ ecdsa==0.13
 
 pycrypto==2.6.1
 
-setuptools==2.2
+setuptools==65.5.1
 
 six==1.10.0
 
